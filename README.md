@@ -5,6 +5,7 @@ This will be an awesome project
 ## Contributors
 
 Jimmy Phan jp2369
+Ethan Lin eyl45
 
 ## Description
 
