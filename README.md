@@ -4,8 +4,7 @@ This will be an awesome project
 
 ## Contributors
 
-Jimmy Phan jp2369
-Ethan Lin eyl45
+Jimmy Phan jp2369, Ethan Lin eyl45, Nadya Lumy nal87
 
 ## Description
 
