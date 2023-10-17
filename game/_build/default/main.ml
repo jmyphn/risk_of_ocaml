@@ -1,3 +1,4 @@
+
 (*Game setup function*)
 let setup () = print_endline ("start");;
 
@@ -8,7 +9,7 @@ let rec loop () = let s = read_line () in
 
 
 
-
+  
 
   loop ()
 
