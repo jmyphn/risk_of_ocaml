@@ -1,8 +1,12 @@
 type player = Player.t
 type players = player list
 type country = Countries.t
-type countries = (country * player) list
-type phase = Deploy | Attack | Fortify
+type countries = country list
+
+type phase =
+  | Deploy
+  | Attack
+  | Fortify
 
 type t = {
   players : players;
@@ -12,7 +16,7 @@ type t = {
 }
 
 (* Given a int [n], initializes players and returns a list of the players
-initialized. USER CHANGES NAME ECT ECT *)
+   initialized. USER CHANGES NAME ECT ECT *)
 let rec initialize_players (n : int) : players =
   match n with
   | 0 -> []
@@ -28,21 +32,14 @@ let init (numPlayers : int) : t =
     players = plist;
     current_player = List.hd plist;
     current_phase = Deploy;
-    countries =
-      [
-        (Countries.init "North America" 8, List.hd plist);
-        (Countries.init "South America" 8, List.hd plist);
-        (Countries.init "Africa" 8, List.nth plist 1);
-        (Countries.init "Europe" 8, List.nth plist 1);
-        (Countries.init "Asia" 8, List.nth plist 2);
-        (Countries.init "Australia" 8, List.nth plist 2);
-      ];
+    countries = Countries.init plist;
   }
 
 (** Given a game, return the current player *)
 let get_current_player game = game.current_player
 
-(* Return the next player given a list of players INEFFICIENT: IMPLEMENT BETTER*)
+(* Return the next player given a list of players INEFFICIENT: IMPLEMENT
+   BETTER*)
 let rec next_player_helper plist cp original =
   match plist with
   | [] -> failwith ""
@@ -56,6 +53,9 @@ let next_player game =
 
 (** Given a game, return the phase*)
 let get_phase game = game.current_phase
+
+(** Given a game, return the countries*)
+let get_countries game = game.countries
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
@@ -82,3 +82,18 @@ let change_phase (p : phase) (game : t) : t =
         current_phase = Deploy;
         countries = game.countries;
       }
+
+(** Returns the countries held by a specific player*)
+let rec countries_owned (lst : Countries.t list) (p : player) : Countries.t list
+    =
+  match lst with
+  | [] -> []
+  | h :: t ->
+      if Countries.get_player h = p then h :: countries_owned t p
+      else countries_owned t p
+
+(** returns a string*)
+let rec country_to_string (lst : Countries.t list) : string =
+  match lst with
+  | [] -> ""
+  | h :: t -> Countries.get_name h ^ " " ^ country_to_string t
