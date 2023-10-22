@@ -6,8 +6,8 @@ build:
 # 	code .
 # 	! dune build --watch
 
-# utop:
-# 	OCAMLRUNPARAM=b dune utop src
+utop:
+	OCAMLRUNPARAM=b dune utop
 
 # test:
 # 	OCAMLRUNPARAM=b dune exec test/test.exe
