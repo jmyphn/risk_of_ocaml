@@ -1,7 +1,7 @@
 # risk_of_ocaml
 
 ## Installation and Dependencies
-This project depends on Raylib and Raygui. Use the package manager [opam](https://opam.ocaml.org/) to install these dependencies.
+This project depends on the [OCaml bindings for Raylib](https://github.com/tjammer/raylib-ocaml) ([Raylib](https://www.raylib.com/)) and the [OCaml binds for Raygui](https://opam.ocaml.org/packages/raygui/raygui.0.6.0/) ([Raygui](https://github.com/raysan5/raygui)). Use the package manager [opam](https://opam.ocaml.org/) to install these dependencies.
 
 In a terminal instance, run
 ```bash
