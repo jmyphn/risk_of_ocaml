@@ -1,9 +1,4 @@
 open Gamestate
-<<<<<<< HEAD
-(*Game setup function*)
-let setup () = print_endline ("start");;
-=======
->>>>>>> 48e2ad2cdd3c4140e81683659908da6cb25599e0
 
 (*Game setup function*)
 let setup () = print_endline ""
