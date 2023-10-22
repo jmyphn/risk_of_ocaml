@@ -1,0 +1,14 @@
+# [dune build] generated file
+_build/
+
+# Dune generated files
+*.install
+
+# Local OPAM switch
+_opam/
+
+# macOS things
+.DS_Store
+
+# [make zip] zip file
+*.zip

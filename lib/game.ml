@@ -1,7 +1,15 @@
 type player = Player.t
 type players = player list
+type country = Countries.t
+type countries = (country * player) list
 type phase = Deploy | Attack | Fortify
-type t = { players : players; current_player : player; current_phase : phase }
+
+type t = {
+  players : players;
+  current_player : player;
+  current_phase : phase;
+  countries : countries;
+}
 
 (* Given a int [n], initializes players and returns a list of the players
 initialized. USER CHANGES NAME ECT ECT *)
@@ -16,7 +24,20 @@ let rec initialize_players (n : int) : players =
 (** Initializes game given a number of players *)
 let init (numPlayers : int) : t =
   let plist = initialize_players numPlayers in
-  { players = plist; current_player = List.hd plist; current_phase = Deploy }
+  {
+    players = plist;
+    current_player = List.hd plist;
+    current_phase = Deploy;
+    countries =
+      [
+        (Countries.init "North America" 8, List.hd plist);
+        (Countries.init "South America" 8, List.hd plist);
+        (Countries.init "Africa" 8, List.nth plist 1);
+        (Countries.init "Europe" 8, List.nth plist 1);
+        (Countries.init "Asia" 8, List.nth plist 2);
+        (Countries.init "Australia" 8, List.nth plist 2);
+      ];
+  }
 
 (** Given a game, return the current player *)
 let get_current_player game = game.current_player
@@ -45,16 +66,19 @@ let change_phase (p : phase) (game : t) : t =
         players = game.players;
         current_player = game.current_player;
         current_phase = Attack;
+        countries = game.countries;
       }
   | Attack ->
       {
         players = game.players;
         current_player = game.current_player;
         current_phase = Fortify;
+        countries = game.countries;
       }
   | Fortify ->
       {
         players = game.players;
         current_player = next_player game;
         current_phase = Deploy;
+        countries = game.countries;
       }
