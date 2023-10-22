@@ -1,5 +1,4 @@
 open Gamestate
-open Raylib
 (*Game setup function*)
 let setup () = print_endline ("start");;
 
