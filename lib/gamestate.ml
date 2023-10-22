@@ -17,17 +17,43 @@ let rec play game =
   let _ =
     match currPhase with
     | Deploy ->
-        let _ = print_endline "Deploy your troops" in
+        let new_troops = Random.int 10 in
+        let _ =
+          print_endline
+            (string_of_int new_troops
+           ^ " have been drafted. Deploy these troops in a country.")
+        in
+
         let input = read_line () in
-        print_endline ("Deployed " ^ input ^ " troops.")
+        if input = "finish" then (
+          print_endline "Goodbye.";
+          exit 0)
+        else print_endline ("Deployed these troops in " ^ input ^ ".");
+        print_endline "--------------------------------"
     | Attack ->
-        let _ = print_endline "Attack" in
+        let _ = print_endline "Attack a country" in
         let input = read_line () in
-        print_endline ("Attack " ^ input ^ " territory.")
+        if input = "finish" then (
+          print_endline "Goodbye.";
+          exit 0)
+        else print_endline ("Your soldiers attacked " ^ input ^ "...");
+        let decision = Random.int 2 in
+        if decision = 1 then
+          print_endline
+            "... your soldiers fought valiantly and won the country!"
+        else
+          print_endline
+            "... your soldiers fought, but failed to capture the country. You \
+             lost your country in the process!";
+        print_endline "--------------------------------"
     | Fortify ->
         let _ = print_endline "Fortify your troops" in
         let input = read_line () in
-        print_endline ("Fortify " ^ input ^ " troops.")
+        if input = "finish" then (
+          print_endline "Goodbye.";
+          exit 0)
+        else print_endline ("Fortify " ^ input ^ " troops.");
+        print_endline "--------------------------------"
   in
   play (Game.change_phase currPhase game)
 
@@ -73,7 +99,23 @@ let action s =
   | START -> ()
   | MENU -> ()
   | ACTIVE ->
-      let _ = print_endline "How many players?" in
+      let _ =
+        print_endline
+          "Choose between 2-4 players. ** In this version, the number of \
+           players will default to 3 players. **"
+      in
       let num_players = read_line () in
-      play (Game.init (int_of_string num_players))
+      if int_of_string_opt num_players = None then (
+        print_endline
+          "Sorry, this is not a valid player count. Defaulting to 3 players.";
+        play (Game.init 3))
+      else if int_of_string num_players < 2 then (
+        print_endline
+          "Sorry, this is not a valid player count. Defaulting to 3 players.";
+        play (Game.init 3))
+      else if int_of_string num_players > 4 then (
+        print_endline
+          "Sorry, this is not a valid player count. Defaulting to 3 players.";
+        play (Game.init 3))
+      else play (Game.init 3)
   | END -> ()

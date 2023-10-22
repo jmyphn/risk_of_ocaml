@@ -1,8 +1,6 @@
 open Gamestate
-open Raylib
 (*Game setup function*)
 let setup () = print_endline ("start");;
-
 
 (*Game loop function*)
 let rec loop game_state () = 
