@@ -19,3 +19,5 @@ val message : t -> unit
     to the player in the terminal.*)
 
 val action : t -> unit
+(** [action] Given a state [t], return a desired string to be shown in the
+    terminal*)

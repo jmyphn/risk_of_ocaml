@@ -92,7 +92,7 @@ let rec countries_owned (lst : Countries.t list) (p : player) : Countries.t list
       if Countries.get_player h = p then h :: countries_owned t p
       else countries_owned t p
 
-(** returns a string*)
+(** Given a list of countries [lst], return a string of those countries *)
 let rec country_to_string (lst : Countries.t list) : string =
   match lst with
   | [] -> ""
