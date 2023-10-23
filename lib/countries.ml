@@ -2,61 +2,63 @@ type t = {
   name : string;
   troops : int;
   player : Player.t;
-  contident : Contident.t;
-  neighboors : string list;
+  continent : Continent.t;
+  neighbours : string list;
 }
 
 let get_name c = c.name
 let get_troops c = c.troops
 let get_player c = c.player
-let get_contident c = c.contident
-let get_neighboors c = c.neighboors
+let get_continent c = c.continent
+let get_neighbours c = c.neighbours
 
 (* Pesudo design: must incoperate randomization of players + better
    implemenetation*)
 let init (p : Player.t list) : t list =
+  let na = Continent.create "North America" 5 in
+  let af = Continent.create "Africa" 4 in
   [
     {
       name = "Maryland";
       troops = 1;
       player = List.nth p 0;
-      contident = Contident.create "North America";
-      neighboors = [ "New York" ];
+      continent = na;
+      neighbours = [ "New York" ];
     };
     {
       name = "New York";
       troops = 1;
       player = List.nth p 2;
-      contident = Contident.create "North America";
-      neighboors = [ "Maryland" ];
+      continent = na;
+      neighbours = [ "Maryland" ];
     };
     {
       name = "California";
       troops = 1;
       player = List.nth p 2;
-      contident = Contident.create "North America";
-      neighboors = [];
+      continent = na;
+      neighbours = [];
     };
     {
       name = "Madagascar";
       troops = 1;
       player = List.nth p 0;
-      contident = Contident.create "Africa";
-      neighboors = [];
+      continent = af;
+      neighbours = [];
     };
     {
       name = "South Africa";
       troops = 1;
       player = List.nth p 1;
-      contident = Contident.create "Africa";
-      neighboors = [ "Egypt" ];
+      continent = af;
+      neighbours = [ "Egypt" ];
     };
     {
       name = "Egypt";
       troops = 1;
       player = List.nth p 2;
-      contident = Contident.create "Africa";
-      neighboors = [ "South Africa" ];
+      continent = af;
+      neighbours = [ "South Africa" ];
     };
   ]
 

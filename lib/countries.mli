@@ -9,11 +9,11 @@ val get_troops : t -> int
 val get_player : t -> Player.t
 (** [get_player] Given a country [t], return the player who owns the country. *)
 
-val get_contident : t -> Contident.t
-(** [get_contident] Given a country [t], return the contident it is in *)
+val get_continent : t -> Continent.t
+(** [get_continent] Given a country [t], return the continent it is in *)
 
-val get_neighboors : t -> string list
-(** [get_neighboors] Given a country [t], return its neighboors
+val get_neighbours : t -> string list
+(** [get_neighbours] Given a country [t], return its neighboors
 
     CAN IMPLEMENT MORE EFFICIENT DATA STRUCTURE *)
 
