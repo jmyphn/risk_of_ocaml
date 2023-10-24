@@ -15,9 +15,9 @@ utop:
 play:
 	OCAMLRUNPARAM=b dune exec game/main.exe
 
-# zip:
-# 	rm -f ms3_code.zip
-# 	zip -r ms3_code.zip . -x@exclude.lst
+zip:
+	rm -f ms2_code.zip
+	zip -r ms2_code.zip . -x@exclude.lst
 
 # clean:
 # 	dune clean
