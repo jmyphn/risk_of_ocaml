@@ -15,8 +15,6 @@ let phase_to_string (phase : Game.phase) : string =
 
 let rec play game =
   let currPlayer = Game.get_current_player game in
-  let currCountries = Game.get_countries game in
-  let owned_countries = Game.countries_owned currCountries currPlayer in
   let currPhase = Game.get_phase game in
   print_endline ("It is Player " ^ Player.get_name currPlayer ^ "'s turn");
   print_endline ("The current phase is " ^ phase_to_string currPhase);
@@ -30,8 +28,7 @@ let rec play game =
           print_endline
             (string_of_int new_troops
            ^ " have been drafted. Deploy these troops in any of the following \
-              countries: "
-            ^ Game.country_to_string owned_countries)
+              countries: ")
         in
 
         let input = read_line () in

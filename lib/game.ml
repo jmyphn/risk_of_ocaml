@@ -22,8 +22,7 @@ let rec initialize_players (n : int) : players =
   | 0 -> []
   | a ->
       let _ = print_endline ("Choose name for Player" ^ string_of_int a) in
-      let name = read_line () in
-      Player.init name :: initialize_players (n - 1)
+      Player.init Raylib.Color.gray :: initialize_players (n - 1)
 
 (** Initializes game given a number of players *)
 let init (numPlayers : int) : t =
@@ -32,7 +31,7 @@ let init (numPlayers : int) : t =
     players = plist;
     current_player = List.hd plist;
     current_phase = Deploy;
-    countries = Countries.init plist;
+    countries = Countries.init ();
   }
 
 (** Given a game, return the current player *)
@@ -82,18 +81,3 @@ let change_phase (p : phase) (game : t) : t =
         current_phase = Deploy;
         countries = game.countries;
       }
-
-(** Returns the countries held by a specific player*)
-let rec countries_owned (lst : Countries.t list) (p : player) : Countries.t list
-    =
-  match lst with
-  | [] -> []
-  | h :: t ->
-      if Countries.get_player h = p then h :: countries_owned t p
-      else countries_owned t p
-
-(** Given a list of countries [lst], return a string of those countries *)
-let rec country_to_string (lst : Countries.t list) : string =
-  match lst with
-  | [] -> ""
-  | h :: t -> Countries.get_name h ^ " " ^ country_to_string t

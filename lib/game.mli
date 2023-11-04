@@ -29,11 +29,4 @@ val change_phase : phase -> t -> t
 (** [change_phase] Given a phase [p], and a game [g], return a game with the
     phase [p]*)
 
-val countries_owned : Countries.t list -> player -> Countries.t list
-(** [countries_owned] Given a game [g] and a player [p], return all the
-    countries owned by the player [p]*)
-
-val country_to_string : Countries.t list -> string
-(** converts a country to string*)
-
 (* val deploy : t -> t val attack : t -> t val fortify : t -> t *)
