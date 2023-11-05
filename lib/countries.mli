@@ -22,10 +22,10 @@ val init : unit -> t list
 (** [init] given a player list [lst], initialize the countries displayed on the
     board *)
 
-val add_value : int -> t -> t
+val add_value : int -> t -> unit
 (** [add_value] Given the number of troops to be added [n] and a country
-    [country], return the country with [n] added to the country. *)
+    [country], increase the number of troops in [country] by [n]. *)
 
-val subtract_value : int -> t -> t
+val subtract_value : int -> t -> unit
 (** [subtract_value] Given the number of troops to be subtracted [n] and a
-    country [country], return the country with [n] subtracted from the country. *)
+    country [country], decrease the number of troops in [country] by [n]. *)
