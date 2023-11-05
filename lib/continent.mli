@@ -5,7 +5,8 @@ val get_name : t -> string
 (** [get_name] Given a continent [c], return the name of the continent *)
 
 val get_value : t -> int
-(** [get_value] Given a continent [c], return the value of the continent. *)
+(** [get_value] Given a continent [c], return the value of bonus points a player
+    can obtain from owning the continent. *)
 
 val create : string -> int -> t
 (** [create] Given a string [str], creates a continent [c] with the name [str]*)

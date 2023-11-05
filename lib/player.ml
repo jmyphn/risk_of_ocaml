@@ -1,9 +1,9 @@
 type t = {
   name : string;
   color : Raylib.Color.t;
-  countries : Countries.t option array;
+  mutable countries : Countries.t option array;
 }
-(** AF: The record {color: _ countries: _} represents a player. All [Some] 
+(** AF: The record {name: _ ; color: _  ; countries: _} represents a player. All [Some] 
    elements of the Countries array represents an country owned by the player. If
    all of the elements of the countries array are [None], they have lost the game.
    If they are all [Some], they have won the game.
@@ -14,7 +14,7 @@ type t = {
 (** Given a player [p], returns the name of the player. *)
 let get_name (p : t) : string = p.name
 
-(* Returns whether all elements in the array [a] are [None]*)
+(* Returns whether all elements in the array [a] are [None] *)
 let are_none (a : Countries.t option array) : bool =
   Array.for_all
     (fun x ->
@@ -23,29 +23,40 @@ let are_none (a : Countries.t option array) : bool =
       | Some _ -> false)
     a
 
-(* Given a array of options [a], return the first index of the array [elm]
-   appears. Requires: [len] must be the same length of [a] and [a] must not be a
-   empty array. Raises: ["Invalid_element"] if there is no [elm] in the array*)
+(* [are_some arr] returns true when all elements in [arr] are [Some x] and false
+   when at least one element in the array is [None] *)
+let are_some (arr : Countries.t option array) : bool =
+  Array.for_all
+    (fun x ->
+      match x with
+      | Some _ -> true
+      | None -> false)
+    arr
 
-(* ----------- THIS FUNCTION NEEDS TO BE CHECKED --------------*)
-let find_index (a : Countries.t option array) (elm : Countries.t option) : int =
-  let rec find (a : Countries.t option array) (acc : int) (len : int)
-      (elm : Countries.t option) : int =
-    if Array.length a = 0 then failwith "Invalid_element"
-    else if a.(acc) = elm then acc
-    else find (Array.sub a acc len) (acc + 1) (len - 1) elm
-  in
-  find a 0 (Array.length a) elm
+(* Given an array of options [arr], [find_index arr elt] returns the first index
+   of the array that contains [elt]. Raises: ["Invalid_element"] if there is no
+   [elt] in the array*)
+let find_index (arr : Countries.t option array) (elt : Countries.t option) : int
+    =
+  let found = ref false in
+  let acc = ref 0 in
+  while !found = false && !acc <= Array.length arr - 1 do
+    if arr.(!acc) = elt then found := true else acc := !acc + 1
+  done;
+  match !found with
+  | true -> !acc
+  | false -> failwith "Invalid_element"
 
 (* Returns whether the array [a] satisfies: All [Some] elements in the countries
    array are to the left of all [None] elements. *)
-
-(* ----------- THIS FUNCTION NEEDS TO BE CHECKED --------------*)
 let check_inv (a : Countries.t option array) : bool =
-  let idx = find_index a None in
-  are_none (Array.sub a idx (Array.length a - idx))
+  if are_some a then true
+  else
+    let idx = find_index a None in
+    are_none (Array.sub a idx (Array.length a - idx))
 
-(* Returns whether the array [a] has any duplicates *)
+(* [duplicate a] returns true when the array [a] has no duplicates and false
+   when [a] contains duplicates *)
 let duplicate (a : Countries.t option array) : bool =
   let lst = Array.to_list a in
   let u = List.sort_uniq Stdlib.compare lst in
@@ -74,7 +85,7 @@ let get_countries_lst (p : t) : Countries.t list =
 
 (** Given a player [p], adds a country to the countries array. Requires: [c]
     must not be owned by the player Raises: ["In_country"] if [c] is already in
-    the [p.country] array *)
+    the [p.countries] array *)
 let add_country (p : t) (c : Countries.t) : unit =
   if Array.exists (fun x -> x = Some c) p.countries then failwith "In_country"
   else
@@ -83,15 +94,15 @@ let add_country (p : t) (c : Countries.t) : unit =
     rep_ok p
 
 (** Given a player [p], removes a country in the countries array. Requires: [c]
-    must be owned by the player and [p.countries] cannot be empty Raises:
+    must be owned by the player and [p.countries] cannot be empty. Raises:
     ["Empty_Array"] if [p.countries] is empty*)
 let remove_country (p : t) (c : Countries.t) : unit =
   if Array.length p.countries = 0 then failwith "Empty_Array"
   else
     let idx1 = find_index p.countries (Some c) in
     let idx2 = find_index p.countries None in
-    p.countries.(idx1) <- p.countries.(idx2);
-    p.countries.(idx2) <- None;
+    p.countries.(idx1) <- p.countries.(idx2 - 1);
+    p.countries.(idx2 - 1) <- None;
     rep_ok p
 
 (** Given player [p], returns the number of countries in the countries array.*)

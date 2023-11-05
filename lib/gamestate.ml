@@ -71,13 +71,6 @@ let rec play game =
   play (Game.change_phase currPhase game)
 
 (**** Game Initialization functions***)
-(* let init_players np = failwith "unimplemented"
-
-   let assign_countries c players = failwith "unimplemented"
-
-   let num_troops players = failwith "unimplemented"
-
-   let assign_troops countries player = failwith "unimplemented" *)
 
 (***)
 let current_state (s : t) =
