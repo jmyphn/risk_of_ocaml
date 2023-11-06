@@ -1,4 +1,4 @@
-module G = Gamestate
+module G = Lib
 module R = Raylib
 
 let mouse_state = ref 0

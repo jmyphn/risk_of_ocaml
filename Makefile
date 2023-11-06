@@ -1,3 +1,5 @@
+.PHONY: test check
+
 build:
 	dune build
 
@@ -9,8 +11,8 @@ build:
 utop:
 	OCAMLRUNPARAM=b dune utop
 
-# test:
-# 	OCAMLRUNPARAM=b dune exec test/test.exe
+test:
+	OCAMLRUNPARAM=b dune exec test/main.exe
 
 play:
 	OCAMLRUNPARAM=b dune exec game/main.exe

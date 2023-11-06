@@ -1,7 +1,7 @@
 type t = {
   name : string;
   color : Raylib.Color.t;
-  mutable countries : Countries.t option array;
+  countries : Countries.t option array;
 }
 (** AF: The record {name: _ ; color: _  ; countries: _} represents a player. All [Some] 
    elements of the Countries array represents an country owned by the player. If
