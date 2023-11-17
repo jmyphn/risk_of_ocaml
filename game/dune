@@ -1,4 +1,3 @@
 (executable
  (name main)
- (modules main)
- (libraries gamestate raylib stdlib))
+ (libraries lib raylib stdlib))
