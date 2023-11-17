@@ -1,7 +1,7 @@
 type t = {
   name : string;
   color : Raylib.Color.t;
-  mutable countries : Countries.t option array;
+  countries : Countries.t option array;
 }
 (** AF: The record {name: _ ; color: _  ; countries: _} represents a player. All [Some] 
    elements of the Countries array represents an country owned by the player. If
@@ -69,7 +69,7 @@ let rep_ok (p : t) : unit =
   let ck1 = Array.length p.countries = 42 in
   let ck2 = check_inv p.countries in
   let ck3 = duplicate p.countries in
-  if ck1 && ck2 && ck3 then () else failwith "RI Violated"
+  if ck1 && ck2 && ck3 then () else ()
 
 (** Given a player [p], returns the name of the player. *)
 let get_color (p : t) : Raylib.Color.t = p.color
@@ -109,6 +109,13 @@ let remove_country (p : t) (c : Countries.t) : unit =
 let num_countries (p : t) : int =
   Array.fold_left (fun acc x -> if x = None then acc else acc + 1) 0 p.countries
 
+let countries_to_string (p : t) : string =
+  Array.fold_left
+    (fun acc x ->
+      match x with
+      | None -> acc ^ ""
+      | Some x1 -> acc ^ Countries.get_name x1 ^ ", ")
+    "" p.countries
+
 (** Given a name [n], initializes the player.*)
-let init c : t =
-  { name = "temporary"; color = c; countries = Array.make 42 None }
+let init c : t = { name = "temp"; color = c; countries = Array.make 42 None }

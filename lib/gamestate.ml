@@ -1,3 +1,6 @@
+open Player
+open Game
+
 type t =
   | START
   | MENU
@@ -16,7 +19,7 @@ let phase_to_string (phase : Game.phase) : string =
 let rec play game =
   let currPlayer = Game.get_current_player game in
   let currPhase = Game.get_phase game in
-  print_endline ("It is Player " ^ Player.get_name currPlayer ^ "'s turn");
+  print_endline ("It is Player " ^ get_name currPlayer ^ "'s turn");
   print_endline ("The current phase is " ^ phase_to_string currPhase);
   let _ =
     match currPhase with
@@ -30,7 +33,7 @@ let rec play game =
            ^ " have been drafted. Deploy these troops in any of the following \
               countries: ")
         in
-
+        let _ = print_endline (Player.countries_to_string currPlayer) in
         let input = read_line () in
         if input = "finish" then (
           print_endline "Goodbye.";
