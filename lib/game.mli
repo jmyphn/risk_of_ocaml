@@ -22,7 +22,7 @@ val next_player : t -> player
 val get_phase : t -> phase
 (** [get_phase] Given a game [g], return the current phase*)
 
-val get_countries : t -> Countries.t list
+val get_countries : t -> Countries.t array
 (** [get_phase] Given a game [g], return the country list*)
 
 val change_phase : phase -> t -> t

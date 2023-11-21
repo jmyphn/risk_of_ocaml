@@ -11,7 +11,9 @@ let get_troops c = c.troops
 let get_continent c = c.continent
 let get_location c = c.location
 let get_neighbours c = c.neighbours
-let init () : t list = []
+
+let init n c nbrs : t =
+  { name = n; troops = 0; continent = c; location = (0, 0); neighbours = nbrs }
 
 let add_value (n : int) (country : t) : unit =
   country.troops <- country.troops + n

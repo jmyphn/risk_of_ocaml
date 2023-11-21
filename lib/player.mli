@@ -29,5 +29,7 @@ val num_countries : t -> int
 (** [num_countries p] Given a player [p] returns the number of countries owned
     by [p]. *)
 
+val countries_to_string : t -> string
+
 val init : Raylib.Color.t -> t
 (** [init c] Initializes a player given a color [Raylib.Color.t].*)
