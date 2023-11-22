@@ -82,12 +82,12 @@ let get_continent (c : string) : Continent.t =
 (**Initializes the countries in a game*)
 let init_countries : Countries.t array =
   [|
-    Countries.init "Ontario" (get_continent "North America") [];
-    Countries.init "Alberta" (get_continent "North America") [];
-    Countries.init "Western US" (get_continent "North America") [];
-    Countries.init "Eastern US" (get_continent "North America") [];
-    Countries.init "Alaska" (get_continent "North America") [];
-    Countries.init "Central America" (get_continent "North America") [];
+    Countries.init "Ontario" (get_continent "North America");
+    Countries.init "Alberta" (get_continent "North America");
+    Countries.init "Western US" (get_continent "North America");
+    Countries.init "Eastern US" (get_continent "North America");
+    Countries.init "Alaska" (get_continent "North America");
+    Countries.init "Central America" (get_continent "North America");
   |]
 
 let to_option_array (arr : 'a array) : 'a option array =

@@ -18,9 +18,14 @@ val get_neighbours : t -> t list
 
     CAN IMPLEMENT MORE EFFICIENT DATA STRUCTURE *)
 
-val init : string -> Continent.t -> t list -> t
-(** [init n c nbrs] initializes a country with values name = n, continent = c,
-    neightbours = nbrs, troops default to 0, location defaults to 0*)
+val init : string -> Continent.t -> t
+(** [init n c] initializes a country with values name = n, continent = c,
+    neighbours default to empty list [], troops default to 0, location defaults
+    to 0 *)
+
+val init_neighbors : t -> t list -> unit
+(** [init_neighbors c nbrs] sets the neighbors of country [c] to the list of
+    neighboring countries [nbrs] *)
 
 val add_value : int -> t -> unit
 (** [add_value] Given the number of troops to be added [n] and a country
