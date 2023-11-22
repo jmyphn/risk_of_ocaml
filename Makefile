@@ -1,6 +1,7 @@
 .PHONY: test check
 
 build:
+	dune clean
 	dune build
 
 # code:

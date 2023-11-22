@@ -15,6 +15,9 @@ type t = {
   countries : countries;
 }
 
+(* Holds the current game state *)
+let game = ref None
+
 (**Array of colors that have not been taken by a player. If None, then the color
    has been taken. RI: All Some values are to the left of the array*)
 let colors_left : Raylib.Color.t option array =
@@ -110,14 +113,16 @@ let assign_countries plst =
   plst
 
 (** Initializes game given a number of players *)
-let init (numPlayers : int) : t =
+let init (numPlayers : int) =
   let plist = assign_countries (init_players numPlayers) in
-  {
-    players = plist;
-    current_player = List.hd plist;
-    current_phase = Deploy;
-    countries = init_countries;
-  }
+  game :=
+    Some
+      {
+        players = plist;
+        current_player = List.hd plist;
+        current_phase = Deploy;
+        countries = init_countries;
+      }
 
 (** Given a game, return the current player *)
 let get_current_player game = game.current_player

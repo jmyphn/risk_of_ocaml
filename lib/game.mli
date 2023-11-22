@@ -9,7 +9,7 @@ type phase =
 type t
 (** [t] The type of the game*)
 
-val init : int -> t
+val init : int -> unit
 (** [init] Given an int [n] representing the number of players, initialize the
     game*)
 
