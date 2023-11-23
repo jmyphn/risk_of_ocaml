@@ -50,6 +50,7 @@ let sample arr size =
   else
     let i = Random.int size in
     let v = arr.(i) in
+    (* swap *)
     arr.(i) <- arr.(size - 1);
     arr.(size - 1) <- None;
     v
@@ -63,7 +64,7 @@ let rec init_players (n : int) : players =
       let _ = print_endline ("Choose name for Player" ^ string_of_int a) in
       match sample colors_left (arr_size colors_left) with
       | None -> failwith "Too many players"
-      | Some c -> Player.init c :: init_players (n - 1))
+      | Some c -> Player.init c :: init_players (a - 1))
 
 (**Initializes the continents in a game.*)
 let continents : (string * Continent.t) array =
@@ -82,7 +83,7 @@ let get_continent (c : string) : Continent.t =
   | None -> failwith "Not a continent"
   | Some (_, v) -> v
 
-(**Initializes the countries in a game*)
+(**Initializes the countries in a game TODO: parse json file(s) *)
 let init_countries : Countries.t array =
   [|
     Countries.init "Ontario" (get_continent "North America");

@@ -1,9 +1,13 @@
 module G = Lib
 module R = Raylib
 
-(* type state = | START | MENU | ACTIVE | END *)
+type state =
+  | START
+  | MENU
+  | ACTIVE
+  | END
 
-let game_state_global = ref "START"
+let game_state_global = ref START
 
 (* player button hitboxes *)
 let start_hb = R.Rectangle.create 480. 570. 240. 100.
@@ -13,12 +17,15 @@ let four_pb_hb = R.Rectangle.create 875. 350. 100. 100.
 let five_pb_hb = R.Rectangle.create 388. 550. 100. 100.
 let six_pb_hb = R.Rectangle.create 713. 550. 100. 100.
 
+(* active state temp button hitbox *)
+let active_hb = R.Rectangle.create 525. 560. 150. 100.
+
 let highlight_button_start mouse hitbox highlight (x, y) =
   let open R in
   if check_collision_point_rec mouse hitbox then
     match is_mouse_button_down MouseButton.Left with
     | false -> R.draw_texture highlight x y Color.raywhite
-    | true -> game_state_global := "MENU"
+    | true -> game_state_global := MENU
 
 let highlight_button_menu mouse hitbox highlight (x, y) n =
   let open R in
@@ -27,7 +34,14 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     | false -> R.draw_texture highlight x y Color.raywhite
     | true ->
         G.Game.init n;
-        game_state_global := "ACTIVE"
+        game_state_global := ACTIVE
+
+let highlight_button_active mouse hitbox highlight (x, y) =
+  let open R in
+  if check_collision_point_rec mouse hitbox then
+    match is_mouse_button_down MouseButton.Left with
+    | false -> R.draw_texture highlight x y Color.raywhite
+    | true -> game_state_global := END
 
 (*Game setup function*)
 let setup () =
@@ -36,18 +50,36 @@ let setup () =
   set_target_fps 60;
 
   (* Background images for each state *)
+  (* start *)
   let bg_start = load_image "images/StartBackground.png" in
   let bg_start_texture = load_texture_from_image bg_start in
   unload_image bg_start;
 
+  (* menu *)
   let bg_menu = load_image "images/MenuBackground.png" in
   let bg_menu_texture = load_texture_from_image bg_menu in
   unload_image bg_menu;
 
-  (* let bg_active = load_image "images/MapBackground.png" in let
-     bg_active_texture = load_texture_from_image bg_active in unload_image
-     bg_active; let bg_end = load_image "images/EndBackground.png" in let
-     bg_end_texture = load_texture_from_image bg_end in unload_image bg_end; *)
+  (* active *)
+  let bg_active = load_image "images/MapBackground.png" in
+  let bg_active_texture = load_texture_from_image bg_active in
+  unload_image bg_active;
+
+  let bg_active_button_tmp = load_image "images/TempButton.png" in
+  let bg_active_button_texture = load_texture_from_image bg_active_button_tmp in
+  unload_image bg_active_button_tmp;
+
+  let bg_active_button_tmp_highlight =
+    load_image "images/TempButtonHighlight.png"
+  in
+  let bg_active_button_texture_highlight =
+    load_texture_from_image bg_active_button_tmp_highlight
+  in
+  unload_image bg_active_button_tmp_highlight;
+
+  (* end *)
+  (* let bg_end = load_image "images/EndBackground.png" in let bg_end_texture =
+     load_texture_from_image bg_end in unload_image bg_end; *)
 
   (* Start button *)
   let start_button = load_image "images/StartButton.png" in
@@ -96,7 +128,9 @@ let setup () =
   unload_image six_pb_highlight;
   ( bg_start_texture,
     bg_menu_texture,
-    (* bg_active_texture, *)
+    bg_active_texture,
+    bg_active_button_texture,
+    bg_active_button_texture_highlight,
     (* bg_end_texture, *)
     start_button_texture,
     start_button_highlight_texture,
@@ -115,7 +149,9 @@ let setup () =
 let rec loop game_state textures =
   let ( start,
         menu,
-        (* active, *)
+        active,
+        active_button,
+        active_button_highlight,
         (* enderman, *)
         start_button,
         start_button_highlight,
@@ -135,7 +171,7 @@ let rec loop game_state textures =
   | true -> R.close_window ()
   | false -> (
       match game_state with
-      | "START" ->
+      | START ->
           R.begin_drawing ();
           R.clear_background R.Color.raywhite;
           R.draw_texture start 0 0 R.Color.raywhite;
@@ -147,7 +183,7 @@ let rec loop game_state textures =
 
           R.end_drawing ();
           loop !game_state_global textures
-      | "MENU" ->
+      | MENU ->
           R.begin_drawing ();
           R.clear_background R.Color.raywhite;
           R.draw_texture menu 0 0 R.Color.raywhite;
@@ -172,13 +208,21 @@ let rec loop game_state textures =
 
           R.end_drawing ();
           loop !game_state_global textures
-      | "ACTIVE" ->
-          game_state_global := "END";
+      | ACTIVE ->
+          R.begin_drawing ();
+          R.clear_background R.Color.raywhite;
+          R.draw_texture active 0 0 R.Color.raywhite;
+          R.draw_texture active_button 525 560 R.Color.raywhite;
+
+          let mouse = R.get_mouse_position () in
+          highlight_button_active mouse active_hb active_button_highlight
+            (525, 560);
+
+          R.end_drawing ();
           loop !game_state_global textures
-      | "END" ->
-          game_state_global := "START";
-          loop !game_state_global textures
-      | _ -> loop !game_state_global textures)
+      | END ->
+          game_state_global := START;
+          loop !game_state_global textures)
 
 (*initializes game*)
 let () = setup () |> loop !game_state_global
