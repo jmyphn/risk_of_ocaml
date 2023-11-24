@@ -1,0 +1,421 @@
+{
+  "map_name": "Classic Map",
+  "Continent": [
+    {
+      "name": "North America",
+      "bonus": 5,
+      "territories": [
+        {
+          "name": "Alaska",
+          "neighbors": [
+            "NWT",
+            "Alberta",
+            "Kamchatka"
+          ]
+        },
+        {
+          "name": "Alberta",
+          "neighbors": [
+            "Alaska",
+            "NWT",
+            "Ontario",
+            "WUS"
+          ]
+        },
+        {
+          "name": "CA",
+          "neighbors": [
+            "WUS",
+            "EUS",
+            "Venezuela"
+          ]
+        },
+        {
+          "name": "EUS",
+          "neighbors": [
+            "WUS",
+            "CA",
+            "Ontario",
+            "Quebec"
+          ]
+        },
+        {
+          "name": "Greenland",
+          "neighbors": [
+            "NWT",
+            "Iceland",
+            "Ontario",
+            "Quebec"
+          ]
+        },
+        {
+          "name": "NWT",
+          "neighbors": [
+            "Alaska",
+            "Alberta",
+            "Ontario",
+            "Greenland"
+          ]
+        },
+        {
+          "name": "Ontario",
+          "neighbors": [
+            "NWT",
+            "Alberta",
+            "WUS",
+            "EUS",
+            "Quebec",
+            "Greenland"
+          ]
+        },
+        {
+          "name": "Quebec",
+          "neighbors": [
+            "EUS",
+            "Ontario",
+            "Greenland"
+          ]
+        },
+        {
+          "name": "WUS",
+          "neighbors": [
+            "Alberta",
+            "Ontario",
+            "EUS",
+            "CA"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "South America",
+      "bonus": 2,
+      "territories": [
+        {
+          "name": "Argentina",
+          "neighbors": [
+            "Peru",
+            "Brazil"
+          ]
+        },
+        {
+          "name": "Brazil",
+          "neighbors": [
+            "Peru",
+            "Argentina",
+            "Venezuela",
+            "NAfrica"
+          ]
+        },
+        {
+          "name": "Venezuela",
+          "neighbors": [
+            "Peru",
+            "Brazil",
+            "CA"
+          ]
+        },
+        {
+          "name": "Peru",
+          "neighbors": [
+            "Venezuela",
+            "Brazil",
+            "Argentina"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Australia",
+      "bonus": 2,
+      "territories":[
+        {
+          "name": "EAustralia",
+          "neighbors": [
+            "WAustralia",
+            "New Guinea"
+          ]
+        },
+        {
+          "name": "Indonesia",
+          "neighbors": [
+            "Siam",
+            "New Guinea",
+            "WAustralia"
+          ]
+        },
+        {
+          "name": "New Guinea",
+          "neighbors": [
+            "Indonesia",
+            "EAustralia",
+            "WAustralia"
+          ]
+        },
+        {
+          "name": "WAustralia",
+          "neighbors": [
+            "Indonesia",
+            "EAustralia",
+            "New Guinea"
+          ]
+        }
+      ]
+    },
+    
+    {
+      "name": "Europe",
+      "bonus": 4,
+      "territories": [
+        {
+          "name": "Great Britain",
+          "neighbors": [
+            "Iceland",
+            "Scandinavia",
+            "NEU",
+            "WEU"
+          ]
+        },
+        {
+          "name": "Iceland",
+          "neighbors": [
+            "Great Britain",
+            "Scandinavia",
+            "Greenland"
+          ]
+        },
+        {
+          "name": "NEU",
+          "neighbors": [
+            "Great Britain",
+            "Scandinavia",
+            "WEU",
+            "SEU",
+            "Ukraine"
+          ]
+        },
+        {
+          "name": "Scandinavia",
+          "neighbors": [
+            "Great Britain",
+            "Iceland",
+            "NEU",
+            "Ukraine"
+          ]
+        },
+        {
+          "name": "SEU",
+          "neighbors": [
+            "Great Britain",
+            "WEU",
+            "NEU",
+            "Ukraine",
+            "MidEast",
+            "Egypt",
+            "NAfrica"
+          ]
+        },
+        {
+          "name": "Ukraine",
+          "neighbors": [
+            "Scandinavia",
+            "SEU",
+            "NEU",
+            "Ural",
+            "MidEast",
+            "Afghanistan"
+          ]
+        },
+        {
+          "name": "WEU",
+          "neighbors": [
+            "Great Britain",
+            "SEU",
+            "NEU",
+            "NEU"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Africa",
+      "bonus": 3,
+      "territories": [
+        {
+          "name": "Congo",
+          "neighbors": [
+            "EAfrica",
+            "SAfrica",
+            "NAfrica"
+          ]
+        },
+        {
+          "name": "EAfrica",
+          "neighbors": [
+            "Egypt",
+            "SAfrica",
+            "Congo",
+            "NAfrica",
+            "Madagascar",
+            "MidEast"
+          ]
+        },
+        {
+          "name": "Egypt",
+          "neighbors": [
+            "SEU",
+            "EAfrica",
+            "NAfrica",
+            "MidEast"
+          ]
+        },
+        {
+          "name": "Madagascar",
+          "neighbors": [
+            "EAfrica",
+            "SAfrica"
+          ]
+        },
+        {
+          "name": "NAfrica",
+          "neighbors": [
+            "EAfrica",
+            "Congo",
+            "Egypt",
+            "SEU",
+            "WEU",
+            "Brazil"
+          ]
+        },
+        {
+          "name": "SAfrica",
+          "neighbors": [
+            "EAfrica",
+            "Congo",
+            "Madagascar"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Asia",
+      "bonus": 7,
+      "territories": [
+        {
+          "name": "Afghanistan",
+          "neighbors": [
+            "MidEast",
+            "Ukraine",
+            "India",
+            "China",
+            "Ural"
+          ]
+        },
+        {
+          "name": "China",
+          "neighbors": [
+            "Afghanistan",
+            "Siam",
+            "India",
+            "Mongolia",
+            "Ural",
+            "Siberia"
+          ]
+        },
+        {
+          "name": "India",
+          "neighbors": [
+            "Afghanistan",
+            "Siam",
+            "China",
+            "MidEast"
+          ]
+        },
+        {
+          "name": "Irkutsk",
+          "neighbors": [
+            "Siberia",
+            "Mongolia",
+            "Kamchatka",
+            "Yakutsk"
+          ]
+        },
+        {
+          "name": "Japan",
+          "neighbors": [
+            "Mongolia",
+            "Kamchatka"
+          ]
+        },
+        {
+          "name": "Kamchatka",
+          "neighbors": [
+            "Mongolia",
+            "Japan",
+            "Irkutsk",
+            "Yakutsk",
+            "Alaska"
+          ]
+        },
+        {
+          "name": "MidEast",
+          "neighbors": [
+            "Ukraine",
+            "India",
+            "Afghanistan",
+            "SEU",
+            "Egypt",
+            "EAfrica"
+          ]
+        },
+        {
+          "name": "Mongolia",
+          "neighbors": [
+            "Japan",
+            "Kamchatka",
+            "Irkutsk",
+            "Siberia",
+            "China"
+          ]
+        },
+        {
+          "name": "Siam",
+          "neighbors": [
+            "India",
+            "China",
+            "Indonesia"
+          ]
+        },
+        {
+          "name": "Siberia",
+          "neighbors": [
+            "Ural",
+            "Yakutsk",
+            "Irkutsk",
+            "China",
+            "Mongolia"
+          ]
+        },
+        {
+          "name": "Ural",
+          "neighbors": [
+            "Ukraine",
+            "Afghanistan",
+            "Siberia",
+            "China"
+          ]
+        },
+        {
+          "name": "Yakutsk",
+          "neighbors": [
+            "Kamchatka",
+            "Irkutsk",
+            "Siberia"
+          ]
+        }
+      ]
+    }
+    
+    
+  ]
+}

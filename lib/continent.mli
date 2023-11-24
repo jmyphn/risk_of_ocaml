@@ -11,6 +11,6 @@ val get_value : t -> int
 val create : string -> int -> t
 (** [create] Given a string [str], creates a continent [c] with the name [str]*)
 
-(* val owns : country list -> player -> int (** [owns] Given a list of countries
-   [lst], determine if a player [t] occupies continents and return the troop
-   bonus associated with the continent(s) owned by that player *) *)
+(* val owns : territory list -> player -> int (** [owns] Given a list of
+   countries [lst], determine if a player [t] occupies continents and return the
+   troop bonus associated with the continent(s) owned by that player *) *)

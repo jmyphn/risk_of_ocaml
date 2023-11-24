@@ -1,7 +1,9 @@
+(* open Yojson.Basic.Util *)
+
 type player = Player.t
 type players = player list
-type country = Countries.t
-type countries = country array
+type territory = Territories.t
+type territories = territory array
 
 type phase =
   | Deploy
@@ -12,7 +14,7 @@ type t = {
   players : players;
   current_player : player;
   current_phase : phase;
-  countries : countries;
+  territories : territories;
 }
 
 (* Holds the current game state *)
@@ -83,24 +85,24 @@ let get_continent (c : string) : Continent.t =
   | None -> failwith "Not a continent"
   | Some (_, v) -> v
 
-(**Initializes the countries in a game TODO: parse json file(s) *)
-let init_countries : Countries.t array =
+(**Initializes the Territories in a game TODO: parse json file(s) *)
+let init_territories : Territories.t array =
   [|
-    Countries.init "Ontario" (get_continent "North America");
-    Countries.init "Alberta" (get_continent "North America");
-    Countries.init "Western US" (get_continent "North America");
-    Countries.init "Eastern US" (get_continent "North America");
-    Countries.init "Alaska" (get_continent "North America");
-    Countries.init "Central America" (get_continent "North America");
+    Territories.init "Ontario" (get_continent "North America");
+    Territories.init "Alberta" (get_continent "North America");
+    Territories.init "Western US" (get_continent "North America");
+    Territories.init "Eastern US" (get_continent "North America");
+    Territories.init "Alaska" (get_continent "North America");
+    Territories.init "Central America" (get_continent "North America");
   |]
 
 let to_option_array (arr : 'a array) : 'a option array =
   Array.map (fun v -> Some v) arr
 
-(** Assigns countries to each player randomly.*)
-let assign_countries plst =
+(** Assigns Territories to each player randomly.*)
+let assign_Territories plst =
   let _ = Random.self_init () in
-  let temp = to_option_array (Array.copy init_countries) in
+  let temp = to_option_array (Array.copy init_territories) in
   for i = 0 to arr_size temp - 1 do
     let _ = print_endline (string_of_int i) in
     let _ = print_endline (string_of_int (arr_size temp)) in
@@ -109,20 +111,20 @@ let assign_countries plst =
     let c = sample temp (arr_size temp) in
     match c with
     | None -> failwith "impossible fdas"
-    | Some c1 -> Player.add_country player c1
+    | Some c1 -> Player.add_territory player c1
   done;
   plst
 
 (** Initializes game given a number of players *)
 let init (numPlayers : int) =
-  let plist = assign_countries (init_players numPlayers) in
+  let plist = assign_Territories (init_players numPlayers) in
   game :=
     Some
       {
         players = plist;
         current_player = List.hd plist;
         current_phase = Deploy;
-        countries = init_countries;
+        territories = init_territories;
       }
 
 (** Given a game, return the current player *)
@@ -144,8 +146,8 @@ let next_player game =
 (** Given a game, return the phase*)
 let get_phase game = game.current_phase
 
-(** Given a game, return the countries*)
-let get_countries game = game.countries
+(** Given a game, return the Territories*)
+let get_territories game = game.territories
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
@@ -156,19 +158,19 @@ let change_phase (p : phase) (game : t) : t =
         players = game.players;
         current_player = game.current_player;
         current_phase = Attack;
-        countries = game.countries;
+        territories = game.territories;
       }
   | Attack ->
       {
         players = game.players;
         current_player = game.current_player;
         current_phase = Fortify;
-        countries = game.countries;
+        territories = game.territories;
       }
   | Fortify ->
       {
         players = game.players;
         current_player = next_player game;
         current_phase = Deploy;
-        countries = game.countries;
+        territories = game.territories;
       }

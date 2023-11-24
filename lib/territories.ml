@@ -17,8 +17,8 @@ let init n c : t =
 
 let init_neighbors c nbrs : unit = c.neighbours <- nbrs
 
-let add_value (n : int) (country : t) : unit =
-  country.troops <- country.troops + n
+let add_value (n : int) (territory : t) : unit =
+  territory.troops <- territory.troops + n
 
-let subtract_value (n : int) (country : t) : unit =
-  country.troops <- country.troops - n
+let subtract_value (n : int) (territory : t) : unit =
+  territory.troops <- territory.troops - n
