@@ -51,26 +51,26 @@ let setup () =
 
   (* Background images for each state *)
   (* start *)
-  let bg_start = load_image "images/StartBackground.png" in
+  let bg_start = load_image "assets/start/StartBackground.png" in
   let bg_start_texture = load_texture_from_image bg_start in
   unload_image bg_start;
 
   (* menu *)
-  let bg_menu = load_image "images/MenuBackground.png" in
+  let bg_menu = load_image "assets/menu/MenuBackground.png" in
   let bg_menu_texture = load_texture_from_image bg_menu in
   unload_image bg_menu;
 
   (* active *)
-  let bg_active = load_image "images/MapBackground.png" in
+  let bg_active = load_image "assets/BlankBackground.png" in
   let bg_active_texture = load_texture_from_image bg_active in
   unload_image bg_active;
 
-  let bg_active_button_tmp = load_image "images/TempButton.png" in
+  let bg_active_button_tmp = load_image "assets/TempButton.png" in
   let bg_active_button_texture = load_texture_from_image bg_active_button_tmp in
   unload_image bg_active_button_tmp;
 
   let bg_active_button_tmp_highlight =
-    load_image "images/TempButtonHighlight.png"
+    load_image "assets/TempButtonHighlight.png"
   in
   let bg_active_button_texture_highlight =
     load_texture_from_image bg_active_button_tmp_highlight
@@ -78,52 +78,54 @@ let setup () =
   unload_image bg_active_button_tmp_highlight;
 
   (* end *)
-  (* let bg_end = load_image "images/EndBackground.png" in let bg_end_texture =
+  (* let bg_end = load_image "assets/EndBackground.png" in let bg_end_texture =
      load_texture_from_image bg_end in unload_image bg_end; *)
 
   (* Start button *)
-  let start_button = load_image "images/StartButton.png" in
+  let start_button = load_image "assets/start/StartButton.png" in
   let start_button_texture = load_texture_from_image start_button in
   unload_image start_button;
-  let start_button_highlight = load_image "images/StartButtonHighlight.png" in
+  let start_button_highlight =
+    load_image "assets/start/StartButtonHighlight.png"
+  in
   let start_button_highlight_texture =
     load_texture_from_image start_button_highlight
   in
   unload_image start_button_highlight;
 
   (* Player count buttons *)
-  let two_pb = load_image "images/2PB.png" in
+  let two_pb = load_image "assets/menu/2PB.png" in
   let two_pb_texture = load_texture_from_image two_pb in
   unload_image two_pb;
-  let two_pb_highlight = load_image "images/2PBHighlight.png" in
+  let two_pb_highlight = load_image "assets/menu/2PBHighlight.png" in
   let two_pb_highlight_texture = load_texture_from_image two_pb_highlight in
   unload_image two_pb_highlight;
 
-  let three_pb = load_image "images/3PB.png" in
+  let three_pb = load_image "assets/menu/3PB.png" in
   let three_pb_texture = load_texture_from_image three_pb in
   unload_image three_pb;
-  let three_pb_highlight = load_image "images/3PBHighlight.png" in
+  let three_pb_highlight = load_image "assets/menu/3PBHighlight.png" in
   let three_pb_highlight_texture = load_texture_from_image three_pb_highlight in
   unload_image three_pb_highlight;
 
-  let four_pb = load_image "images/4PB.png" in
+  let four_pb = load_image "assets/menu/4PB.png" in
   let four_pb_texture = load_texture_from_image four_pb in
   unload_image four_pb;
-  let four_pb_highlight = load_image "images/4PBHighlight.png" in
+  let four_pb_highlight = load_image "assets/menu/4PBHighlight.png" in
   let four_pb_highlight_texture = load_texture_from_image four_pb_highlight in
   unload_image four_pb_highlight;
 
-  let five_pb = load_image "images/5PB.png" in
+  let five_pb = load_image "assets/menu/5PB.png" in
   let five_pb_texture = load_texture_from_image five_pb in
   unload_image five_pb;
-  let five_pb_highlight = load_image "images/5PBHighlight.png" in
+  let five_pb_highlight = load_image "assets/menu/5PBHighlight.png" in
   let five_pb_highlight_texture = load_texture_from_image five_pb_highlight in
   unload_image five_pb_highlight;
 
-  let six_pb = load_image "images/6PB.png" in
+  let six_pb = load_image "assets/menu/6PB.png" in
   let six_pb_texture = load_texture_from_image six_pb in
   unload_image six_pb;
-  let six_pb_highlight = load_image "images/6PBHighlight.png" in
+  let six_pb_highlight = load_image "assets/menu/6PBHighlight.png" in
   let six_pb_highlight_texture = load_texture_from_image six_pb_highlight in
   unload_image six_pb_highlight;
   ( bg_start_texture,
@@ -212,8 +214,9 @@ let rec loop game_state textures =
           R.begin_drawing ();
           R.clear_background R.Color.raywhite;
           R.draw_texture active 0 0 R.Color.raywhite;
-          R.draw_texture active_button 525 560 R.Color.raywhite;
 
+          (* temp button *)
+          R.draw_texture active_button 525 560 R.Color.raywhite;
           let mouse = R.get_mouse_position () in
           highlight_button_active mouse active_hb active_button_highlight
             (525, 560);
