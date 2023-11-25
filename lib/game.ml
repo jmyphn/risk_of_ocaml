@@ -1,4 +1,4 @@
-(* open Yojson.Basic.Util *)
+module Y = Yojson.Basic.Util
 
 type player = Player.t
 type players = player list
@@ -15,10 +15,15 @@ type t = {
   current_player : player;
   current_phase : phase;
   territories : territories;
+  troops_to_place : int;
 }
 
 (* Holds the current game state *)
-let game = ref None
+let game : t option ref = ref None
+
+(* Holds the current map *)
+let json = "data/countries.json"
+let path = Yojson.Basic.from_file json
 
 (**Array of colors that have not been taken by a player. If None, then the color
    has been taken. RI: All Some values are to the left of the array*)
@@ -69,32 +74,15 @@ let rec init_players (n : int) : players =
       | Some c -> Player.init c :: init_players (a - 1))
 
 (**Initializes the continents in a game.*)
-let continents : (string * Continent.t) array =
-  [|
-    ("North America", Continent.create "North America" 5);
-    ("South America", Continent.create "South America" 3);
-    ("Africa", Continent.create "Africa" 3);
-    ("Europe", Continent.create "Europe" 5);
-    ("Asia", Continent.create "Asia" 7);
-    ("Australia", Continent.create "Australia" 3);
-  |]
+(* let init_continents = path |> Map.create_map |> Map.get_continents *)
 
 (** [get_continent c] returns the continent with name c*)
-let get_continent (c : string) : Continent.t =
-  match Array.find_opt (fun (k, _) -> c = k) continents with
-  | None -> failwith "Not a continent"
-  | Some (_, v) -> v
+(* let get_continent (c : string) : Continent.t = match Array.find_opt (fun
+   continent -> Continent.get_name continent = c) continents with | None ->
+   failwith "Not a continent" | Some c -> c *)
 
-(**Initializes the Territories in a game TODO: parse json file(s) *)
-let init_territories : Territories.t array =
-  [|
-    Territories.init "Ontario" (get_continent "North America");
-    Territories.init "Alberta" (get_continent "North America");
-    Territories.init "Western US" (get_continent "North America");
-    Territories.init "Eastern US" (get_continent "North America");
-    Territories.init "Alaska" (get_continent "North America");
-    Territories.init "Central America" (get_continent "North America");
-  |]
+(**Initializes the Territories in a game *)
+let init_territories = path |> Map.create_map |> Map.get_territories
 
 let to_option_array (arr : 'a array) : 'a option array =
   Array.map (fun v -> Some v) arr
@@ -125,6 +113,7 @@ let init (numPlayers : int) =
         current_player = List.hd plist;
         current_phase = Deploy;
         territories = init_territories;
+        troops_to_place = 0;
       }
 
 (** Given a game, return the current player *)
@@ -159,6 +148,7 @@ let change_phase (p : phase) (game : t) : t =
         current_player = game.current_player;
         current_phase = Attack;
         territories = game.territories;
+        troops_to_place = game.troops_to_place;
       }
   | Attack ->
       {
@@ -166,6 +156,7 @@ let change_phase (p : phase) (game : t) : t =
         current_player = game.current_player;
         current_phase = Fortify;
         territories = game.territories;
+        troops_to_place = game.troops_to_place;
       }
   | Fortify ->
       {
@@ -173,4 +164,5 @@ let change_phase (p : phase) (game : t) : t =
         current_player = next_player game;
         current_phase = Deploy;
         territories = game.territories;
+        troops_to_place = game.troops_to_place;
       }

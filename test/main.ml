@@ -41,12 +41,35 @@ let pp_country_option_array =
 
 (******************************** EXAMPLES ************************************)
 (*--------------------------- Continent Examples -----------------------------*)
-let north_america = Continent.create "North America" 5
-let south_america = Continent.create "South America" 2
-let africa = Continent.create "Africa" 3
-let europe = Continent.create "Europe" 5
-let asia = Continent.create "Asia" 7
-let australia = Continent.create "Australia" 2
+
+(* json file of the classic map *)
+let path = "data/countries.json"
+let json = Yojson.Basic.from_file path
+let map = Map.create_map json
+
+(* all territories *)
+let territories = Map.get_territories map
+
+(* all continents *)
+let continents = Map.get_continents map
+
+let get_continent_from_array name =
+  match Array.find_opt (fun x -> Continent.get_name x = name) continents with
+  | None -> failwith "bruh"
+  | Some v -> v
+
+let get_territory_from_array name =
+  match Array.find_opt (fun x -> Territories.get_name x = name) territories with
+  | None -> failwith "bruh"
+  | Some v -> v
+
+(* continents *)
+let north_america = get_continent_from_array "North America"
+let south_america = get_continent_from_array "South America"
+let africa = get_continent_from_array "Africa"
+let europe = get_continent_from_array "Europe"
+let asia = get_continent_from_array "Asia"
+let australia = get_continent_from_array "Australia"
 
 (***************************** Continent tests ********************************)
 
@@ -83,58 +106,58 @@ let continent_get_value_tests =
 (*--------------------------- Country Examples -------------------------------*)
 
 (* North American territories*)
-let alaska = Territories.init "Alaska" north_america
-let alberta = Territories.init "Alberta" north_america
-let central_america = Territories.init "Central America" north_america
-let eastern_us = Territories.init "Eastern US" north_america
-let greenland = Territories.init "Greenland" north_america
-let northwest_territory = Territories.init "Northwest Territory" north_america
-let ontario = Territories.init "Ontario" north_america
-let quebec = Territories.init "Quebec" north_america
-let western_us = Territories.init "Western US" north_america
+let alaska = get_territory_from_array "Alaska"
+let alberta = get_territory_from_array "Alberta"
+let central_america = get_territory_from_array "Central America"
+let eastern_us = get_territory_from_array "Eastern US"
+let greenland = get_territory_from_array "Greenland"
+let northwest_territory = get_territory_from_array "Northwest Territory"
+let ontario = get_territory_from_array "Ontario"
+let quebec = get_territory_from_array "Quebec"
+let western_us = get_territory_from_array "Western US"
 
 (* South American territories *)
-let argentina = Territories.init "Argentina" south_america
-let brazil = Territories.init "Brazil" south_america
-let venezuela = Territories.init "Venezuela" south_america
-let peru = Territories.init "Peru" south_america
+let argentina = get_territory_from_array "Argentina"
+let brazil = get_territory_from_array "Brazil"
+let venezuela = get_territory_from_array "Venezuela"
+let peru = get_territory_from_array "Peru"
 
 (* Australian territories *)
-let eastern_australia = Territories.init "Eastern Australia" australia
-let indonesia = Territories.init "Indonesia" australia
-let new_guinea = Territories.init "New Guinea" australia
-let western_australia = Territories.init "Western Australia" australia
+let eastern_australia = get_territory_from_array "Eastern Australia"
+let indonesia = get_territory_from_array "Indonesia"
+let new_guinea = get_territory_from_array "New Guinea"
+let western_australia = get_territory_from_array "Western Australia"
 
 (* European territories *)
-let great_britain = Territories.init "Great Britain" europe
-let iceland = Territories.init "Iceland" europe
-let northern_europe = Territories.init "Northern Europe" europe
-let scandinavia = Territories.init "Scandinavia" europe
-let southern_europe = Territories.init "Southern Europe" europe
-let ukraine = Territories.init "Ukraine" europe
-let western_europe = Territories.init "Western Europe" europe
+let great_britain = get_territory_from_array "Great Britain"
+let iceland = get_territory_from_array "Iceland"
+let northern_europe = get_territory_from_array "Northern Europe"
+let scandinavia = get_territory_from_array "Scandinavia"
+let southern_europe = get_territory_from_array "Southern Europe"
+let ukraine = get_territory_from_array "Ukraine"
+let western_europe = get_territory_from_array "Western Europe"
 
 (* African territories *)
-let congo = Territories.init "Congo" africa
-let east_africa = Territories.init "East Africa" africa
-let egypt = Territories.init "Egypt" africa
-let madagascar = Territories.init "Madagascar" africa
-let north_africa = Territories.init "North Africa" africa
-let south_africa = Territories.init "South Africa" africa
+let congo = get_territory_from_array "Congo"
+let east_africa = get_territory_from_array "East Africa"
+let egypt = get_territory_from_array "Egypt"
+let madagascar = get_territory_from_array "Madagascar"
+let north_africa = get_territory_from_array "North Africa"
+let south_africa = get_territory_from_array "South Africa"
 
 (* Asian territories *)
-let afghanistan = Territories.init "Afghanistan" asia
-let china = Territories.init "China" asia
-let india = Territories.init "India" asia
-let irkutsk = Territories.init "Irkutsk" asia
-let japan = Territories.init "Japan" asia
-let kamchatka = Territories.init "Kamchatka" asia
-let middle_east = Territories.init "Middle East" asia
-let mongolia = Territories.init "Mongolia" asia
-let siam = Territories.init "Siam" asia
-let siberia = Territories.init "Siberia" asia
-let ural = Territories.init "Ural" asia
-let yakutsk = Territories.init "Yakutsk" asia
+let afghanistan = get_territory_from_array "Afghanistan"
+let china = get_territory_from_array "China"
+let india = get_territory_from_array "India"
+let irkutsk = get_territory_from_array "Irkutsk"
+let japan = get_territory_from_array "Japan"
+let kamchatka = get_territory_from_array "Kamchatka"
+let middle_east = get_territory_from_array "Middle East"
+let mongolia = get_territory_from_array "Mongolia"
+let siam = get_territory_from_array "Siam"
+let siberia = get_territory_from_array "Siberia"
+let ural = get_territory_from_array "Ural"
+let yakutsk = get_territory_from_array "Yakutsk"
 
 (* Set the neighboring territories for each of the above territories let _ =
    Territories.init_neighbors alaska [ northwest_territory; alberta; kamchatka ]
@@ -378,35 +401,36 @@ let territories_get_continent_test out in1 _ =
 let territories_get_continent_tests =
   [
     "get continent of Alberta"
-    >:: territories_get_continent_test north_america alberta;
+    >:: territories_get_continent_test "North America" alberta;
     "get continent of Greenland"
-    >:: territories_get_continent_test north_america greenland;
+    >:: territories_get_continent_test "North America" greenland;
     "get continent of Ontario"
-    >:: territories_get_continent_test north_america ontario;
+    >:: territories_get_continent_test "North America" ontario;
     "get continent of Quebec"
-    >:: territories_get_continent_test north_america quebec;
+    >:: territories_get_continent_test "North America" quebec;
     "get continent of Argentina"
-    >:: territories_get_continent_test south_america argentina;
+    >:: territories_get_continent_test "South America" argentina;
     "get continent of Venezuela"
-    >:: territories_get_continent_test south_america venezuela;
+    >:: territories_get_continent_test "South America" venezuela;
     "get continent of Eastern Australia"
-    >:: territories_get_continent_test australia eastern_australia;
+    >:: territories_get_continent_test "Australia" eastern_australia;
     "get continent of Western Australia"
-    >:: territories_get_continent_test australia western_australia;
-    "get continent of Iceland" >:: territories_get_continent_test europe iceland;
+    >:: territories_get_continent_test "Australia" western_australia;
+    "get continent of Iceland"
+    >:: territories_get_continent_test "Europe" iceland;
     "get continent of Scandinavia"
-    >:: territories_get_continent_test europe scandinavia;
+    >:: territories_get_continent_test "Europe" scandinavia;
     "get continent of Western Europe"
-    >:: territories_get_continent_test europe western_europe;
-    "get continent of Egypt" >:: territories_get_continent_test africa egypt;
+    >:: territories_get_continent_test "Europe" western_europe;
+    "get continent of Egypt" >:: territories_get_continent_test "Africa" egypt;
     "get continent of Madagascar"
-    >:: territories_get_continent_test africa madagascar;
-    "get continent of Congo" >:: territories_get_continent_test africa congo;
-    "get continent of Japan" >:: territories_get_continent_test asia japan;
-    "get continent of Siam" >:: territories_get_continent_test asia siam;
-    "get continent of Ural" >:: territories_get_continent_test asia ural;
+    >:: territories_get_continent_test "Africa" madagascar;
+    "get continent of Congo" >:: territories_get_continent_test "Africa" congo;
+    "get continent of Japan" >:: territories_get_continent_test "Asia" japan;
+    "get continent of Siam" >:: territories_get_continent_test "Asia" siam;
+    "get continent of Ural" >:: territories_get_continent_test "Asia" ural;
     "get continent of Middle East"
-    >:: territories_get_continent_test asia middle_east;
+    >:: territories_get_continent_test "Asia" middle_east;
   ]
 
 (*----------------------------Territories.get_location
@@ -416,36 +440,42 @@ let territories_get_location_test out in1 _ =
 
 let territories_get_location_tests =
   [
-    "get location of Alaska" >:: territories_get_location_test (0, 0) alaska;
+    "get location of Alaska"
+    >:: territories_get_location_test "_alaska.png" alaska;
     "get location of Central America"
-    >:: territories_get_location_test (0, 0) central_america;
-    "get location of Ontario" >:: territories_get_location_test (0, 0) ontario;
-    "get location of Quebec" >:: territories_get_location_test (0, 0) quebec;
+    >:: territories_get_location_test "_ca.png" central_america;
+    "get location of Ontario"
+    >:: territories_get_location_test "_ontario.png" ontario;
+    "get location of Quebec"
+    >:: territories_get_location_test "_quebec.png" quebec;
     "get location of Argentina"
-    >:: territories_get_location_test (0, 0) argentina;
+    >:: territories_get_location_test "_arg.png" argentina;
     "get location of Venezuela"
-    >:: territories_get_location_test (0, 0) venezuela;
-    "get location of Peru" >:: territories_get_location_test (0, 0) peru;
+    >:: territories_get_location_test "_venezuela.png" venezuela;
+    "get location of Peru" >:: territories_get_location_test "_peru.png" peru;
     "get location of Indonesia"
-    >:: territories_get_location_test (0, 0) indonesia;
+    >:: territories_get_location_test "_indonesia.png" indonesia;
     "get location of New Guinea"
-    >:: territories_get_location_test (0, 0) new_guinea;
+    >:: territories_get_location_test "_new_guinea.png" new_guinea;
     "get location of Eastern Australia"
-    >:: territories_get_location_test (0, 0) eastern_australia;
+    >:: territories_get_location_test "_east_australia.png" eastern_australia;
     "get location of Great Britain"
-    >:: territories_get_location_test (0, 0) great_britain;
+    >:: territories_get_location_test "_great_britain.png" great_britain;
     "get location of Northern Europe"
-    >:: territories_get_location_test (0, 0) northern_europe;
-    "get location of Ukraine" >:: territories_get_location_test (0, 0) ukraine;
+    >:: territories_get_location_test "_n_europe.png" northern_europe;
+    "get location of Ukraine"
+    >:: territories_get_location_test "_ukraine.png" ukraine;
     "get location of North Africa"
-    >:: territories_get_location_test (0, 0) north_africa;
+    >:: territories_get_location_test "_n_africa.png" north_africa;
     "get location of South Africa"
-    >:: territories_get_location_test (0, 0) south_africa;
-    "get location of Egypt" >:: territories_get_location_test (0, 0) egypt;
-    "get location of Irkutsk" >:: territories_get_location_test (0, 0) irkutsk;
-    "get location of Yakutsk" >:: territories_get_location_test (0, 0) yakutsk;
+    >:: territories_get_location_test "_s_africa.png" south_africa;
+    "get location of Egypt" >:: territories_get_location_test "_egypt.png" egypt;
+    "get location of Irkutsk"
+    >:: territories_get_location_test "_irkutsk.png" irkutsk;
+    "get location of Yakutsk"
+    >:: territories_get_location_test "_yakutsk.png" yakutsk;
     "get location of Afghanistan"
-    >:: territories_get_location_test (0, 0) afghanistan;
+    >:: territories_get_location_test "_afghanistan.png" afghanistan;
   ]
 
 (*----------------------------Territories.get_neighbors

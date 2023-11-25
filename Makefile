@@ -4,10 +4,10 @@ build:
 	dune clean
 	dune build
 
-# code:
-# 	-dune build
-# 	code .
-# 	! dune build --watch
+code:
+	-dune build
+	code .
+	! dune build --watch
 
 utop:
 	OCAMLRUNPARAM=b dune utop

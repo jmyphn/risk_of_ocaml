@@ -1,4 +1,4 @@
-module G = Lib
+module L = Lib
 module R = Raylib
 
 type state =
@@ -33,7 +33,7 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     match is_mouse_button_down MouseButton.Left with
     | false -> R.draw_texture highlight x y Color.raywhite
     | true ->
-        G.Game.init n;
+        L.Game.init n;
         game_state_global := ACTIVE
 
 let highlight_button_active mouse hitbox highlight (x, y) =

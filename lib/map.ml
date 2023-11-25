@@ -1,28 +1,23 @@
-type t = string
+module Y = Yojson.Basic.Util
+module R = Raylib
 
-let create_map : t =
-  "\n\
-  \                                                      _/`-_-_   _    _\n\
-  \                                           __    _-_/       `--` `-_/ `-_\n\
-  \   _-__---_--_--_-_               __-_--_-_/  `-_/                     /--`\n\
-  \  /               /              /             _/                      `_\n\
-  \  `   North       _`         /--`  Europe    _/         Asia            /\n\
-  \   `   America   /        _-`              /`                        _  `_\n\
-  \    `           /      /``` _/``-_      _-`                         / `-_/\n\
-  \     `      _-_/       `-`-'      |    /_        _     /`-_       _/\n\
-  \      `    /                       `-_/  `_    _/ `_  /    `-_  _/\n\
-  \      /   /                                `-_ /    `-`      /_/`\n\
-  \      ` _-                                    `               __ _-_/`-_\n\
-  \         _-_-_-_-_                 _-_-_-_-_-__        /`-_/`-` `  __-_/\n\
-  \        /         -__--_          /            `-_     `-_  ___  /`\n\
-  \        `               `_       /               /        `-`  `-`\n\
-  \        `-   South       _|      `-_   Africa   /_             __    |`-_\n\
-  \          `-   America   /         -`          _-/            /` `-_-`   `-_\n\
-  \           /        _-_/           `-_       _/             /               |\n\
-  \           `                          |     `_           _--`  Australia    /\n\
-  \            `     /                    `     /           `_               _/\n\
-  \             `-_--                     /  __/              `_    _--_    /\n\
-  \                                       '-'                   `_-`    `-_-`\n\
-  \ "
+type territories = Territories.t array
+type continents = Continent.t array
 
-let display_map (curr_map : t) : unit = print_string curr_map
+type t = {
+  territories : territories;
+  continents : continents;
+}
+
+let get_continents map = map.continents
+let get_territories map = map.territories
+
+let create_map path : t =
+  {
+    territories =
+      path |> Y.member "territories" |> Y.to_list |> Array.of_list
+      |> Array.map Territories.init;
+    continents =
+      path |> Y.member "Continent" |> Y.to_list |> Array.of_list
+      |> Array.map Continent.create;
+  }
