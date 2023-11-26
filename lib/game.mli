@@ -9,7 +9,7 @@ type phase =
 type t
 (** [t] The type of the game*)
 
-val init : int -> t
+val init : int -> unit
 (** [init] Given an int [n] representing the number of players, initialize the
     game*)
 
@@ -22,8 +22,8 @@ val next_player : t -> player
 val get_phase : t -> phase
 (** [get_phase] Given a game [g], return the current phase*)
 
-val get_countries : t -> Countries.t array
-(** [get_phase] Given a game [g], return the country list*)
+val get_territories : t -> Territories.t array
+(** [get_phase] Given a game [g], return the [Territories.t array]*)
 
 val change_phase : phase -> t -> t
 (** [change_phase] Given a phase [p], and a game [g], return a game with the

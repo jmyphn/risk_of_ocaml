@@ -10,26 +10,26 @@ val rep_ok : t -> unit
 val get_color : t -> Raylib.Color.t
 (** [get_color p] Given a player [p] returns the color of [p]. *)
 
-val get_countries : t -> Countries.t option array
-(** [get_countries p] Given a player [p] returns the countries owned by [p]. *)
+val get_territories : t -> Territories.t option array
+(** [get_Territories p] Given a player [p] returns the Territories owned by [p]. *)
 
-val get_countries_lst : t -> Countries.t list
-(** [get_countries_lst p] Given a player [p] returns the list of countries owned
-    by [p].*)
+val get_territories_lst : t -> Territories.t list
+(** [get_Territories_lst p] Given a player [p] returns the list of Territories
+    owned by [p].*)
 
-val add_country : t -> Countries.t -> unit
-(** [add_country p c] Given a player [p] and country [c], add the country to the
-    player [p]. *)
+val add_territory : t -> Territories.t -> unit
+(** [add_territory p c] Given a player [p] and territory [c], add the territory
+    to the player [p]. *)
 
-val remove_country : t -> Countries.t -> unit
-(** [add_country p c] Given a player [p] and country [c], remove the country
-    from the player [p]. Requires: [c] must be owned by the player*)
+val remove_territory : t -> Territories.t -> unit
+(** [add_territory p c] Given a player [p] and territory [c], remove the
+    territory from the player [p]. Requires: [c] must be owned by the player*)
 
-val num_countries : t -> int
-(** [num_countries p] Given a player [p] returns the number of countries owned
-    by [p]. *)
+val num_territories : t -> int
+(** [num_Territories p] Given a player [p] returns the number of Territories
+    owned by [p]. *)
 
-val countries_to_string : t -> string
+val territories_to_string : t -> string
 
 val init : Raylib.Color.t -> t
 (** [init c] Initializes a player given a color [Raylib.Color.t].*)

@@ -1,7 +1,9 @@
+module Y = Yojson.Basic.Util
+
 type player = Player.t
 type players = player list
-type country = Countries.t
-type countries = country array
+type territory = Territories.t
+type territories = territory array
 
 type phase =
   | Deploy
@@ -12,8 +14,16 @@ type t = {
   players : players;
   current_player : player;
   current_phase : phase;
-  countries : countries;
+  territories : territories;
+  troops_to_place : int;
 }
+
+(* Holds the current game state *)
+let game : t option ref = ref None
+
+(* Holds the current map *)
+let json = "data/countries.json"
+let path = Yojson.Basic.from_file json
 
 (**Array of colors that have not been taken by a player. If None, then the color
    has been taken. RI: All Some values are to the left of the array*)
@@ -47,6 +57,7 @@ let sample arr size =
   else
     let i = Random.int size in
     let v = arr.(i) in
+    (* swap *)
     arr.(i) <- arr.(size - 1);
     arr.(size - 1) <- None;
     v
@@ -60,50 +71,33 @@ let rec init_players (n : int) : players =
       let _ = print_endline ("Choose name for Player" ^ string_of_int a) in
       match sample colors_left (arr_size colors_left) with
       | None -> failwith "Too many players"
-      | Some c -> Player.init c :: init_players (n - 1))
+      | Some c -> Player.init c :: init_players (a - 1))
 
 (**Initializes the continents in a game.*)
-let continents : (string * Continent.t) array =
-  [|
-    ("North America", Continent.create "North America" 5);
-    ("South America", Continent.create "South America" 3);
-    ("Africa", Continent.create "Africa" 3);
-    ("Europe", Continent.create "Europe" 5);
-    ("Asia", Continent.create "Asia" 7);
-    ("Australia", Continent.create "Australia" 3);
-  |]
+(* let init_continents = path |> Map.create_map |> Map.get_continents *)
 
 (** [get_continent c] returns the continent with name c*)
-let get_continent (c : string) : Continent.t =
-  match Array.find_opt (fun (k, _) -> c = k) continents with
-  | None -> failwith "Not a continent"
-  | Some (_, v) -> v
+(* let get_continent (c : string) : Continent.t = match Array.find_opt (fun
+   continent -> Continent.get_name continent = c) continents with | None ->
+   failwith "Not a continent" | Some c -> c *)
 
-(**Initializes the countries in a game*)
-let init_countries : Countries.t array =
-  [|
-    Countries.init "Ontario" (get_continent "North America") [];
-    Countries.init "Alberta" (get_continent "North America") [];
-    Countries.init "Western US" (get_continent "North America") [];
-    Countries.init "Eastern US" (get_continent "North America") [];
-    Countries.init "Alaska" (get_continent "North America") [];
-    Countries.init "Central America" (get_continent "North America") [];
-  |]
+(**Initializes the Territories in a game *)
+let init_territories = path |> Map.create_map |> Map.get_territories
 
 let to_option_array (arr : 'a array) : 'a option array =
   Array.map (fun v -> Some v) arr
 
-(** Assigns countries to each player randomly.*)
-let assign_countries plst =
+(** Assigns Territories to each player randomly.*)
+let assign_Territories plst =
   let _ = Random.self_init () in
-  let temp = to_option_array (Array.copy init_countries) in
+  let temp = to_option_array (Array.copy init_territories) in
   for i = 0 to arr_size temp - 1 do
     let player_ind = i mod List.length plst in
     let player = List.nth plst player_ind in
     let c = sample temp (arr_size temp) in
     match c with
     | None -> failwith "impossible"
-    | Some c1 -> Player.add_country player c1
+    | Some c1 -> Player.add_territory player c1
   done;
   plst
 
@@ -117,67 +111,49 @@ let num_troops_per_player n =
   | _ -> failwith "Invalid number of players"
 
 let assign_troops_helper t p =
-  let countries = Player.get_countries p in
+  let countries = Player.get_territories p in
   for i = 0 to t - 1 do
     let index = i mod arr_size countries in
     match countries.(index) with
     | None -> failwith "impossible"
-    | Some c -> Countries.add_value 1 c
+    | Some c -> Territories.add_value 1 c
   done;
   p
 
 let assign_troops n plst = List.map (assign_troops_helper n) plst
 
-let rec roll_dice (n : int) : int list =
-  match n with
-  | 0 -> []
-  | _ -> Random.int 6 :: roll_dice (n - 1)
+(* let rec roll_dice (n : int) : int list = match n with | 0 -> [] | _ ->
+   Random.int 6 :: roll_dice (n - 1)
 
-let attack (atk : country) (atk_player : player) (def : country)
-    (def_player : player) =
-  let atk_troops = Countries.get_troops atk in
-  let def_troops = Countries.get_troops def in
-  let atk_dice =
-    match atk_troops with
-    | n when n > 2 -> roll_dice 3
-    | n when n > 0 -> roll_dice n
-    | _ -> failwith "violates rep_inv"
-  in
-  let def_dice =
-    match def_troops with
-    | n when n > 1 -> roll_dice 2
-    | n when n > 0 -> roll_dice n
-    | _ -> failwith "violates rep_inv"
-  in
-  let rec cmp (a : int list) (d : int list) : unit =
-    match
-      ( List.rev (List.sort Stdlib.compare a),
-        List.rev (List.sort Stdlib.compare d) )
-    with
-    | [], [] -> ()
-    | _, [] ->
-        Player.add_country atk_player def;
-        Player.remove_country def_player def
-    | [], _ -> failwith "can't attack"
-    | h :: t, h2 :: t2 ->
-        if h > h2 then Countries.subtract_value 1 def
-        else Countries.subtract_value 1 atk;
-        cmp t t2
-  in
-  cmp atk_dice def_dice
+   let attack (atk : territory) (atk_player : player) (def : territory)
+   (def_player : player) = let atk_troops = Territories.get_troops atk in let
+   def_troops = Territories.get_troops def in let atk_dice = match atk_troops
+   with | n when n > 2 -> roll_dice 3 | n when n > 0 -> roll_dice n | _ ->
+   failwith "violates rep_inv" in let def_dice = match def_troops with | n when
+   n > 1 -> roll_dice 2 | n when n > 0 -> roll_dice n | _ -> failwith "violates
+   rep_inv" in let rec cmp (a : int list) (d : int list) : unit = match (
+   List.rev (List.sort Stdlib.compare a), List.rev (List.sort Stdlib.compare d)
+   ) with | [], [] -> () | _, [] -> Player.add_territory atk_player def;
+   Player.remove_territory def_player def | [], _ -> failwith "can't attack" | h
+   :: t, h2 :: t2 -> if h > h2 then Territories.subtract_value 1 def else
+   Territories.subtract_value 1 atk; cmp t t2 in cmp atk_dice def_dice *)
 
 (** Initializes game given a number of players *)
-let init (numPlayers : int) : t =
+let init (numPlayers : int) =
   let plist =
-    init_players numPlayers |> assign_countries
-    |> assign_troops (num_troops_per_player numPlayers)
+    assign_troops
+      (num_troops_per_player numPlayers)
+      (assign_Territories (init_players numPlayers))
   in
-  {
-    players = plist;
-    current_player = List.hd plist;
-    current_phase = Deploy;
-    countries = init_countries;
-  }
+  game :=
+    Some
+      {
+        players = plist;
+        current_player = List.hd plist;
+        current_phase = Deploy;
+        territories = init_territories;
+        troops_to_place = 0;
+      }
 
 (** Given a game, return the current player *)
 let get_current_player game = game.current_player
@@ -198,8 +174,8 @@ let next_player game =
 (** Given a game, return the phase*)
 let get_phase game = game.current_phase
 
-(** Given a game, return the countries*)
-let get_countries game = game.countries
+(** Given a game, return the Territories*)
+let get_territories game = game.territories
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
@@ -210,19 +186,22 @@ let change_phase (p : phase) (game : t) : t =
         players = game.players;
         current_player = game.current_player;
         current_phase = Attack;
-        countries = game.countries;
+        territories = game.territories;
+        troops_to_place = game.troops_to_place;
       }
   | Attack ->
       {
         players = game.players;
         current_player = game.current_player;
         current_phase = Fortify;
-        countries = game.countries;
+        territories = game.territories;
+        troops_to_place = game.troops_to_place;
       }
   | Fortify ->
       {
         players = game.players;
         current_player = next_player game;
         current_phase = Deploy;
-        countries = game.countries;
+        territories = game.territories;
+        troops_to_place = game.troops_to_place;
       }

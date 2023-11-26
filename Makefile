@@ -1,12 +1,13 @@
 .PHONY: test check
 
 build:
+	dune clean
 	dune build
 
-# code:
-# 	-dune build
-# 	code .
-# 	! dune build --watch
+code:
+	-dune build
+	code .
+	! dune build --watch
 
 utop:
 	OCAMLRUNPARAM=b dune utop
@@ -21,9 +22,9 @@ zip:
 	rm -f ms2_code.zip
 	zip -r ms2_code.zip . -x@exclude.lst
 
-# clean:
-# 	dune clean
-# 	rm -f ms3_code.zip
+clean:
+	dune clean
+	rm -f *.zip
 
 # doc:
 # 	dune build @doc
