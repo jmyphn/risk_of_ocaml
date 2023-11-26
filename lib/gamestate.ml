@@ -45,6 +45,19 @@ let rec play game =
           Map.display_map Map.create_map;
           print_endline "Attack a country"
         in
+        let _ =
+          print_endline
+            (Array.fold_left
+               (fun acc x ->
+                 match x with
+                 | None -> "" ^ acc
+                 | Some c ->
+                     Countries.get_name c ^ ": "
+                     ^ string_of_int (Countries.get_troops c)
+                     ^ acc)
+               ""
+               (Player.get_countries currPlayer))
+        in
         let input = read_line () in
         if input = "finish" then (
           print_endline "Goodbye.";

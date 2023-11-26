@@ -98,20 +98,80 @@ let assign_countries plst =
   let _ = Random.self_init () in
   let temp = to_option_array (Array.copy init_countries) in
   for i = 0 to arr_size temp - 1 do
-    let _ = print_endline (string_of_int i) in
-    let _ = print_endline (string_of_int (arr_size temp)) in
     let player_ind = i mod List.length plst in
     let player = List.nth plst player_ind in
     let c = sample temp (arr_size temp) in
     match c with
-    | None -> failwith "impossible fdas"
+    | None -> failwith "impossible"
     | Some c1 -> Player.add_country player c1
   done;
   plst
 
+let num_troops_per_player n =
+  match n with
+  | 2 -> 40
+  | 3 -> 35
+  | 4 -> 30
+  | 5 -> 25
+  | 6 -> 20
+  | _ -> failwith "Invalid number of players"
+
+let assign_troops_helper t p =
+  let countries = Player.get_countries p in
+  for i = 0 to t - 1 do
+    let index = i mod arr_size countries in
+    match countries.(index) with
+    | None -> failwith "impossible"
+    | Some c -> Countries.add_value 1 c
+  done;
+  p
+
+let assign_troops n plst = List.map (assign_troops_helper n) plst
+
+let rec roll_dice (n : int) : int list =
+  match n with
+  | 0 -> []
+  | _ -> Random.int 6 :: roll_dice (n - 1)
+
+let attack (atk : country) (atk_player : player) (def : country)
+    (def_player : player) =
+  let atk_troops = Countries.get_troops atk in
+  let def_troops = Countries.get_troops def in
+  let atk_dice =
+    match atk_troops with
+    | n when n > 2 -> roll_dice 3
+    | n when n > 0 -> roll_dice n
+    | _ -> failwith "violates rep_inv"
+  in
+  let def_dice =
+    match def_troops with
+    | n when n > 1 -> roll_dice 2
+    | n when n > 0 -> roll_dice n
+    | _ -> failwith "violates rep_inv"
+  in
+  let rec cmp (a : int list) (d : int list) : unit =
+    match
+      ( List.rev (List.sort Stdlib.compare a),
+        List.rev (List.sort Stdlib.compare d) )
+    with
+    | [], [] -> ()
+    | _, [] ->
+        Player.add_country atk_player def;
+        Player.remove_country def_player def
+    | [], _ -> failwith "can't attack"
+    | h :: t, h2 :: t2 ->
+        if h > h2 then Countries.subtract_value 1 def
+        else Countries.subtract_value 1 atk;
+        cmp t t2
+  in
+  cmp atk_dice def_dice
+
 (** Initializes game given a number of players *)
 let init (numPlayers : int) : t =
-  let plist = assign_countries (init_players numPlayers) in
+  let plist =
+    init_players numPlayers |> assign_countries
+    |> assign_troops (num_troops_per_player numPlayers)
+  in
   {
     players = plist;
     current_player = List.hd plist;
