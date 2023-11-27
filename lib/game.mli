@@ -4,12 +4,12 @@ type players = player list
 type phase =
   | Deploy
   | Attack
-  | Fortify
+  | Fortify  (** [phase] The phase of the current game *)
 
 type t
-(** [t] The type of the game*)
+(** [t] The type of the current game *)
 
-val init : int -> unit
+val init : int -> t
 (** [init] Given an int [n] representing the number of players, initialize the
     game*)
 
@@ -25,7 +25,7 @@ val get_phase : t -> phase
 val get_territories : t -> Territories.t array
 (** [get_phase] Given a game [g], return the [Territories.t array]*)
 
-val change_phase : phase -> t -> t
+val change_phase : t -> t
 (** [change_phase] Given a phase [p], and a game [g], return a game with the
     phase [p]*)
 

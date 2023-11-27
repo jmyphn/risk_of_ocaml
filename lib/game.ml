@@ -18,9 +18,6 @@ type t = {
   troops_to_place : int;
 }
 
-(* Holds the current game state *)
-let game : t option ref = ref None
-
 (* Holds the current map *)
 let json = "data/countries.json"
 let path = Yojson.Basic.from_file json
@@ -145,15 +142,13 @@ let init (numPlayers : int) =
       (num_troops_per_player numPlayers)
       (assign_Territories (init_players numPlayers))
   in
-  game :=
-    Some
-      {
-        players = plist;
-        current_player = List.hd plist;
-        current_phase = Deploy;
-        territories = init_territories;
-        troops_to_place = 0;
-      }
+  {
+    players = plist;
+    current_player = List.hd plist;
+    current_phase = Deploy;
+    territories = init_territories;
+    troops_to_place = 0;
+  }
 
 (** Given a game, return the current player *)
 let get_current_player game = game.current_player
@@ -179,9 +174,10 @@ let get_territories game = game.territories
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
-let change_phase (p : phase) (game : t) : t =
-  match p with
+let change_phase (game : t) : t =
+  match game.current_phase with
   | Deploy ->
+      print_endline "Attack";
       {
         players = game.players;
         current_player = game.current_player;
@@ -190,6 +186,7 @@ let change_phase (p : phase) (game : t) : t =
         troops_to_place = game.troops_to_place;
       }
   | Attack ->
+      print_endline "Fortify";
       {
         players = game.players;
         current_player = game.current_player;
@@ -198,6 +195,7 @@ let change_phase (p : phase) (game : t) : t =
         troops_to_place = game.troops_to_place;
       }
   | Fortify ->
+      print_endline "Deploy";
       {
         players = game.players;
         current_player = next_player game;

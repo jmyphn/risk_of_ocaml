@@ -1,5 +1,6 @@
 module Y = Yojson.Basic.Util
 module C = Continent
+module R = Raylib
 
 type t = {
   name : string;
