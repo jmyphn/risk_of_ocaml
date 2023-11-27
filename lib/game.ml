@@ -177,11 +177,34 @@ let get_phase game = game.current_phase
 (** Given a game, return the Territories*)
 let get_territories game = game.territories
 
+let phase_to_string (phase : phase) : string =
+  match phase with
+  | Deploy -> "deploy"
+  | Attack -> "attack"
+  | Fortify -> "fortify"
+
+let get_troops (_ : player) : int = Random.int 10
+
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
 let change_phase (p : phase) (game : t) : t =
+  let _ =
+    print_endline
+      ("It is Player " ^ Player.get_name game.current_player ^ "'s turn")
+  in
+  let _ = print_endline ("The current phase is " ^ phase_to_string p) in
   match p with
   | Deploy ->
+      let new_troops = get_troops game.current_player in
+      let _ =
+        print_endline
+          (string_of_int new_troops
+         ^ " have been drafted. Deploy these troops in any of the following \
+            countries: ")
+      in
+      let _ =
+        print_endline (Player.territories_to_string game.current_player)
+      in
       {
         players = game.players;
         current_player = game.current_player;
