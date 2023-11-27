@@ -6,6 +6,7 @@ _build/
 
 # Local OPAM switch
 _opam/
+.vscode/
 
 # macOS things
 .DS_Store
