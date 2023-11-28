@@ -74,6 +74,22 @@ let rep_ok (p : t) : unit =
 (** Given a player [p], returns the name of the player. *)
 let get_color (p : t) : Raylib.Color.t = p.color
 
+(** Given a player [p] and a string [s], returns the index of the territory with
+    Territory.name = s. Raises: ["not owned"] if not found*)
+let get_territory (p : t) (s : string) : Territories.t =
+  let ter =
+    Array.find_opt
+      (fun t ->
+        match t with
+        | None -> false
+        | Some t -> Territories.get_name t = s)
+      p.territories
+  in
+  match ter with
+  | None -> failwith "not owned"
+  | Some None -> failwith "not owned"
+  | Some (Some t) -> t
+
 (** Given a player [p], returns an option array of Territories owned by the
     player. *)
 let get_territories (p : t) : Territories.t option array = p.territories
@@ -118,7 +134,10 @@ let territories_to_string (p : t) : string =
     (fun acc x ->
       match x with
       | None -> acc ^ ""
-      | Some x1 -> acc ^ Territories.get_name x1 ^ ", ")
+      | Some x1 ->
+          acc ^ Territories.get_name x1 ^ ": "
+          ^ string_of_int (Territories.get_troops x1)
+          ^ ", ")
     "" p.territories
 
 (** Given a name [n], initializes the player.*)

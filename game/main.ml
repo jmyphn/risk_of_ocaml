@@ -8,6 +8,7 @@ type state =
   | END
 
 let game_state_global = ref START
+let game = ref None
 
 (* player button hitboxes *)
 let start_hb = R.Rectangle.create 480. 570. 240. 100.
@@ -17,8 +18,11 @@ let four_pb_hb = R.Rectangle.create 875. 350. 100. 100.
 let five_pb_hb = R.Rectangle.create 388. 550. 100. 100.
 let six_pb_hb = R.Rectangle.create 713. 550. 100. 100.
 
-(* active state temp button hitbox *)
-let active_hb = R.Rectangle.create 525. 560. 150. 100.
+(* state temp button hitbox *)
+let state_hb = R.Rectangle.create 300. 350. 150. 100.
+
+(* phase temp button hitbox *)
+let phase_hb = R.Rectangle.create 750. 350. 150. 100.
 
 let highlight_button_start mouse hitbox highlight (x, y) =
   let open R in
@@ -33,15 +37,24 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     match is_mouse_button_down MouseButton.Left with
     | false -> R.draw_texture highlight x y Color.raywhite
     | true ->
-        L.Game.init n;
+        game := Some (L.Game.init n);
         game_state_global := ACTIVE
 
-let highlight_button_active mouse hitbox highlight (x, y) =
+let highlight_button_state mouse hitbox highlight (x, y) =
   let open R in
   if check_collision_point_rec mouse hitbox then
     match is_mouse_button_down MouseButton.Left with
     | false -> R.draw_texture highlight x y Color.raywhite
-    | true -> game_state_global := END
+    | true ->
+        game := None;
+        game_state_global := END
+
+let highlight_button_phase mouse hitbox highlight (x, y) =
+  let open R in
+  if check_collision_point_rec mouse hitbox then
+    match is_mouse_button_pressed MouseButton.Left with
+    | false -> R.draw_texture highlight x y Color.raywhite
+    | true -> game := Some (L.Game.change_phase (Option.get !game))
 
 (*Game setup function*)
 let setup () =
@@ -60,7 +73,7 @@ let setup () =
   let bg_menu_texture = load_texture_from_image bg_menu in
   unload_image bg_menu;
 
-  (* active *)
+  (* state button *)
   let bg_active = load_image "assets/BlankBackground.png" in
   let bg_active_texture = load_texture_from_image bg_active in
   unload_image bg_active;
@@ -76,6 +89,19 @@ let setup () =
     load_texture_from_image bg_active_button_tmp_highlight
   in
   unload_image bg_active_button_tmp_highlight;
+
+  (* phase button *)
+  let bg_phase_button_tmp = load_image "assets/PhaseButton.png" in
+  let bg_phase_button_texture = load_texture_from_image bg_phase_button_tmp in
+  unload_image bg_phase_button_tmp;
+
+  let bg_phase_button_tmp_highlight =
+    load_image "assets/PhaseButtonHighlight.png"
+  in
+  let bg_phase_button_texture_highlight =
+    load_texture_from_image bg_phase_button_tmp_highlight
+  in
+  unload_image bg_phase_button_tmp_highlight;
 
   (* end *)
   (* let bg_end = load_image "assets/EndBackground.png" in let bg_end_texture =
@@ -122,6 +148,9 @@ let setup () =
   let five_pb_highlight_texture = load_texture_from_image five_pb_highlight in
   unload_image five_pb_highlight;
 
+  (* active state *)
+
+  (* blue countries *)
   let six_pb = load_image "assets/menu/6PB.png" in
   let six_pb_texture = load_texture_from_image six_pb in
   unload_image six_pb;
@@ -133,6 +162,8 @@ let setup () =
     bg_active_texture,
     bg_active_button_texture,
     bg_active_button_texture_highlight,
+    bg_phase_button_texture,
+    bg_phase_button_texture_highlight,
     (* bg_end_texture, *)
     start_button_texture,
     start_button_highlight_texture,
@@ -154,6 +185,8 @@ let rec loop game_state textures =
         active,
         active_button,
         active_button_highlight,
+        phase_button,
+        phase_button_highlight,
         (* enderman, *)
         start_button,
         start_button_highlight,
@@ -166,7 +199,7 @@ let rec loop game_state textures =
         five_pb_button,
         five_pb_button_highlight,
         six_pb_button,
-        six_pb_button_highlight ) =
+        six_pb_button_highlight (* *) ) =
     textures
   in
   match R.window_should_close () with
@@ -215,11 +248,15 @@ let rec loop game_state textures =
           R.clear_background R.Color.raywhite;
           R.draw_texture active 0 0 R.Color.raywhite;
 
-          (* temp button *)
-          R.draw_texture active_button 525 560 R.Color.raywhite;
+          (* change state *)
+          R.draw_texture active_button 300 350 R.Color.raywhite;
           let mouse = R.get_mouse_position () in
-          highlight_button_active mouse active_hb active_button_highlight
-            (525, 560);
+          highlight_button_state mouse state_hb active_button_highlight
+            (300, 350);
+
+          (* change phase *)
+          R.draw_texture phase_button 750 350 R.Color.raywhite;
+          highlight_button_phase mouse phase_hb phase_button_highlight (750, 350);
 
           R.end_drawing ();
           loop !game_state_global textures

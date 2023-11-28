@@ -18,9 +18,6 @@ type t = {
   troops_to_place : int;
 }
 
-(* Holds the current game state *)
-let game : t option ref = ref None
-
 (* Holds the current map *)
 let json = "data/countries.json"
 let path = Yojson.Basic.from_file json
@@ -84,6 +81,25 @@ let rec init_players (n : int) : players =
 (**Initializes the Territories in a game *)
 let init_territories = path |> Map.create_map |> Map.get_territories
 
+let get_territory_game (s : string) : Territories.t =
+  let ter =
+    Array.find_opt (fun t -> Territories.get_name t = s) init_territories
+  in
+  match ter with
+  | None -> failwith "impossible"
+  | Some c -> c
+
+let check_territory_rep g =
+  let t =
+    List.fold_left
+      (fun acc (p : player) -> Player.get_territories_lst p @ acc)
+      [] g.players
+  in
+  List.length (List.sort_uniq Stdlib.compare t) = 42
+
+(** Checks representation invariants during gameplay.*)
+let rep_ok g = if check_territory_rep g then g else failwith "rep-inv violated"
+
 let to_option_array (arr : 'a array) : 'a option array =
   Array.map (fun v -> Some v) arr
 
@@ -122,21 +138,60 @@ let assign_troops_helper t p =
 
 let assign_troops n plst = List.map (assign_troops_helper n) plst
 
-(* let rec roll_dice (n : int) : int list = match n with | 0 -> [] | _ ->
-   Random.int 6 :: roll_dice (n - 1)
+let rec roll_dice (n : int) : int list =
+  match n with
+  | 0 -> []
+  | _ -> Random.int 6 :: roll_dice (n - 1)
 
-   let attack (atk : territory) (atk_player : player) (def : territory)
-   (def_player : player) = let atk_troops = Territories.get_troops atk in let
-   def_troops = Territories.get_troops def in let atk_dice = match atk_troops
-   with | n when n > 2 -> roll_dice 3 | n when n > 0 -> roll_dice n | _ ->
-   failwith "violates rep_inv" in let def_dice = match def_troops with | n when
-   n > 1 -> roll_dice 2 | n when n > 0 -> roll_dice n | _ -> failwith "violates
-   rep_inv" in let rec cmp (a : int list) (d : int list) : unit = match (
-   List.rev (List.sort Stdlib.compare a), List.rev (List.sort Stdlib.compare d)
-   ) with | [], [] -> () | _, [] -> Player.add_territory atk_player def;
-   Player.remove_territory def_player def | [], _ -> failwith "can't attack" | h
-   :: t, h2 :: t2 -> if h > h2 then Territories.subtract_value 1 def else
-   Territories.subtract_value 1 atk; cmp t t2 in cmp atk_dice def_dice *)
+let rec pp_lst pp_elt lst =
+  match lst with
+  | [] -> ""
+  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
+
+let attack (atk : territory) (atk_player : player) (def : territory)
+    (def_player : player) =
+  let _ =
+    print_endline
+      (Territories.get_name atk ^ " attacks" ^ Territories.get_name def)
+  in
+  let atk_troops = Territories.get_troops atk in
+  let def_troops = Territories.get_troops def in
+  let atk_dice =
+    match atk_troops with
+    | n when n > 2 -> roll_dice 3
+    | n when n > 0 -> roll_dice n
+    | _ -> failwith "violates rep_inv"
+  in
+  let _ = print_endline ("attack rolls: " ^ pp_lst string_of_int atk_dice) in
+  let def_dice =
+    match def_troops with
+    | n when n > 1 -> roll_dice 2
+    | n when n > 0 -> roll_dice n
+    | _ -> failwith "violates\n   rep_inv"
+  in
+  let _ = print_endline ("defense rolls: " ^ pp_lst string_of_int def_dice) in
+  let rec cmp (a : int list) (d : int list) : unit =
+    match
+      ( List.rev (List.sort Stdlib.compare a),
+        List.rev (List.sort Stdlib.compare d) )
+    with
+    | [], [] -> ()
+    | _, [] ->
+        print_endline "Attack wins";
+        Player.add_territory atk_player def;
+        Player.remove_territory def_player def
+    | [], _ -> print_endline "can't attack"
+    | h :: t, h2 :: t2 ->
+        if h > h2 then
+          let _ = print_endline "Defense lost one troop" in
+          Territories.subtract_value 1 def
+        else
+          let _ = print_endline "Attack lost one troop" in
+          Territories.subtract_value 1 atk;
+          cmp t t2
+  in
+  print_endline "Attack is over";
+  cmp atk_dice def_dice
 
 (** Initializes game given a number of players *)
 let init (numPlayers : int) =
@@ -145,15 +200,13 @@ let init (numPlayers : int) =
       (num_troops_per_player numPlayers)
       (assign_Territories (init_players numPlayers))
   in
-  game :=
-    Some
-      {
-        players = plist;
-        current_player = List.hd plist;
-        current_phase = Deploy;
-        territories = init_territories;
-        troops_to_place = 0;
-      }
+  {
+    players = plist;
+    current_player = List.hd plist;
+    current_phase = Deploy;
+    territories = init_territories;
+    troops_to_place = 0;
+  }
 
 (** Given a game, return the current player *)
 let get_current_player game = game.current_player
@@ -177,6 +230,14 @@ let get_phase game = game.current_phase
 (** Given a game, return the Territories*)
 let get_territories game = game.territories
 
+let rec get_player_from_territory (ter : Territories.t) (plst : players) =
+  match plst with
+  | [] -> failwith "not found"
+  | h :: t ->
+      let t_list = Player.get_territories_lst h in
+      if List.exists (fun t1 -> t1 = ter) t_list then h
+      else get_player_from_territory ter t
+
 let phase_to_string (phase : phase) : string =
   match phase with
   | Deploy -> "deploy"
@@ -187,13 +248,15 @@ let get_troops (_ : player) : int = Random.int 10
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
-let change_phase (p : phase) (game : t) : t =
+let change_phase (game : t) : t =
   let _ =
     print_endline
       ("It is Player " ^ Player.get_name game.current_player ^ "'s turn")
   in
-  let _ = print_endline ("The current phase is " ^ phase_to_string p) in
-  match p with
+  let _ =
+    print_endline ("The current phase is " ^ phase_to_string game.current_phase)
+  in
+  match game.current_phase with
   | Deploy ->
       let new_troops = get_troops game.current_player in
       let _ =
@@ -205,14 +268,26 @@ let change_phase (p : phase) (game : t) : t =
       let _ =
         print_endline (Player.territories_to_string game.current_player)
       in
-      {
-        players = game.players;
-        current_player = game.current_player;
-        current_phase = Attack;
-        territories = game.territories;
-        troops_to_place = game.troops_to_place;
-      }
+      rep_ok
+        {
+          players = game.players;
+          current_player = game.current_player;
+          current_phase = Attack;
+          territories = game.territories;
+          troops_to_place = game.troops_to_place;
+        }
   | Attack ->
+      let _ = print_endline "Choose which territory to use for attack." in
+      let _ =
+        print_endline (Player.territories_to_string game.current_player)
+      in
+      let atk_ter = Player.get_territory game.current_player (read_line ()) in
+      let _ = print_endline "Choose which territory to attack." in
+      let _ = print_endline (Territories.neighbours_to_string atk_ter) in
+      let def_input = read_line () in
+      let def_ter = get_territory_game def_input in
+      attack atk_ter game.current_player def_ter
+        (get_player_from_territory def_ter game.players);
       {
         players = game.players;
         current_player = game.current_player;

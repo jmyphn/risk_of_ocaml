@@ -1,5 +1,11 @@
 type t
 
+(* val change_owner : t -> Player.t option -> unit (** [change_owner t p]
+   Mutates [t.owner] to equal [p].*)
+
+   val get_owner : t -> Player.t * [get_owner t] Returns the owner of the
+   territory. *)
+
 val get_name : t -> string
 (** [get_name] Given a territory [t], return the name of the territory *)
 
@@ -17,6 +23,8 @@ val get_neighbours : t -> string list
 (** [get_neighbours] Given a territory [t], return its neighboors
 
     CAN IMPLEMENT MORE EFFICIENT DATA STRUCTURE *)
+
+val neighbours_to_string : t -> string
 
 val init : Yojson.Basic.t -> t
 (** [init n c] initializes a territory with values name = n, continent = c,
