@@ -82,7 +82,9 @@ let get_territory (p : t) (s : string) : Territories.t =
       (fun t ->
         match t with
         | None -> false
-        | Some t -> Territories.get_name t = s)
+        | Some t ->
+            String.lowercase_ascii (Territories.get_name t)
+            = String.lowercase_ascii s)
       p.territories
   in
   match ter with
@@ -138,7 +140,7 @@ let territories_to_string (p : t) : string =
       | Some x1 ->
           acc ^ Territories.get_name x1 ^ ": "
           ^ string_of_int (Territories.get_troops x1)
-          ^ ", ")
+          ^ "\n")
     "" p.territories
 
 (** Given a name [n] and color [c], initializes the player.*)
