@@ -10,7 +10,7 @@ type continents =
   | South_America
 
 val get_name : t -> continents
-(** [get_name] Given a continent [c], return the name of the continent *)
+(** [get_name] Given a continent [c], return the type of the continent *)
 
 val get_value : t -> int
 (** [get_value] Given a continent [c], return the value of bonus points a player

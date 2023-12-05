@@ -25,12 +25,12 @@ let to_string = function
   | South_America -> "South America"
 
 let of_string = function
-  | "Europe" -> { name = Europe; value = 3 }
-  | "Asia" -> { name = Asia; value = 3 }
+  | "Europe" -> { name = Europe; value = 5 }
+  | "Asia" -> { name = Asia; value = 7 }
   | "Africa" -> { name = Africa; value = 3 }
-  | "Australia" -> { name = Australia; value = 3 }
-  | "North America" -> { name = North_America; value = 3 }
-  | "South America" -> { name = South_America; value = 3 }
+  | "Australia" -> { name = Australia; value = 2 }
+  | "North America" -> { name = North_America; value = 5 }
+  | "South America" -> { name = South_America; value = 2 }
   | _ -> failwith "Invalid continent string"
 
 (* let create json : t = let name_str = json |> Y.member "name" |> Y.to_string
