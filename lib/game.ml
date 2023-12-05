@@ -12,7 +12,7 @@ type phase =
 
 type t = {
   players : players;
-  current_player : player;
+  mutable current_player : player;
   current_phase : phase;
   territories : territories;
   troops_to_place : int;
@@ -184,16 +184,23 @@ let attack (atk : territory) (atk_player : player) (def : territory)
       ( List.rev (List.sort Stdlib.compare a),
         List.rev (List.sort Stdlib.compare d) )
     with
-    | [], [] -> failwith "violates inv"
+    | [], [] -> print_endline "can't attack"
     | _, [] ->
         print_endline "Attack wins";
+        print_endline
+          ("Choose the number of troops to move over, max "
+          ^ string_of_int (Territories.get_troops atk));
+        let n = int_of_string (read_line ()) in
+        Territories.add_value n def;
+        Territories.subtract_value n atk;
         Player.add_territory atk_player def;
         Player.remove_territory def_player def
     | [], _ -> print_endline "can't attack"
     | h :: t, h2 :: t2 ->
-        if h > h2 then
+        if h > h2 then (
           let _ = print_endline "Defense lost one troop" in
-          Territories.subtract_value 1 def
+          Territories.subtract_value 1 def;
+          cmp t t2)
         else
           let _ = print_endline "Attack lost one troop" in
           Territories.subtract_value 1 atk;
@@ -257,6 +264,45 @@ let territories_to_attack t =
       let t2 = get_territory_game n in
       Territories.get_owner t2 <> Territories.get_owner t)
     neighbours
+
+let owned_neighbours t =
+  let neighbours = Territories.get_neighbours t in
+  List.filter
+    (fun n ->
+      let t2 = get_territory_game n in
+      Territories.get_owner t2 = Territories.get_owner t)
+    neighbours
+
+let rec fortify_territories tlst acc (visited : string list) =
+  let t = List.hd tlst in
+  let visited' = Territories.get_name t :: visited in
+  let n = owned_neighbours t in
+  let new_t =
+    List.filter (fun t1 -> List.exists (fun t2 -> t1 <> t2) visited) n
+  in
+  let acc' = List.sort_uniq Stdlib.compare (n @ acc) in
+  match new_t with
+  | [] -> acc'
+  | _ ->
+      let tlst' = List.map (fun h -> get_territory_game h) new_t in
+      fortify_territories tlst' acc' visited'
+
+let fortify p =
+  let _ = print_endline "Select a territory to move troops from: " in
+  let _ = Player.territories_to_string p in
+  let t1 = get_territory_game (read_line ()) in
+  let _ =
+    print_endline
+      ("Select the number of troops to move: max "
+      ^ string_of_int (Territories.get_troops t1 - 1))
+  in
+  let n = int_of_string (read_line ()) in
+  let _ = print_endline "Choose the territory to move troops to " in
+  let tlst = fortify_territories [ t1 ] [] [] in
+  print_endline (pp_lst (fun s -> s) tlst);
+  let t2 = get_territory_game (read_line ()) in
+  Territories.add_value n t2;
+  Territories.subtract_value n t1
 
 let phase_to_string (phase : phase) : string =
   match phase with
@@ -347,9 +393,8 @@ let change_phase (game : t) : t =
         (get_player (Territories.get_owner def_ter) game.players);
       change_phase Fortify game
   | Fortify ->
-      let _ = print_endline "Select a country to move troops from: " in
-      let _ =
-        print_endline (Player.territories_to_string game.current_player)
-      in
-
+      fortify game.current_player;
+      print_endline
+        ("Player" ^ Player.get_name game.current_player ^ "'s turn is over.");
+      game.current_player <- next_player game;
       change_phase Deploy game
