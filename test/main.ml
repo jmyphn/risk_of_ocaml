@@ -483,7 +483,7 @@ let territories_get_location_tests =
    northwest_territory; alaska; ontario; western_us ] alberta; ] *)
 
 (*--------------------------- Player Examples --------------------------------*)
-let p1 = Player.init Raylib.Color.gray
+let p1 = Player.init "temp" Raylib.Color.gray
 
 (***************************** Player tests **********************************)
 
