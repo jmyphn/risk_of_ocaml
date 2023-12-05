@@ -264,7 +264,60 @@ let phase_to_string (phase : phase) : string =
   | Attack -> "attack"
   | Fortify -> "fortify"
 
-let get_troops (_ : player) : int = Random.int 10
+(** [get_troops p] given a player [p], return the amount of troops they are able
+    to deploy*)
+let get_troops (p : player) : int =
+  let n = (Player.num_territories p / 3) + Player.get_continent p in
+  if n < 3 then 3 else n
+
+(** [Change_phase p g] given phase [p] and a game [g] return the game with the
+    phase changed to phase [p]*)
+let change_phase p g =
+  rep_ok
+    {
+      players = g.players;
+      current_player = g.current_player;
+      current_phase = p;
+      territories = g.territories;
+      troops_to_place = g.troops_to_place;
+    }
+
+(** [Deploy_helper g] given a game [g], tell the player to deploy their troops
+    in their territories and deploy those troops int the cooresponding
+    territories. Only return when the player has finished deploying their
+    troops. *)
+let deploy_helper g =
+  let new_troops = ref (get_troops g.current_player) in
+  if !new_troops = 0 then
+    failwith "IMPOSSIBLE: Each player must have 3 troops minimum"
+  else
+    while !new_troops > 0 do
+      let _ =
+        print_endline
+          (string_of_int !new_troops
+         ^ " troop have been drafted. Select the country you want to deploy in "
+          )
+      in
+      let _ = print_endline (Player.territories_to_string g.current_player) in
+      let input = Player.get_territory g.current_player (read_line ()) in
+      let _ =
+        print_endline
+          ("Select the number of troops you wish to deploy: ("
+         ^ string_of_int !new_troops ^ " Troops avaliable)")
+      in
+      let should_loop = ref true in
+      let troop_input = ref 0 in
+      while !should_loop do
+        troop_input := int_of_string (read_line ());
+        if !troop_input <= !new_troops then should_loop := false
+        else should_loop := true;
+        print_endline
+          ("Select a troop number below " ^ string_of_int !new_troops)
+      done;
+      let _ = Territories.add_value !troop_input input in
+      new_troops := !new_troops - !troop_input
+    done;
+  print_endline "You have no more troops to deploy"
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
@@ -278,24 +331,8 @@ let change_phase (game : t) : t =
   in
   match game.current_phase with
   | Deploy ->
-      let new_troops = get_troops game.current_player in
-      let _ =
-        print_endline
-          (string_of_int new_troops
-         ^ " have been drafted. Deploy these troops in any of the following \
-            countries: ")
-      in
-      let _ =
-        print_endline (Player.territories_to_string game.current_player)
-      in
-      rep_ok
-        {
-          players = game.players;
-          current_player = game.current_player;
-          current_phase = Attack;
-          territories = game.territories;
-          troops_to_place = game.troops_to_place;
-        }
+      deploy_helper game;
+      change_phase Attack game
   | Attack ->
       let _ = print_endline "Choose which territory to use for attack." in
       let atk_opt = can_attack_territories game.current_player in
@@ -312,18 +349,10 @@ let change_phase (game : t) : t =
       let def_ter = get_territory_game def_input in
       attack atk_ter game.current_player def_ter
         (get_player (Territories.get_owner def_ter) game.players);
-      {
-        players = game.players;
-        current_player = game.current_player;
-        current_phase = Fortify;
-        territories = game.territories;
-        troops_to_place = game.troops_to_place;
-      }
+      change_phase Fortify game
   | Fortify ->
-      {
-        players = game.players;
-        current_player = next_player game;
-        current_phase = Deploy;
-        territories = game.territories;
-        troops_to_place = game.troops_to_place;
-      }
+      let _ = print_endline "Select a country to move troops from: " in
+      let _ =
+        print_endline (Player.territories_to_string game.current_player)
+      in
+      change_phase Deploy game

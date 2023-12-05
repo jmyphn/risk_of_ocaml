@@ -82,7 +82,9 @@ let get_territory (p : t) (s : string) : Territories.t =
       (fun t ->
         match t with
         | None -> false
-        | Some t -> Territories.get_name t = s)
+        | Some t ->
+            String.lowercase_ascii (Territories.get_name t)
+            = String.lowercase_ascii s)
       p.territories
   in
   match ter with
@@ -130,6 +132,28 @@ let num_territories (p : t) : int =
     (fun acc x -> if x = None then acc else acc + 1)
     0 p.territories
 
+let check_country lst str num =
+  if List.fold_left (fun acc c -> if c = str then acc + 1 else acc) 0 lst = num
+  then num
+  else 0
+
+(** [match_continents lst] Given a list of continents [lst], return the
+    continents which have all of the territories within that specific continent
+    within the list [lst].*)
+let match_continents (lst : Continent.t list) =
+  let c_lst =
+    List.map (fun c -> Continent.get_name c |> Continent.to_string) lst
+  in
+  check_country c_lst "North America" 5
+
+let get_continent (p : t) : int =
+  let lst =
+    List.fold_left
+      (fun acc t -> Territories.get_continent t :: acc)
+      [] (get_territories_lst p)
+  in
+  match_continents lst
+
 let territories_to_string (p : t) : string =
   Array.fold_left
     (fun acc x ->
@@ -138,7 +162,7 @@ let territories_to_string (p : t) : string =
       | Some x1 ->
           acc ^ Territories.get_name x1 ^ ": "
           ^ string_of_int (Territories.get_troops x1)
-          ^ ", ")
+          ^ "\n")
     "" p.territories
 
 (** Given a name [n] and color [c], initializes the player.*)

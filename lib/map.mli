@@ -10,7 +10,7 @@ type territories = Territories.t array
 val get_territories : t -> territories
 (** [get_territories map] returns the territories on the map *)
 
-val get_continents : t -> continents
+(* val get_continents : t -> continents *)
 (** [get_continents map] returns the continents on the map *)
 
 val create_map : Yojson.Basic.t -> t
