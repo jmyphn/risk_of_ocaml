@@ -80,7 +80,7 @@ let rec init_players (n : int) : players =
    continent -> Continent.get_name continent = c) continents with | None ->
    failwith "Not a continent" | Some c -> c *)
 
-(**Initializes the Territories in a game *)
+(**Inihtializes the Territories in a game *)
 let init_territories = path |> Map.create_map |> Map.get_territories
 
 let get_territory_game (s : string) : Territories.t =
