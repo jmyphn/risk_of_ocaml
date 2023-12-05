@@ -165,11 +165,9 @@ let yakutsk = get_territory_from_array "Yakutsk"
    let _ = Territories.init_neighbors alberta [ northwest_territory; alaska;
    ontario; western_us ] *)
 
-(***************************** territories tests
-  ********************************)
+(***************************** territories tests ****************************)
 
-(*----------------------------Territories.get_name
-  -----------------------------*)
+(*----------------------------Territories.get_name -------------------------*)
 let territories_get_name_test out in1 _ =
   assert_equal out (Territories.get_name in1)
 
@@ -214,8 +212,7 @@ let territories_get_name_tests =
     "get name of Japan" >:: territories_get_name_test "Japan" japan;
   ]
 
-(*-----------------Territories.get_troops, add_value & subtract_value
-  ----------*)
+(*------------Territories.get_troops, add_value & subtract_value ----------*)
 let _ = Territories.add_value 5 alaska
 let _ = Territories.add_value 5 alberta
 let _ = Territories.add_value 5 central_america
@@ -393,8 +390,7 @@ let territories_troops_value_tests =
     "get troops of Argentina" >:: territories_get_troops_test 2 argentina;
   ]
 
-(*---------------------------Territories.get_continent
-  -------------------------*)
+(*------------------------Territories.get_continent -------------------------*)
 let territories_get_continent_test out in1 _ =
   assert_equal out (Territories.get_continent in1)
 
@@ -433,8 +429,7 @@ let territories_get_continent_tests =
     >:: territories_get_continent_test "Asia" middle_east;
   ]
 
-(*----------------------------Territories.get_location
-  -------------------------*)
+(*-------------------------Territories.get_location -------------------------*)
 let territories_get_location_test out in1 _ =
   assert_equal out (Territories.get_location in1)
 
@@ -478,8 +473,7 @@ let territories_get_location_tests =
     >:: territories_get_location_test "_afghanistan.png" afghanistan;
   ]
 
-(*----------------------------Territories.get_neighbors
-  ------------------------*)
+(*--------------------------Territories.get_neighbors ------------------------*)
 (* let territories_get_neighbors_test out in1 _ = assert_equal out
    (Territories.get_neighbours in1)
 
