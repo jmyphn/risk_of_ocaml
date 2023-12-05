@@ -110,6 +110,7 @@ let add_territory (p : t) (c : Territories.t) : unit =
   else
     let idx = find_index p.territories None in
     p.territories.(idx) <- Some c;
+    Territories.change_owner c p.name;
     rep_ok p
 
 (** Given a player [p], removes a territory in the Territories array. Requires:
@@ -142,5 +143,5 @@ let territories_to_string (p : t) : string =
           ^ "\n")
     "" p.territories
 
-(** Given a name [n], initializes the player.*)
-let init c : t = { name = "temp"; color = c; territories = Array.make 42 None }
+(** Given a name [n] and color [c], initializes the player.*)
+let init n c : t = { name = n; color = c; territories = Array.make 42 None }

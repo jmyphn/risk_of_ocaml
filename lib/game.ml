@@ -59,16 +59,18 @@ let sample arr size =
     arr.(size - 1) <- None;
     v
 
+let get_player s lst = List.find (fun p -> Player.get_name p = s) lst
+
 (* Given a int [n], initializes players and returns a list of the players
    initialized. USER CHANGES NAME ECT ECT *)
 let rec init_players (n : int) : players =
   match n with
   | 0 -> []
   | a -> (
-      let _ = print_endline ("Choose name for Player" ^ string_of_int a) in
+      let _ = print_endline ("Choose name for Player " ^ string_of_int a) in
       match sample colors_left (arr_size colors_left) with
       | None -> failwith "Too many players"
-      | Some c -> Player.init c :: init_players (a - 1))
+      | Some c -> Player.init (string_of_int n) c :: init_players (a - 1))
 
 (**Initializes the continents in a game.*)
 (* let init_continents = path |> Map.create_map |> Map.get_continents *)
@@ -152,12 +154,19 @@ let attack (atk : territory) (atk_player : player) (def : territory)
     (def_player : player) =
   let _ =
     print_endline
-      (Territories.get_name atk ^ " attacks" ^ Territories.get_name def)
+      (Territories.get_name atk ^ " attacks " ^ Territories.get_name def)
   in
   let atk_troops = Territories.get_troops atk in
   let def_troops = Territories.get_troops def in
+  let _ =
+    print_endline
+      ("Choose how many troops to attack with max 3 or "
+      ^ string_of_int (atk_troops - 1)
+      ^ ", min 1")
+  in
+  let num_atk_dice = int_of_string (read_line ()) in
   let atk_dice =
-    match atk_troops with
+    match num_atk_dice with
     | n when n > 2 -> roll_dice 3
     | n when n > 0 -> roll_dice n
     | _ -> failwith "violates rep_inv"
@@ -175,7 +184,7 @@ let attack (atk : territory) (atk_player : player) (def : territory)
       ( List.rev (List.sort Stdlib.compare a),
         List.rev (List.sort Stdlib.compare d) )
     with
-    | [], [] -> ()
+    | [], [] -> failwith "violates inv"
     | _, [] ->
         print_endline "Attack wins";
         Player.add_territory atk_player def;
@@ -190,8 +199,8 @@ let attack (atk : territory) (atk_player : player) (def : territory)
           Territories.subtract_value 1 atk;
           cmp t t2
   in
-  print_endline "Attack is over";
-  cmp atk_dice def_dice
+  cmp atk_dice def_dice;
+  print_endline "Attack is over"
 
 (** Initializes game given a number of players *)
 let init (numPlayers : int) =
@@ -230,13 +239,24 @@ let get_phase game = game.current_phase
 (** Given a game, return the Territories*)
 let get_territories game = game.territories
 
-let rec get_player_from_territory (ter : Territories.t) (plst : players) =
-  match plst with
-  | [] -> failwith "not found"
-  | h :: t ->
-      let t_list = Player.get_territories_lst h in
-      if List.exists (fun t1 -> t1 = ter) t_list then h
-      else get_player_from_territory ter t
+(* let rec get_player_from_territory (ter : Territories.t) (plst : players) =
+   match plst with | [] -> failwith "not found" | h :: t -> let t_list =
+   Player.get_territories_lst h in if List.exists (fun t1 -> t1 = ter) t_list
+   then h else get_player_from_territory ter t *)
+
+(**Given a player, returns a list of the territories that can attack (have more
+   than one troop)*)
+let can_attack_territories p =
+  let t_lst = Player.get_territories_lst p in
+  List.filter (fun t -> Territories.get_troops t > 1) t_lst
+
+let territories_to_attack t =
+  let neighbours = Territories.get_neighbours t in
+  List.filter
+    (fun n ->
+      let t2 = get_territory_game n in
+      Territories.get_owner t2 <> Territories.get_owner t)
+    neighbours
 
 let phase_to_string (phase : phase) : string =
   match phase with
@@ -311,16 +331,20 @@ let change_phase (game : t) : t =
       change_phase Attack game
   | Attack ->
       let _ = print_endline "Choose which territory to use for attack." in
+      let atk_opt = can_attack_territories game.current_player in
       let _ =
-        print_endline (Player.territories_to_string game.current_player)
+        print_endline (pp_lst (fun t -> Territories.get_name t) atk_opt)
       in
       let atk_ter = Player.get_territory game.current_player (read_line ()) in
+      assert (List.exists (fun t -> t == atk_ter) atk_opt);
       let _ = print_endline "Choose which territory to attack." in
-      let _ = print_endline (Territories.neighbours_to_string atk_ter) in
+      let def_options = territories_to_attack atk_ter in
+      let _ = print_endline (pp_lst (fun s -> s) def_options) in
       let def_input = read_line () in
+      assert (List.exists (fun s -> s = def_input) def_options);
       let def_ter = get_territory_game def_input in
       attack atk_ter game.current_player def_ter
-        (get_player_from_territory def_ter game.players);
+        (get_player (Territories.get_owner def_ter) game.players);
       change_phase Fortify game
   | Fortify ->
       let _ = print_endline "Select a country to move troops from: " in
