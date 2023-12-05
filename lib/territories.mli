@@ -12,7 +12,7 @@ val get_name : t -> string
 val get_troops : t -> int
 (** [get_value] Given a territory [t], return its number of troops. *)
 
-val get_continent : t -> string
+val get_continent : t -> Continent.t
 (** [get_continent] Given a territory [t], return the continent it is in *)
 
 val get_location : t -> string

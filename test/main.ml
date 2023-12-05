@@ -51,25 +51,30 @@ let map = Map.create_map json
 let territories = Map.get_territories map
 
 (* all continents *)
-let continents = Map.get_continents map
+(* let continents = Map.get_continents map *)
 
-let get_continent_from_array name =
-  match Array.find_opt (fun x -> Continent.get_name x = name) continents with
-  | None -> failwith "bruh"
-  | Some v -> v
+(* let get_continent_from_array name = match Array.find_opt (fun x ->
+   Continent.get_name x = name) continents with | None -> failwith "bruh" | Some
+   v -> v *)
 
 let get_territory_from_array name =
   match Array.find_opt (fun x -> Territories.get_name x = name) territories with
   | None -> failwith "bruh"
   | Some v -> v
 
-(* continents *)
-let north_america = get_continent_from_array "North America"
-let south_america = get_continent_from_array "South America"
-let africa = get_continent_from_array "Africa"
-let europe = get_continent_from_array "Europe"
-let asia = get_continent_from_array "Asia"
-let australia = get_continent_from_array "Australia"
+(* Create continents using Continent.of_string *)
+(* let north_america = get_continent_from_array "North America" let
+   south_america = get_continent_from_array "South America" let africa =
+   get_continent_from_array "Africa" let europe = get_continent_from_array
+   "Europe" let asia = get_continent_from_array "Asia" let australia =
+   get_continent_from_array "Australia" *)
+
+let north_america = Continent.of_string "North America"
+let south_america = Continent.of_string "South America"
+let africa = Continent.of_string "Africa"
+let europe = Continent.of_string "Europe"
+let asia = Continent.of_string "Asia"
+let australia = Continent.of_string "Australia"
 
 (***************************** Continent tests ********************************)
 
@@ -80,13 +85,13 @@ let continent_get_name_test out in1 _ =
 let continent_get_name_tests =
   [
     "get name of North America"
-    >:: continent_get_name_test "North America" north_america;
+    >:: continent_get_name_test North_America north_america;
     "get name of South America"
-    >:: continent_get_name_test "South America" south_america;
-    "get name of Africa" >:: continent_get_name_test "Africa" africa;
-    "get name of Europe" >:: continent_get_name_test "Europe" europe;
-    "get name of Asia" >:: continent_get_name_test "Asia" asia;
-    "get name of Australia" >:: continent_get_name_test "Australia" australia;
+    >:: continent_get_name_test South_America south_america;
+    "get name of Africa" >:: continent_get_name_test Africa africa;
+    "get name of Europe" >:: continent_get_name_test Europe europe;
+    "get name of Asia" >:: continent_get_name_test Asia asia;
+    "get name of Australia" >:: continent_get_name_test Australia australia;
   ]
 
 (*----------------------------Continent.get_value ----------------------------*)
@@ -165,11 +170,9 @@ let yakutsk = get_territory_from_array "Yakutsk"
    let _ = Territories.init_neighbors alberta [ northwest_territory; alaska;
    ontario; western_us ] *)
 
-(***************************** territories tests
-  ********************************)
+(***************************** territories tests ****************************)
 
-(*----------------------------Territories.get_name
-  -----------------------------*)
+(*----------------------------Territories.get_name -------------------------*)
 let territories_get_name_test out in1 _ =
   assert_equal out (Territories.get_name in1)
 
@@ -214,8 +217,7 @@ let territories_get_name_tests =
     "get name of Japan" >:: territories_get_name_test "Japan" japan;
   ]
 
-(*-----------------Territories.get_troops, add_value & subtract_value
-  ----------*)
+(*------------Territories.get_troops, add_value & subtract_value ----------*)
 let _ = Territories.add_value 5 alaska
 let _ = Territories.add_value 5 alberta
 let _ = Territories.add_value 5 central_america
@@ -393,48 +395,45 @@ let territories_troops_value_tests =
     "get troops of Argentina" >:: territories_get_troops_test 2 argentina;
   ]
 
-(*---------------------------Territories.get_continent
-  -------------------------*)
+(*------------------------Territories.get_continent -------------------------*)
 let territories_get_continent_test out in1 _ =
   assert_equal out (Territories.get_continent in1)
 
 let territories_get_continent_tests =
   [
     "get continent of Alberta"
-    >:: territories_get_continent_test "North America" alberta;
+    >:: territories_get_continent_test north_america alberta;
     "get continent of Greenland"
-    >:: territories_get_continent_test "North America" greenland;
+    >:: territories_get_continent_test north_america greenland;
     "get continent of Ontario"
-    >:: territories_get_continent_test "North America" ontario;
+    >:: territories_get_continent_test north_america ontario;
     "get continent of Quebec"
-    >:: territories_get_continent_test "North America" quebec;
+    >:: territories_get_continent_test north_america quebec;
     "get continent of Argentina"
-    >:: territories_get_continent_test "South America" argentina;
+    >:: territories_get_continent_test south_america argentina;
     "get continent of Venezuela"
-    >:: territories_get_continent_test "South America" venezuela;
+    >:: territories_get_continent_test south_america venezuela;
     "get continent of Eastern Australia"
-    >:: territories_get_continent_test "Australia" eastern_australia;
+    >:: territories_get_continent_test australia eastern_australia;
     "get continent of Western Australia"
-    >:: territories_get_continent_test "Australia" western_australia;
-    "get continent of Iceland"
-    >:: territories_get_continent_test "Europe" iceland;
+    >:: territories_get_continent_test australia western_australia;
+    "get continent of Iceland" >:: territories_get_continent_test europe iceland;
     "get continent of Scandinavia"
-    >:: territories_get_continent_test "Europe" scandinavia;
+    >:: territories_get_continent_test europe scandinavia;
     "get continent of Western Europe"
-    >:: territories_get_continent_test "Europe" western_europe;
-    "get continent of Egypt" >:: territories_get_continent_test "Africa" egypt;
+    >:: territories_get_continent_test europe western_europe;
+    "get continent of Egypt" >:: territories_get_continent_test africa egypt;
     "get continent of Madagascar"
-    >:: territories_get_continent_test "Africa" madagascar;
-    "get continent of Congo" >:: territories_get_continent_test "Africa" congo;
-    "get continent of Japan" >:: territories_get_continent_test "Asia" japan;
-    "get continent of Siam" >:: territories_get_continent_test "Asia" siam;
-    "get continent of Ural" >:: territories_get_continent_test "Asia" ural;
+    >:: territories_get_continent_test africa madagascar;
+    "get continent of Congo" >:: territories_get_continent_test africa congo;
+    "get continent of Japan" >:: territories_get_continent_test asia japan;
+    "get continent of Siam" >:: territories_get_continent_test asia siam;
+    "get continent of Ural" >:: territories_get_continent_test asia ural;
     "get continent of Middle East"
-    >:: territories_get_continent_test "Asia" middle_east;
+    >:: territories_get_continent_test asia middle_east;
   ]
 
-(*----------------------------Territories.get_location
-  -------------------------*)
+(*-------------------------Territories.get_location -------------------------*)
 let territories_get_location_test out in1 _ =
   assert_equal out (Territories.get_location in1)
 
@@ -478,8 +477,7 @@ let territories_get_location_tests =
     >:: territories_get_location_test "_afghanistan.png" afghanistan;
   ]
 
-(*----------------------------Territories.get_neighbors
-  ------------------------*)
+(*--------------------------Territories.get_neighbors ------------------------*)
 (* let territories_get_neighbors_test out in1 _ = assert_equal out
    (Territories.get_neighbours in1)
 

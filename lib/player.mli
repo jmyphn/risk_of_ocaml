@@ -33,6 +33,11 @@ val num_territories : t -> int
 (** [num_Territories p] Given a player [p] returns the number of Territories
     owned by [p]. *)
 
+val get_continent : t -> int
+(** [get_continet p] Given a player [p], returns the continents owned by [p].
+    Possible continents are "Asia","North America","Africa","South
+    America","Europe", and "Australia"*)
+
 val territories_to_string : t -> string
 
 val init : string -> Raylib.Color.t -> t
