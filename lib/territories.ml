@@ -7,7 +7,7 @@ type owner = string
 type t = {
   name : string;
   mutable troops : int;
-  continent : string;
+  continent : Continent.t;
   location : string;
   neighbours : string list;
   mutable owner : owner;
@@ -25,10 +25,15 @@ let neighbours_to_string c =
   List.fold_left (fun acc t -> acc ^ t) "" c.neighbours
 
 let init json : t =
+  let continent_str = json |> Y.member "continent" |> Y.to_string in
+  let continent =
+    try Continent.of_string continent_str
+    with Failure _ -> failwith "Invalid continent in JSON"
+  in
   {
     name = json |> Y.member "name" |> Y.to_string;
     troops = 0;
-    continent = json |> Y.member "continent" |> Y.to_string;
+    continent;
     location = json |> Y.member "tag" |> Y.to_string;
     neighbours =
       json |> Y.member "neighbors" |> Y.to_list |> List.map Y.to_string;

@@ -264,7 +264,11 @@ let phase_to_string (phase : phase) : string =
   | Attack -> "attack"
   | Fortify -> "fortify"
 
-let get_troops (_ : player) : int = Random.int 10
+(** [get_troops p] given a player [p], return the amount of troops they are able
+    to deploy*)
+let get_troops (p : player) : int =
+  let n = (Player.num_territories p / 3) + Player.get_continent p in
+  if n < 3 then 3 else n
 
 (** [Change_phase p g] given phase [p] and a game [g] return the game with the
     phase changed to phase [p]*)
@@ -284,8 +288,8 @@ let change_phase p g =
     troops. *)
 let deploy_helper g =
   let new_troops = ref (get_troops g.current_player) in
-  print_endline (string_of_int !new_troops);
-  if !new_troops = 0 then print_endline "You have no troops to deploy"
+  if !new_troops = 0 then
+    failwith "IMPOSSIBLE: Each player must have 3 troops minimum"
   else
     while !new_troops > 0 do
       let _ =
@@ -351,5 +355,4 @@ let change_phase (game : t) : t =
       let _ =
         print_endline (Player.territories_to_string game.current_player)
       in
-
       change_phase Deploy game
