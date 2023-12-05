@@ -35,5 +35,6 @@ val num_territories : t -> int
 
 val territories_to_string : t -> string
 
-val init : Raylib.Color.t -> t
-(** [init c] Initializes a player given a color [Raylib.Color.t].*)
+val init : string -> Raylib.Color.t -> t
+(** [init n c] Initializes a player given a name [string] and color
+    [Raylib.Color.t].*)
