@@ -186,41 +186,7 @@ let yakutsk = get_territory_from_array "Yakutsk"
    let _ = Territories.init_neighbors alberta [ northwest_territory; alaska;
    ontario; western_us ] *)
 
-(***************************** Territories tests ****************************)
-
-(*---------------------Territories.change_owner & get_owner ----------------*)
-
-let _ = Territories.change_owner ontario "1"
-let _ = Territories.change_owner siam "2"
-let _ = Territories.change_owner alaska "3"
-let _ = Territories.change_owner alberta "4"
-let _ = Territories.change_owner congo "5"
-let _ = Territories.change_owner indonesia "6"
-let _ = Territories.change_owner peru "1"
-let _ = Territories.change_owner kamchatka "2"
-let _ = Territories.change_owner new_guinea "3"
-let _ = Territories.change_owner great_britain "4"
-let _ = Territories.change_owner scandinavia "5"
-let _ = Territories.change_owner egypt "6"
-
-let territories_owner_test out in1 _ =
-  assert_equal out (Territories.get_owner in1)
-
-let territories_owner_tests =
-  [
-    "get owner of ontario" >:: territories_owner_test "1" ontario;
-    "get owner of siam" >:: territories_owner_test "2" siam;
-    "get owner of alaska" >:: territories_owner_test "3" alaska;
-    "get owner of alberta" >:: territories_owner_test "4" alberta;
-    "get owner of congo" >:: territories_owner_test "5" congo;
-    "get owner of indonesia" >:: territories_owner_test "6" indonesia;
-    "get owner of peru" >:: territories_owner_test "1" peru;
-    "get owner of kamchatka" >:: territories_owner_test "2" kamchatka;
-    "get owner of new guinea" >:: territories_owner_test "3" new_guinea;
-    "get owner of great britain" >:: territories_owner_test "4" great_britain;
-    "get owner of scandinavia" >:: territories_owner_test "5" scandinavia;
-    "get owner of egypt" >:: territories_owner_test "6" egypt;
-  ]
+(************************* Territories & Player tests *************************)
 
 (*----------------------------Territories.get_name -------------------------*)
 let territories_get_name_test out in1 _ =
@@ -537,12 +503,156 @@ let territories_get_location_tests =
    northwest_territory; alaska; ontario; western_us ] alberta; ] *)
 
 (*--------------------------- Player Examples --------------------------------*)
-let p1 = Player.init "temp" Raylib.Color.gray
+let p1 = Player.init "1" Raylib.Color.gray
+let p2 = Player.init "2" Raylib.Color.green
+let p3 = Player.init "3" Raylib.Color.yellow
+let p4 = Player.init "4" Raylib.Color.red
+let p5 = Player.init "5" Raylib.Color.blue
+let p6 = Player.init "6" Raylib.Color.purple
 
-(***************************** Player tests **********************************)
+(*----------------------------Player.get_name -------------------------*)
+let player_get_name_test out in1 _ = assert_equal out (Player.get_name in1)
 
-(*-------------------------- Get_territories_List
-  ------------------------------*)
+let player_get_name_tests =
+  [
+    "get name of player 1" >:: player_get_name_test "1" p1;
+    "get name of player 2" >:: player_get_name_test "2" p2;
+    "get name of player 3" >:: player_get_name_test "3" p3;
+    "get name of player 4" >:: player_get_name_test "4" p4;
+    "get name of player 5" >:: player_get_name_test "5" p5;
+    "get name of player 6" >:: player_get_name_test "6" p6;
+  ]
+
+(*----------------------------Player.get_color -------------------------*)
+let player_get_color_test out in1 _ = assert_equal out (Player.get_color in1)
+
+let player_get_color_tests =
+  [
+    "get color of player 1" >:: player_get_color_test Raylib.Color.gray p1;
+    "get color of player 2" >:: player_get_color_test Raylib.Color.green p2;
+    "get color of player 3" >:: player_get_color_test Raylib.Color.yellow p3;
+    "get color of player 4" >:: player_get_color_test Raylib.Color.red p4;
+    "get color of player 5" >:: player_get_color_test Raylib.Color.blue p5;
+    "get color of player 6" >:: player_get_color_test Raylib.Color.purple p6;
+  ]
+
+(* -----------Initialize player's territories using Player.add_territory &
+   remove_territory --------------------------------------------------------*)
+
+(* Let player 1 own: Alaska, Quebec, Scandinavia, Japan, China, Congo, New
+   Guinea *)
+let _ = Player.add_territory p1 alaska
+let _ = Player.add_territory p1 kamchatka
+let _ = Player.add_territory p1 quebec
+let _ = Player.add_territory p1 afghanistan
+let _ = Player.remove_territory p1 kamchatka
+let _ = Player.add_territory p1 scandinavia
+let _ = Player.add_territory p1 japan
+let _ = Player.add_territory p1 china
+let _ = Player.add_territory p1 indonesia
+let _ = Player.remove_territory p1 afghanistan
+let _ = Player.add_territory p1 congo
+let _ = Player.add_territory p1 new_guinea
+let _ = Player.remove_territory p1 indonesia
+
+(* Let player 2 own: Ontario, Northwest Territory, Great Britain, Kamchatka,
+   Ural, South Africa, Indonesia *)
+let _ = Player.add_territory p2 ontario
+let _ = Player.add_territory p2 mongolia
+let _ = Player.add_territory p2 northwest_territory
+let _ = Player.add_territory p2 great_britain
+let _ = Player.add_territory p2 kamchatka
+let _ = Player.add_territory p2 middle_east
+let _ = Player.remove_territory p2 mongolia
+let _ = Player.add_territory p2 ural
+let _ = Player.add_territory p2 south_africa
+let _ = Player.remove_territory p2 middle_east
+let _ = Player.add_territory p2 indonesia
+
+(* Let player 3 own: Eastern Australia, Egypt, Madagascar, Iceland, India,
+   Venezuela, Brazil *)
+let _ = Player.add_territory p3 greenland
+let _ = Player.add_territory p3 eastern_australia
+let _ = Player.add_territory p3 egypt
+let _ = Player.remove_territory p3 greenland
+let _ = Player.add_territory p3 madagascar
+let _ = Player.add_territory p3 iceland
+let _ = Player.add_territory p3 india
+let _ = Player.add_territory p3 venezuela
+let _ = Player.add_territory p3 brazil
+
+(* Let player 4 own: North Africa and Ukraine *)
+let _ = Player.add_territory p4 north_africa
+let _ = Player.add_territory p4 ukraine
+
+(* Let player 5 own: Central America *)
+let _ = Player.add_territory p5 central_america
+
+(* Let player 6 own no territories *)
+
+(*----------------------------Player.num_territories -------------------------*)
+
+let player_num_territories_test out in1 _ =
+  assert_equal out (Player.num_territories in1)
+
+let player_num_territories_tests =
+  [
+    "num territories of player 1" >:: player_num_territories_test 7 p1;
+    "num territories of player 2" >:: player_num_territories_test 7 p2;
+    "num territories of player 3" >:: player_num_territories_test 7 p3;
+    "num territories of player 4" >:: player_num_territories_test 2 p4;
+    "num territories of player 5" >:: player_num_territories_test 1 p5;
+    "num territories of player 6" >:: player_num_territories_test 0 p6;
+  ]
+
+(*---------------------Territories.change_owner & get_owner ----------------*)
+
+(* Let player 1 now own: Ontario, Quebec, Scandinavia, Japan, China, India, New
+   Guinea *)
+
+(* Let player 2 now own: China, Northwest Territory, Great Britain, Ukraine,
+   Ural, South Africa, Indonesia *)
+
+(* Let player 3 now own: Eastern Australia, Egypt, Madagascar, Iceland, Alaska,
+   Venezuela, Brazil *)
+
+(* Let player 4 now own: North Africa and Kamchatka *)
+
+(* Let player 5 now own: Congo *)
+
+(* Let player 6 still own no territories *)
+
+let _ = Territories.change_owner ontario "1"
+let _ = Territories.change_owner china "2"
+let _ = Territories.change_owner alaska "3"
+let _ = Territories.change_owner india "1"
+let _ = Territories.change_owner congo "5"
+let _ = Territories.change_owner central_america "1"
+let _ = Territories.change_owner kamchatka "4"
+let _ = Territories.change_owner ukraine "2"
+
+let territories_owner_test out in1 _ =
+  assert_equal out (Territories.get_owner in1)
+
+let territories_owner_tests =
+  [
+    "get owner of ontario" >:: territories_owner_test "1" ontario;
+    "get owner of alaska" >:: territories_owner_test "3" alaska;
+    "get owner of congo" >:: territories_owner_test "5" congo;
+    "get owner of indonesia" >:: territories_owner_test "2" indonesia;
+    "get owner of kamchatka" >:: territories_owner_test "4" kamchatka;
+    "get owner of new guinea" >:: territories_owner_test "1" new_guinea;
+    "get owner of great britain" >:: territories_owner_test "2" great_britain;
+    "get owner of scandinavia" >:: territories_owner_test "1" scandinavia;
+    "get owner of egypt" >:: territories_owner_test "3" egypt;
+    "get owner of china" >:: territories_owner_test "2" china;
+    "get owner of india" >:: territories_owner_test "1" india;
+    "get owner of central america"
+    >:: territories_owner_test "1" central_america;
+    "get owner of ukraine" >:: territories_owner_test "2" ukraine;
+  ]
+
+(*------------------------- Get_territories_List --------------------------*)
 let get_territories_list_test out in1 _ =
   assert_equal ~printer:pp_country_list
     ~msg:
@@ -552,7 +662,7 @@ let get_territories_list_test out in1 _ =
     (Player.get_territories_lst in1)
 
 let get_territories_list_tests =
-  [ "get_territories_list empty" >:: get_territories_list_test [] p1 ]
+  [ "get_territories_list empty" >:: get_territories_list_test [] p6 ]
 
 (*------------------------------ add_country ---------------------------------*)
 (* let add_country_test out in1 in2 _ = Player.add_country in1 in2; assert_equal
@@ -563,6 +673,8 @@ let get_territories_list_tests =
    let add_country_test = [] *)
 
 (******************************************************************************)
+
+(******************************** Game tests **********************************)
 
 let tests =
   "main test suite"
@@ -577,7 +689,9 @@ let tests =
            territories_troops_value_tests;
            territories_get_continent_tests;
            territories_get_location_tests;
-           (* territories_get_neighbors_tests; *)
+           player_get_name_tests (* territories_get_neighbors_tests; *);
+           player_get_color_tests;
+           player_num_territories_tests;
          ]
 
 let _ = run_test_tt_main tests

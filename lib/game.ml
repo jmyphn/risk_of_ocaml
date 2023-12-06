@@ -86,6 +86,8 @@ let check_player_lost g p =
   if List.length (Player.get_territories_lst p) = 0 then remove_player g p
   else ()
 
+let get_game_over g = g.game_over
+
 (****************************************************************************)
 (*************************************************************************)
 
