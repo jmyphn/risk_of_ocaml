@@ -66,8 +66,7 @@ let draw_territories_of_player (player : L.Player.t) =
           let location = L.Territories.get_location territory in
           R.draw_text
             (string_of_int (L.Territories.get_troops territory))
-            (fst location - 20)
-            (snd location) 20
+            (fst location) (snd location) 20
             (L.Player.get_color player))
     territories
 
