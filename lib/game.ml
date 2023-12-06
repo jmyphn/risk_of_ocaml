@@ -42,6 +42,7 @@ let rec pp_lst pp_elt lst =
 
 let pp_territory_list t = pp_lst (fun s -> s) t
 let get_player s lst = List.find (fun p -> Player.get_name p = s) lst
+let get_players game = game.players
 
 (***************************Sampling helpers**********************************)
 
