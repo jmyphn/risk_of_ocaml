@@ -62,8 +62,6 @@ let setup () =
   init_window 1200 800 "risk_of_ocaml";
   set_target_fps 60;
 
-  (* Background images for each state *)
-  (* start *)
   let bg_start = load_image "assets/start/StartBackground.png" in
   let bg_start_texture = load_texture_from_image bg_start in
   unload_image bg_start;
@@ -74,7 +72,7 @@ let setup () =
   unload_image bg_menu;
 
   (* state button *)
-  let bg_active = load_image "assets/BlankBackground.png" in
+  let bg_active = load_image "assets/MapBackground.png" in
   let bg_active_texture = load_texture_from_image bg_active in
   unload_image bg_active;
 
@@ -149,14 +147,13 @@ let setup () =
   unload_image five_pb_highlight;
 
   (* active state *)
-
-  (* blue countries *)
   let six_pb = load_image "assets/menu/6PB.png" in
   let six_pb_texture = load_texture_from_image six_pb in
   unload_image six_pb;
   let six_pb_highlight = load_image "assets/menu/6PBHighlight.png" in
   let six_pb_highlight_texture = load_texture_from_image six_pb_highlight in
   unload_image six_pb_highlight;
+
   ( bg_start_texture,
     bg_menu_texture,
     bg_active_texture,
@@ -199,7 +196,7 @@ let rec loop game_state textures =
         five_pb_button,
         five_pb_button_highlight,
         six_pb_button,
-        six_pb_button_highlight (* *) ) =
+        six_pb_button_highlight ) =
     textures
   in
   match R.window_should_close () with
@@ -246,7 +243,22 @@ let rec loop game_state textures =
       | ACTIVE ->
           R.begin_drawing ();
           R.clear_background R.Color.raywhite;
+
+          (* making active state *)
+
+          (* draw the map itself *)
           R.draw_texture active 0 0 R.Color.raywhite;
+
+          (* draw current player *)
+          let curr_player = L.Game.get_current_player (Option.get !game) in
+          let curr_player_name = L.Player.get_name curr_player in
+          let curr_player_color = L.Player.get_color curr_player in
+          let curr_player_string =
+            "It is Player " ^ curr_player_name ^ "'s turn"
+          in
+          R.draw_text curr_player_string 378 714 50 curr_player_color;
+
+          (* drawing the territory textboxes on the screen *)
 
           (* change state *)
           R.draw_texture active_button 300 350 R.Color.raywhite;

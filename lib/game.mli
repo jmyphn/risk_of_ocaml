@@ -13,6 +13,10 @@ val init : int -> t
 (** [init] Given an int [n] representing the number of players, initialize the
     game*)
 
+val get_players : t -> player list
+(** [get_players game] Given a game [game], returns the players in this game as
+    a [player list]. *)
+
 val get_current_player : t -> player
 (** [get_current_player] Given a game [g], return the current player*)
 
