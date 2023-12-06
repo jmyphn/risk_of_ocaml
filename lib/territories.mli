@@ -15,14 +15,12 @@ val get_troops : t -> int
 val get_continent : t -> Continent.t
 (** [get_continent] Given a territory [t], return the continent it is in *)
 
-val get_location : t -> string
-(** [get_location] Given a territory [t], return the extension tag of the
-    territory *)
+val get_location : t -> int * int
+(** [get_location] Given a territory [t], return the location of the territory
+    on the screen *)
 
 val get_neighbours : t -> string list
-(** [get_neighbours] Given a territory [t], return its neighboors
-
-    CAN IMPLEMENT MORE EFFICIENT DATA STRUCTURE *)
+(** [get_neighbours] Given a territory [t], return its neighbors *)
 
 val neighbours_to_string : t -> string
 

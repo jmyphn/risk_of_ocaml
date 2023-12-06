@@ -8,7 +8,8 @@ type t = {
   name : string;
   mutable troops : int;
   continent : Continent.t;
-  location : string;
+  location_x : int;
+  location_y : int;
   neighbours : string list;
   mutable owner : owner;
 }
@@ -18,7 +19,7 @@ let get_owner c = c.owner
 let get_name c = c.name
 let get_troops c = c.troops
 let get_continent c = c.continent
-let get_location c = c.location
+let get_location c = (c.location_x, c.location_y)
 let get_neighbours c = c.neighbours
 
 let neighbours_to_string c =
@@ -34,7 +35,8 @@ let init json : t =
     name = json |> Y.member "name" |> Y.to_string;
     troops = 0;
     continent;
-    location = json |> Y.member "tag" |> Y.to_string;
+    location_x = json |> Y.member "location_x" |> Y.to_int;
+    location_y = json |> Y.member "location_y" |> Y.to_int;
     neighbours =
       json |> Y.member "neighbors" |> Y.to_list |> List.map Y.to_string;
     owner = "";
