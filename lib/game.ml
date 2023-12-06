@@ -307,9 +307,9 @@ let rec fortify_territories tlst acc (visited : string list) =
   let visited' = Territories.get_name t :: visited in
   let n = owned_neighbours t in
   let new_t =
-    List.filter (fun t1 -> List.exists (fun t2 -> t1 <> t2) visited) n
+    List.filter (fun t1 -> List.exists (fun t2 -> t1 = t2) visited = false) n
   in
-  let acc' = List.sort_uniq Stdlib.compare (n @ acc) in
+  let acc' = List.sort_uniq Stdlib.compare (new_t @ acc) in
   match new_t with
   | [] -> acc'
   | _ ->
