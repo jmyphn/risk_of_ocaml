@@ -108,6 +108,22 @@ let continent_get_value_tests =
     "get value of Australia" >:: continent_get_value_test 2 australia;
   ]
 
+(*----------------------------Continent.to_string ----------------------------*)
+let continent_to_string_test out in1 _ =
+  assert_equal out (Continent.to_string (Continent.get_name in1))
+
+let continent_to_string_tests =
+  [
+    "to_string North America"
+    >:: continent_to_string_test "North America" north_america;
+    "to_string South America"
+    >:: continent_to_string_test "South America" south_america;
+    "to_string Africa" >:: continent_to_string_test "Africa" africa;
+    "to_string Europe" >:: continent_to_string_test "Europe" europe;
+    "to_string Asia" >:: continent_to_string_test "Asia" asia;
+    "to_string Australia" >:: continent_to_string_test "Australia" australia;
+  ]
+
 (*--------------------------- Country Examples -------------------------------*)
 
 (* North American territories*)
@@ -521,6 +537,7 @@ let tests =
            get_territories_list_tests;
            continent_get_name_tests;
            continent_get_value_tests;
+           continent_to_string_tests;
            territories_get_name_tests;
            territories_troops_value_tests;
            territories_get_continent_tests;
