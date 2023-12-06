@@ -34,6 +34,17 @@ let colors_left : Raylib.Color.t option array =
     Some Raylib.Color.purple;
   |]
 
+(*************************** Helpers **********************************)
+let rec pp_lst pp_elt lst =
+  match lst with
+  | [] -> ""
+  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
+
+let pp_territory_list t = pp_lst (fun s -> s) t
+let get_player s lst = List.find (fun p -> Player.get_name p = s) lst
+
+(***************************Sampling helpers**********************************)
+
 (**Returns the number of non-None elements in an option array that has shifted
    all None elements right. Requires: All Some values are left of all None
    values. *)
@@ -58,9 +69,11 @@ let sample arr size =
     arr.(i) <- arr.(size - 1);
     arr.(size - 1) <- None;
     v
+(*************************************************************************)
 
-let get_player s lst = List.find (fun p -> Player.get_name p = s) lst
+(*************************************************************************)
 
+(*************************** Initialization**********************************)
 (* Given a int [n], initializes players and returns a list of the players
    initialized. USER CHANGES NAME ECT ECT *)
 let rec init_players (n : int) : players =
@@ -140,17 +153,29 @@ let assign_troops_helper t p =
 
 let assign_troops n plst = List.map (assign_troops_helper n) plst
 
+(** Initializes game given a number of players *)
+let init (numPlayers : int) =
+  let plist =
+    assign_troops
+      (num_troops_per_player numPlayers)
+      (assign_Territories (init_players numPlayers))
+  in
+  {
+    players = plist;
+    current_player = List.hd plist;
+    current_phase = Deploy;
+    territories = init_territories;
+    troops_to_place = 0;
+  }
+
+(****************************************************************************)
+
+(******************************* ATTACK****************************************)
+
 let rec roll_dice (n : int) : int list =
   match n with
   | 0 -> []
   | _ -> Random.int 6 :: roll_dice (n - 1)
-
-let rec pp_lst pp_elt lst =
-  match lst with
-  | [] -> ""
-  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
-
-let pp_territory_list t = pp_lst (fun s -> s) t
 
 (**Given a player, returns a list of the territories that can attack (have more
    than one troop)*)
@@ -252,48 +277,9 @@ and attacking atk atk_player def def_player game =
   in
   cmp atk_dice def_dice
 
-(** Initializes game given a number of players *)
-let init (numPlayers : int) =
-  let plist =
-    assign_troops
-      (num_troops_per_player numPlayers)
-      (assign_Territories (init_players numPlayers))
-  in
-  {
-    players = plist;
-    current_player = List.hd plist;
-    current_phase = Deploy;
-    territories = init_territories;
-    troops_to_place = 0;
-  }
+(****************************************************************************)
 
-(** Given a game, return the current player *)
-let get_current_player game = game.current_player
-
-(* Return the next player given a list of players INEFFICIENT: IMPLEMENT
-   BETTER*)
-let rec next_player_helper plist cp original =
-  match plist with
-  | [] -> failwith ""
-  | [ _ ] -> List.hd original
-  | h1 :: h2 :: t ->
-      if h1 = cp then h2 else next_player_helper (h2 :: t) cp original
-
-(** given a game, return the next player*)
-let next_player game =
-  next_player_helper game.players game.current_player game.players
-
-(** Given a game, return the phase*)
-let get_phase game = game.current_phase
-
-(** Given a game, return the Territories*)
-let get_territories game = game.territories
-
-(* let rec get_player_from_territory (ter : Territories.t) (plst : players) =
-   match plst with | [] -> failwith "not found" | h :: t -> let t_list =
-   Player.get_territories_lst h in if List.exists (fun t1 -> t1 = ter) t_list
-   then h else get_player_from_territory ter t *)
-
+(******************************Fortify***********************************)
 let owned_neighbours t =
   let neighbours = Territories.get_neighbours t in
   List.filter
@@ -318,7 +304,7 @@ let rec fortify_territories tlst acc (visited : string list) =
 
 let fortify p =
   let _ = print_endline "Select a territory to move troops from: " in
-  let _ = Player.territories_to_string p in
+  let _ = print_endline (Player.territories_to_string p) in
   let t1 = get_territory_game (read_line ()) in
   let _ =
     print_endline
@@ -333,29 +319,13 @@ let fortify p =
   Territories.add_value n t2;
   Territories.subtract_value n t1
 
-let phase_to_string (phase : phase) : string =
-  match phase with
-  | Deploy -> "deploy"
-  | Attack -> "attack"
-  | Fortify -> "fortify"
+(****************************************************************************)
 
 (** [get_troops p] given a player [p], return the amount of troops they are able
     to deploy*)
 let get_troops (p : player) : int =
   let n = (Player.num_territories p / 3) + Player.get_continent p in
   if n < 3 then 3 else n
-
-(** [Change_phase p g] given phase [p] and a game [g] return the game with the
-    phase changed to phase [p]*)
-let change_phase p g =
-  rep_ok
-    {
-      players = g.players;
-      current_player = g.current_player;
-      current_phase = p;
-      territories = g.territories;
-      troops_to_place = g.troops_to_place;
-    }
 
 (** [Deploy_helper g] given a game [g], tell the player to deploy their troops
     in their territories and deploy those troops int the cooresponding
@@ -393,6 +363,50 @@ let deploy_helper g =
       new_troops := !new_troops - !troop_input
     done;
   print_endline "You have no more troops to deploy"
+
+(**********************Phase change helpers************************************)
+let phase_to_string (phase : phase) : string =
+  match phase with
+  | Deploy -> "deploy"
+  | Attack -> "attack"
+  | Fortify -> "fortify"
+
+(** [Change_phase p g] given phase [p] and a game [g] return the game with the
+    phase changed to phase [p]*)
+let change_phase p g =
+  rep_ok
+    {
+      players = g.players;
+      current_player = g.current_player;
+      current_phase = p;
+      territories = g.territories;
+      troops_to_place = g.troops_to_place;
+    }
+
+(** Given a game, return the current player *)
+let get_current_player game = game.current_player
+
+(* Return the next player given a list of players INEFFICIENT: IMPLEMENT
+   BETTER*)
+let rec next_player_helper plist cp original =
+  match plist with
+  | [] -> failwith ""
+  | [ _ ] -> List.hd original
+  | h1 :: h2 :: t ->
+      if h1 = cp then h2 else next_player_helper (h2 :: t) cp original
+
+(** given a game, return the next player*)
+let next_player game =
+  next_player_helper game.players game.current_player game.players
+
+(** Given a game, return the phase*)
+let get_phase game = game.current_phase
+
+(** Given a game, return the Territories*)
+let get_territories game = game.territories
+(**********************************************************)
+
+(********************** Phase Change **************************************)
 
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
