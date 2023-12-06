@@ -56,10 +56,25 @@ let highlight_button_phase mouse hitbox highlight (x, y) =
     | false -> R.draw_texture highlight x y Color.raywhite
     | true -> game := Some (L.Game.change_phase (Option.get !game))
 
+let draw_territories_of_player (player : L.Player.t) =
+  let territories = L.Player.get_territories player in
+  Array.iter
+    (fun elem ->
+      match elem with
+      | None -> ()
+      | Some territory ->
+          let location = L.Territories.get_location territory in
+          R.draw_text
+            (string_of_int (L.Territories.get_troops territory))
+            (fst location - 20)
+            (snd location) 20
+            (L.Player.get_color player))
+    territories
+
 (*Game setup function*)
 let setup () =
   let open R in
-  init_window 1200 800 "risk_of_ocaml";
+  init_window 1400 900 "risk_of_ocaml";
   set_target_fps 60;
 
   let bg_start = load_image "assets/start/StartBackground.png" in
@@ -256,9 +271,19 @@ let rec loop game_state textures =
           let curr_player_string =
             "It is Player " ^ curr_player_name ^ "'s turn"
           in
-          R.draw_text curr_player_string 378 714 50 curr_player_color;
+          R.draw_text curr_player_string 378 811 50 curr_player_color;
 
-          (* drawing the territory textboxes on the screen *)
+          (* draw the territory textboxes on the screen *)
+          let players = L.Game.get_players (Option.get !game) in
+          (* for every player in the current game: for every territory in that
+             player's option array: check whether the territory is Some or None;
+             if Some territory, then get the territory's location tuple; draw
+             the territory text box on the screen with the player's associated
+             color *)
+          let _ =
+            List.iter (fun player -> draw_territories_of_player player) players
+          in
+          ();
 
           (* change state *)
           R.draw_texture active_button 300 350 R.Color.raywhite;

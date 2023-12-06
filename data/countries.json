@@ -8,7 +8,8 @@
         "Alberta",
         "Kamchatka"
       ],
-      "tag": "_alaska.png"
+      "location_x": 63,
+      "location_y": 125
     },
     {
       "name": "Alberta",
@@ -19,7 +20,8 @@
         "Ontario",
         "Western US"
       ],
-      "tag": "_alberta.png"
+      "location_x": 159,
+      "location_y": 154
     },
     {
       "name": "Central America",
@@ -29,7 +31,8 @@
         "Eastern US",
         "Venezuela"
       ],
-      "tag": "_ca.png"
+      "location_x": 207,
+      "location_y": 388
     },
     {
       "name": "Eastern US",
@@ -40,7 +43,8 @@
         "Ontario",
         "Quebec"
       ],
-      "tag": "_eus.png"
+      "location_x": 265,
+      "location_y": 260
     },
     {
       "name": "Greenland",
@@ -51,7 +55,8 @@
         "Ontario",
         "Quebec"
       ],
-      "tag": "_greenland.png"
+      "location_x": 400,
+      "location_y": 81
     },
     {
       "name": "Northwest Territory",
@@ -62,7 +67,8 @@
         "Ontario",
         "Greenland"
       ],
-      "tag": "_nw_territory.png"
+      "location_x": 180,
+      "location_y": 120
     },
     {
       "name": "Ontario",
@@ -75,7 +81,8 @@
         "Quebec",
         "Greenland"
       ],
-      "tag": "_ontario.png"
+      "location_x": 242,
+      "location_y": 206
     },
     {
       "name": "Quebec",
@@ -85,7 +92,8 @@
         "Ontario",
         "Greenland"
       ],
-      "tag": "_quebec.png"
+      "location_x": 325,
+      "location_y": 211
     },
     {
       "name": "Western US",
@@ -96,7 +104,8 @@
         "Eastern US",
         "Central America"
       ],
-      "tag": "_wus.png"
+      "location_x": 159,
+      "location_y": 286
     },
     {
       "name": "Argentina",
@@ -105,7 +114,8 @@
         "Peru",
         "Brazil"
       ],
-      "tag": "_arg.png"
+      "location_x": 295,
+      "location_y": 662
     },
     {
       "name": "Brazil",
@@ -116,7 +126,8 @@
         "Venezuela",
         "North Africa"
       ],
-      "tag": "_brazil.png"
+      "location_x": 342,
+      "location_y": 549
     },
     {
       "name": "Venezuela",
@@ -126,7 +137,8 @@
         "Brazil",
         "Central America"
       ],
-      "tag": "_venezuela.png"
+      "location_x": 248,
+      "location_y": 462
     },
     {
       "name": "Peru",
@@ -136,7 +148,8 @@
         "Brazil",
         "Argentina"
       ],
-      "tag": "_peru.png"
+      "location_x": 255,
+      "location_y": 544
     },
     {
       "name": "Eastern Australia",
@@ -145,7 +158,8 @@
         "Western Australia",
         "New Guinea"
       ],
-      "tag": "_east_australia.png"
+      "location_x": 1139,
+      "location_y": 706
     },
     {
       "name": "Indonesia",
@@ -155,7 +169,8 @@
         "New Guinea",
         "Western Australia"
       ],
-      "tag": "_indonesia.png"
+      "location_x": 967,
+      "location_y": 604
     },
     {
       "name": "New Guinea",
@@ -165,7 +180,8 @@
         "Eastern Australia",
         "Western Australia"
       ],
-      "tag": "_new_guinea.png"
+      "location_x": 1120,
+      "location_y": 575
     },
     {
       "name": "Western Australia",
@@ -175,7 +191,8 @@
         "Eastern Australia",
         "New Guinea"
       ],
-      "tag": "_west_australia.png"
+      "location_x": 1083,
+      "location_y": 708
     },
     {
       "name": "Great Britain",
@@ -186,7 +203,8 @@
         "Northern Europe",
         "Western Europe"
       ],
-      "tag": "_great_britain.png"
+      "location_x": 498,
+      "location_y": 260
     },
     {
       "name": "Iceland",
@@ -196,7 +214,8 @@
         "Scandinavia",
         "Greenland"
       ],
-      "tag": "_iceland.png"
+      "location_x": 498,
+      "location_y": 158
     },
     {
       "name": "Northern Europe",
@@ -208,7 +227,8 @@
         "Southern Europe",
         "Ukraine"
       ],
-      "tag": "_n_europe.png"
+      "location_x": 566,
+      "location_y": 284
     },
     {
       "name": "Scandinavia",
@@ -219,7 +239,8 @@
         "Northern Europe",
         "Ukraine"
       ],
-      "tag": "_scandanavia.png"
+      "location_x": 586,
+      "location_y": 170
     },
     {
       "name": "Southern Europe",
@@ -233,7 +254,8 @@
         "Egypt",
         "North Africa"
       ],
-      "tag": "_s_europe.png"
+      "location_x": 611,
+      "location_y": 354
     },
     {
       "name": "Ukraine",
@@ -246,7 +268,8 @@
         "Middle East",
         "Afghanistan"
       ],
-      "tag": "_ukraine.png"
+      "location_x": 701,
+      "location_y": 218
     },
     {
       "name": "Western Europe",
@@ -257,7 +280,8 @@
         "Northern Europe",
         "Northern Europe"
       ],
-      "tag": "_w_europe.png"
+      "location_x": 508,
+      "location_y": 374
     },
     {
       "name": "Congo",
@@ -267,7 +291,8 @@
         "South Africa",
         "North Africa"
       ],
-      "tag": "_congo.png"
+      "location_x": 631,
+      "location_y": 613
     },
     {
       "name": "East Africa",
@@ -280,7 +305,8 @@
         "Madagascar",
         "Middle East"
       ],
-      "tag": "_e_africa.png"
+      "location_x": 700,
+      "location_y": 580
     },
     {
       "name": "Egypt",
@@ -291,7 +317,8 @@
         "North Africa",
         "Middle East"
       ],
-      "tag": "_egypt.png"
+      "location_x": 636,
+      "location_y": 474
     },
     {
       "name": "Madagascar",
@@ -300,7 +327,8 @@
         "East Africa",
         "South Africa"
       ],
-      "tag": "_madagascar.png"
+      "location_x": 766,
+      "location_y": 715
     },
     {
       "name": "North Africa",
@@ -313,7 +341,8 @@
         "Western Europe",
         "Brazil"
       ],
-      "tag": "_n_africa.png"
+      "location_x": 547,
+      "location_y": 525
     },
     {
       "name": "South Africa",
@@ -323,7 +352,8 @@
         "Congo",
         "Madagascar"
       ],
-      "tag": "_s_africa.png"
+      "location_x": 639,
+      "location_y": 727
     },
     {
       "name": "Afghanistan",
@@ -335,7 +365,8 @@
         "China",
         "Ural"
       ],
-      "tag": "_afghanistan.png"
+      "location_x": 804,
+      "location_y": 298
     },
     {
       "name": "China",
@@ -348,7 +379,8 @@
         "Ural",
         "Siberia"
       ],
-      "tag": "_china.png"
+      "location_x": 939,
+      "location_y": 359
     },
     {
       "name": "India",
@@ -359,7 +391,8 @@
         "China",
         "Middle East"
       ],
-      "tag": "_india.png"
+      "location_x": 864,
+      "location_y": 424
     },
     {
       "name": "Irkutsk",
@@ -370,7 +403,8 @@
         "Kamchatka",
         "Yakutsk"
       ],
-      "tag": "_irkutsk.png"
+      "location_x": 967,
+      "location_y": 199
     },
     {
       "name": "Japan",
@@ -379,7 +413,8 @@
         "Mongolia",
         "Kamchatka"
       ],
-      "tag": "_japan.png"
+      "location_x": 1106,
+      "location_y": 248
     },
     {
       "name": "Kamchatka",
@@ -391,7 +426,8 @@
         "Yakutsk",
         "Alaska"
       ],
-      "tag": "_kamchatka.png"
+      "location_x": 1077,
+      "location_y": 101
     },
     {
       "name": "Middle East",
@@ -404,7 +440,8 @@
         "Egypt",
         "East Africa"
       ],
-      "tag": "_mid_east.png"
+      "location_x": 738,
+      "location_y": 412
     },
     {
       "name": "Mongolia",
@@ -416,7 +453,8 @@
         "Siberia",
         "China"
       ],
-      "tag": "_mongolia.png"
+      "location_x": 970,
+      "location_y": 281
     },
     {
       "name": "Siam",
@@ -426,7 +464,8 @@
         "China",
         "Indonesia"
       ],
-      "tag": "_siam.png"
+      "location_x": 963,
+      "location_y": 457
     },
     {
       "name": "Siberia",
@@ -438,7 +477,8 @@
         "China",
         "Mongolia"
       ],
-      "tag": "_siberia.png"
+      "location_x": 884,
+      "location_y": 127
     },
     {
       "name": "Ural",
@@ -449,7 +489,8 @@
         "Siberia",
         "China"
       ],
-      "tag": "_ural.png"
+      "location_x": 823,
+      "location_y": 194
     },
     {
       "name": "Yakutsk",
@@ -459,7 +500,8 @@
         "Irkutsk",
         "Siberia"
       ],
-      "tag": "_yakutsk.png"
+      "location_x": 981,
+      "location_y": 96
     }
   ]
 }
