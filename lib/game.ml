@@ -67,10 +67,12 @@ let rec init_players (n : int) : players =
   match n with
   | 0 -> []
   | a -> (
-      let _ = print_endline ("Choose name for Player " ^ string_of_int a) in
+      print_endline ("\nSelect name for player " ^ string_of_int a);
+      let input = read_line () in
+      print_endline ("Player " ^ string_of_int a ^ " Succesfully Initialized");
       match sample colors_left (arr_size colors_left) with
       | None -> failwith "Too many players"
-      | Some c -> Player.init (string_of_int n) c :: init_players (a - 1))
+      | Some c -> Player.init input c :: init_players (a - 1))
 
 (**Initializes the continents in a game.*)
 (* let init_continents = path |> Map.create_map |> Map.get_continents *)
@@ -379,12 +381,10 @@ let deploy_helper g =
     failwith "IMPOSSIBLE: Each player must have 3 troops minimum"
   else
     while !new_troops > 0 do
-      let _ =
-        print_endline
-          ("\n" ^ string_of_int !new_troops
-         ^ " troops have been drafted. Select the country you want to deploy \
-            in: ")
-      in
+      print_endline
+        ("\n" ^ string_of_int !new_troops
+       ^ " troops have been drafted. Select the country you want to deploy in: "
+        );
       let _ = print_endline (Player.territories_to_string g.current_player) in
       let input =
         catch_error
@@ -394,11 +394,9 @@ let deploy_helper g =
       let should_loop = ref true in
       let troops_chosen = ref 0 in
       while !should_loop do
-        let _ =
-          print_endline
-            ("Select the number of troops you wish to deploy: ("
-           ^ string_of_int !new_troops ^ " Troops avaliable)")
-        in
+        print_endline
+          ("Select the number of troops you wish to deploy: ("
+         ^ string_of_int !new_troops ^ " Troops avaliable)");
         troops_chosen :=
           catch_error
             (fun x ->
@@ -418,7 +416,7 @@ let deploy_helper g =
 let change_phase (game : t) : t =
   let _ =
     print_endline
-      ("It is Player " ^ Player.get_name game.current_player ^ "'s turn")
+      ("It is " ^ Player.get_name game.current_player ^ "'s turn")
   in
   let _ =
     print_endline ("The current phase is " ^ phase_to_string game.current_phase)
