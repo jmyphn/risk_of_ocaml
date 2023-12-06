@@ -3,6 +3,8 @@ type t = {
   color : Raylib.Color.t;
   territories : Territories.t option array;
 }
+
+exception Not_Owned
 (** AF: The record {name: _ ; color: _  ; Territories: _} represents a player. All [Some] 
    elements of the Territories array represents an territory owned by the player. If
    all of the elements of the Territories array are [None], they have lost the game.
@@ -88,8 +90,8 @@ let get_territory (p : t) (s : string) : Territories.t =
       p.territories
   in
   match ter with
-  | None -> failwith "not owned"
-  | Some None -> failwith "not owned"
+  | None -> raise Not_Owned
+  | Some None -> raise Not_Owned
   | Some (Some t) -> t
 
 (** Given a player [p], returns an option array of Territories owned by the
@@ -132,21 +134,36 @@ let num_territories (p : t) : int =
     (fun acc x -> if x = None then acc else acc + 1)
     0 p.territories
 
-let check_country lst str num =
-  if List.fold_left (fun acc c -> if c = str then acc + 1 else acc) 0 lst = num
-  then num
+(** [check_country lst c num] Given a list of country strings [lst], a continent
+    [c], and the number of territories in that country [num], if the number of
+    times [c] is in [lst] = [num], return the bonus associated with the
+    continent [c].*)
+let check_country lst c num =
+  if
+    List.fold_left
+      (fun acc a -> if c = Continent.get_name a then acc + 1 else acc)
+      0 lst
+    = num
+  then Continent.get_continent_value c
   else 0
 
-(** [match_continents lst] Given a list of continents [lst], return the
-    continents which have all of the territories within that specific continent
-    within the list [lst].*)
+(** [match_continents lst] Given a list of continents [lst], return the bonus
+    associated with the continents that are owned.*)
 let match_continents (lst : Continent.t list) =
-  let c_lst =
-    List.map (fun c -> Continent.get_name c |> Continent.to_string) lst
-  in
-  check_country c_lst "North America" 5
+  check_country lst Continent.North_America
+    (Continent.get_continent_number Continent.North_America)
+  + check_country lst Continent.South_America
+      (Continent.get_continent_number Continent.South_America)
+  + check_country lst Continent.Africa
+      (Continent.get_continent_number Continent.Africa)
+  + check_country lst Continent.Asia
+      (Continent.get_continent_number Continent.Asia)
+  + check_country lst Continent.Australia
+      (Continent.get_continent_number Continent.Australia)
+  + check_country lst Continent.Europe
+      (Continent.get_continent_number Continent.Europe)
 
-let get_continent (p : t) : int =
+let get_continent_bonus (p : t) : int =
   let lst =
     List.fold_left
       (fun acc t -> Territories.get_continent t :: acc)
