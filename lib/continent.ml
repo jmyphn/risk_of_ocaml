@@ -24,6 +24,22 @@ let to_string = function
   | North_America -> "North America"
   | South_America -> "South America"
 
+let get_continent_number = function
+  | Europe -> 7
+  | Asia -> 12
+  | Africa -> 6
+  | Australia -> 4
+  | North_America -> 9
+  | South_America -> 4
+
+let get_continent_value = function
+  | Europe -> 5
+  | Asia -> 7
+  | Africa -> 3
+  | Australia -> 2
+  | North_America -> 5
+  | South_America -> 2
+
 let of_string = function
   | "Europe" -> { name = Europe; value = 5 }
   | "Asia" -> { name = Asia; value = 7 }

@@ -19,7 +19,16 @@ val get_value : t -> int
 val to_string : continents -> string
 (** [to_string c]* Given a continent [c], return the string of the continent *)
 
+val get_continent_number : continents -> int
+(** [to_string c]* Given a continent [c], return the number of territories in
+    the continent *)
+
+val get_continent_value : continents -> int
+(** [to_string c]* Given a continent [c], return the int value of the continent *)
+
 val of_string : string -> t
+(** [of_string str]* Given a string [tstr], return the associated type of the
+    continent *)
 
 (* val create : Yojson.Basic.t -> t *)
 (** [create json] Given a Yojson.Basic.t [json] reprentation of a continent,

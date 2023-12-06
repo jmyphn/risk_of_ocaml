@@ -108,6 +108,22 @@ let continent_get_value_tests =
     "get value of Australia" >:: continent_get_value_test 2 australia;
   ]
 
+(*----------------------------Continent.to_string ----------------------------*)
+let continent_to_string_test out in1 _ =
+  assert_equal out (Continent.to_string (Continent.get_name in1))
+
+let continent_to_string_tests =
+  [
+    "to_string North America"
+    >:: continent_to_string_test "North America" north_america;
+    "to_string South America"
+    >:: continent_to_string_test "South America" south_america;
+    "to_string Africa" >:: continent_to_string_test "Africa" africa;
+    "to_string Europe" >:: continent_to_string_test "Europe" europe;
+    "to_string Asia" >:: continent_to_string_test "Asia" asia;
+    "to_string Australia" >:: continent_to_string_test "Australia" australia;
+  ]
+
 (*--------------------------- Country Examples -------------------------------*)
 
 (* North American territories*)
@@ -170,7 +186,41 @@ let yakutsk = get_territory_from_array "Yakutsk"
    let _ = Territories.init_neighbors alberta [ northwest_territory; alaska;
    ontario; western_us ] *)
 
-(***************************** territories tests ****************************)
+(***************************** Territories tests ****************************)
+
+(*---------------------Territories.change_owner & get_owner ----------------*)
+
+let _ = Territories.change_owner ontario "1"
+let _ = Territories.change_owner siam "2"
+let _ = Territories.change_owner alaska "3"
+let _ = Territories.change_owner alberta "4"
+let _ = Territories.change_owner congo "5"
+let _ = Territories.change_owner indonesia "6"
+let _ = Territories.change_owner peru "1"
+let _ = Territories.change_owner kamchatka "2"
+let _ = Territories.change_owner new_guinea "3"
+let _ = Territories.change_owner great_britain "4"
+let _ = Territories.change_owner scandinavia "5"
+let _ = Territories.change_owner egypt "6"
+
+let territories_owner_test out in1 _ =
+  assert_equal out (Territories.get_owner in1)
+
+let territories_owner_tests =
+  [
+    "get owner of ontario" >:: territories_owner_test "1" ontario;
+    "get owner of siam" >:: territories_owner_test "2" siam;
+    "get owner of alaska" >:: territories_owner_test "3" alaska;
+    "get owner of alberta" >:: territories_owner_test "4" alberta;
+    "get owner of congo" >:: territories_owner_test "5" congo;
+    "get owner of indonesia" >:: territories_owner_test "6" indonesia;
+    "get owner of peru" >:: territories_owner_test "1" peru;
+    "get owner of kamchatka" >:: territories_owner_test "2" kamchatka;
+    "get owner of new guinea" >:: territories_owner_test "3" new_guinea;
+    "get owner of great britain" >:: territories_owner_test "4" great_britain;
+    "get owner of scandinavia" >:: territories_owner_test "5" scandinavia;
+    "get owner of egypt" >:: territories_owner_test "6" egypt;
+  ]
 
 (*----------------------------Territories.get_name -------------------------*)
 let territories_get_name_test out in1 _ =
@@ -521,6 +571,8 @@ let tests =
            get_territories_list_tests;
            continent_get_name_tests;
            continent_get_value_tests;
+           continent_to_string_tests;
+           territories_owner_tests;
            territories_get_name_tests;
            territories_troops_value_tests;
            territories_get_continent_tests;

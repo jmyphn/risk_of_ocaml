@@ -324,8 +324,20 @@ let fortify p =
 (** [get_troops p] given a player [p], return the amount of troops they are able
     to deploy*)
 let get_troops (p : player) : int =
-  let n = (Player.num_territories p / 3) + Player.get_continent p in
+  let n =
+    int_of_float (ceil (float_of_int (Player.num_territories p) /. 3.))
+    + Player.get_continent_bonus p
+  in
   if n < 3 then 3 else n
+
+(** [Catch_error f msg] Runs the function f which takes in an input
+    (readline()), and reruns the function and prints a message if there is and
+    error. *)
+let rec catch_error f msg =
+  try f (read_line ())
+  with _ ->
+    print_endline msg;
+    catch_error f msg
 
 (** [Deploy_helper g] given a game [g], tell the player to deploy their troops
     in their territories and deploy those troops int the cooresponding
@@ -339,28 +351,35 @@ let deploy_helper g =
     while !new_troops > 0 do
       let _ =
         print_endline
-          (string_of_int !new_troops
-         ^ " troop have been drafted. Select the country you want to deploy in "
-          )
+          ("\n" ^ string_of_int !new_troops
+         ^ " troops have been drafted. Select the country you want to deploy \
+            in: ")
       in
       let _ = print_endline (Player.territories_to_string g.current_player) in
-      let input = Player.get_territory g.current_player (read_line ()) in
-      let _ =
-        print_endline
-          ("Select the number of troops you wish to deploy: ("
-         ^ string_of_int !new_troops ^ " Troops avaliable)")
+      let input =
+        catch_error
+          (Player.get_territory g.current_player)
+          "Invalid Territory Name"
       in
       let should_loop = ref true in
-      let troop_input = ref 0 in
+      let troops_chosen = ref 0 in
       while !should_loop do
-        troop_input := int_of_string (read_line ());
-        if !troop_input <= !new_troops then should_loop := false
-        else should_loop := true;
-        print_endline
-          ("Select a troop number below " ^ string_of_int !new_troops)
+        let _ =
+          print_endline
+            ("Select the number of troops you wish to deploy: ("
+           ^ string_of_int !new_troops ^ " Troops avaliable)")
+        in
+        troops_chosen :=
+          catch_error
+            (fun x ->
+              if int_of_string x <= !new_troops then int_of_string x
+              else failwith "")
+            "Invalid Input";
+        if !troops_chosen <= !new_troops then should_loop := false
+        else should_loop := true
       done;
-      let _ = Territories.add_value !troop_input input in
-      new_troops := !new_troops - !troop_input
+      let _ = Territories.add_value !troops_chosen input in
+      new_troops := !new_troops - !troops_chosen
     done;
   print_endline "You have no more troops to deploy"
 
