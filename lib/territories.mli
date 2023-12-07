@@ -25,6 +25,8 @@ val get_neighbours : t -> string list
     CAN IMPLEMENT MORE EFFICIENT DATA STRUCTURE *)
 
 val neighbours_to_string : t -> string
+(** [neighbours_to_string p] Given a territory [p], returns its neighboors in a
+    string form *)
 
 val init : Yojson.Basic.t -> t
 (** [init n c] initializes a territory with values name = n, continent = c,
