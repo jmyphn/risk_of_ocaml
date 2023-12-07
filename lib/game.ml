@@ -11,11 +11,12 @@ type phase =
   | Fortify
 
 type t = {
-  players : players;
+  mutable players : players;
   mutable current_player : player;
   current_phase : phase;
   territories : territories;
   troops_to_place : int;
+  mutable game_over : bool;
 }
 
 (* Holds the current map *)
@@ -42,6 +43,7 @@ let rec pp_lst pp_elt lst =
 
 let pp_territory_list t = pp_lst (fun s -> s) t
 let get_player s lst = List.find (fun p -> Player.get_name p = s) lst
+let get_players game = game.players
 
 (** [Catch_error f msg] Runs the function f which takes in an input
     (readline()), and reruns the function and prints a message if there is and
@@ -79,7 +81,23 @@ let sample arr size =
     arr.(size - 1) <- None;
     v
 (*************************************************************************)
+(*******************************End game functions****************************)
 
+let check_game_over g =
+  if List.length g.players = 1 then g.game_over <- true else ()
+
+let remove_player g p =
+  let plst = g.players in
+  let plst' = List.filter (fun p1 -> p1 <> p) plst in
+  g.players <- plst'
+
+let check_player_lost g p =
+  if List.length (Player.get_territories_lst p) = 0 then remove_player g p
+  else ()
+
+let get_game_over g = g.game_over
+
+(****************************************************************************)
 (*************************************************************************)
 
 (*************************** Initialization**********************************)
@@ -95,14 +113,6 @@ let rec init_players (n : int) : players =
       match sample colors_left (arr_size colors_left) with
       | None -> failwith "Too many players"
       | Some c -> Player.init input c :: init_players (a - 1))
-
-(**Initializes the continents in a game.*)
-(* let init_continents = path |> Map.create_map |> Map.get_continents *)
-
-(** [get_continent c] returns the continent with name c*)
-(*= let get_continent (c : string) : Continent.t = match Array.find_opt (fun
-   continent -> Continent.get_name continent = c) continents with | None ->
-   failwith "Not a continent" | Some c -> c *)
 
 (**Inihtializes the Territories in a game *)
 let init_territories = path |> Map.create_map |> Map.get_territories
@@ -177,6 +187,7 @@ let init (numPlayers : int) =
     current_phase = Deploy;
     territories = init_territories;
     troops_to_place = 0;
+    game_over = false;
   }
 
 (****************************************************************************)
@@ -216,33 +227,34 @@ let rec attack (game : t) =
       "Invalid Input"
   in
   if err = "no" || err = "No" then ()
-  else print_endline "Choose which territory to attack with:";
-  let atk_opt = can_attack_territories game.current_player in
-  print_endline (Player.usable_territories_to_string game.current_player);
-  let atk_ter =
-    catch_error
-      (fun x ->
-        if
-          List.exists
-            (fun t -> t = Player.get_territory game.current_player x)
-            atk_opt
-        then Player.get_territory game.current_player x
-        else failwith "")
-      "Invalid input"
-  in
-  let atk_player = get_player (Territories.get_owner atk_ter) game.players in
-  print_endline "\nChoose which territory to attack:";
-  let def_options = territories_to_attack atk_ter in
-  print_endline (pp_territory_list def_options);
-  let def_ter =
-    catch_error
-      (fun x ->
-        if List.exists (fun s -> s = x) def_options then get_territory_game x
-        else failwith "")
-      "Invalid input"
-  in
-  let def_player = get_player (Territories.get_owner def_ter) game.players in
-  attacking atk_ter atk_player def_ter def_player game
+  else
+    let _ = print_endline "Choose which territory to attack with:" in
+    let atk_opt = can_attack_territories game.current_player in
+    print_endline (Player.usable_territories_to_string game.current_player);
+    let atk_ter =
+      catch_error
+        (fun x ->
+          if
+            List.exists
+              (fun t -> t = Player.get_territory game.current_player x)
+              atk_opt
+          then Player.get_territory game.current_player x
+          else failwith "")
+        "Invalid input"
+    in
+    let atk_player = get_player (Territories.get_owner atk_ter) game.players in
+    print_endline "\nChoose which territory to attack:";
+    let def_options = territories_to_attack atk_ter in
+    print_endline (pp_territory_list def_options);
+    let def_ter =
+      catch_error
+        (fun x ->
+          if List.exists (fun s -> s = x) def_options then get_territory_game x
+          else failwith "")
+        "Invalid input"
+    in
+    let def_player = get_player (Territories.get_owner def_ter) game.players in
+    attacking atk_ter atk_player def_ter def_player game
 
 and attacking atk atk_player def def_player game =
   print_endline
@@ -289,7 +301,12 @@ and attacking atk atk_player def def_player game =
           Territories.subtract_value n atk;
           Player.add_territory atk_player def;
           Player.remove_territory def_player def;
-          attack game)
+          check_player_lost game def_player;
+          check_game_over game;
+          if game.game_over then
+            print_endline
+              ("Player " ^ Player.get_name atk_player ^ " won the game!")
+          else attack game)
         else attack game
     | [], _ ->
         print_endline "Attack lost";
@@ -350,6 +367,8 @@ let fortify p =
 
 (****************************************************************************)
 
+(******************************Deploy**********************************)
+
 (** [get_troops p] given a player [p], return the amount of troops they are able
     to deploy*)
 let get_troops (p : player) : int =
@@ -398,6 +417,7 @@ let deploy_helper g =
       new_troops := !new_troops - !troops_chosen
     done;
   print_endline "You have no more troops to deploy"
+(****************************************************************************)
 
 (**********************Phase change helpers************************************)
 let phase_to_string (phase : phase) : string =
@@ -416,6 +436,7 @@ let change_phase p g =
       current_phase = p;
       territories = g.territories;
       troops_to_place = g.troops_to_place;
+      game_over = g.game_over;
     }
 
 (** Given a game, return the current player *)
