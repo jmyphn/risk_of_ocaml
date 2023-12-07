@@ -521,14 +521,93 @@ let territories_get_location_tests =
     >:: territories_get_location_test (804, 298) afghanistan;
   ]
 
-(*--------------------------Territories.get_neighbors ------------------------*)
-(* let territories_get_neighbors_test out in1 _ = assert_equal out
-   (Territories.get_neighbours in1)
+(*----------------------Territories.get_neighbours ------------------------*)
+let territories_get_neighbours_test out in1 _ =
+  assert_equal out (Territories.get_neighbours in1)
 
-   let territories_get_neighbors_tests = [ "get neighbors of Alaska" >::
-   territories_get_neighbors_test [ northwest_territory; alberta; kamchatka ]
-   alaska; "get neighbors of Alberta" >:: territories_get_neighbors_test [
-   northwest_territory; alaska; ontario; western_us ] alberta; ] *)
+let territories_get_neighbours_tests =
+  [
+    "get neighbors of Alaska"
+    >:: territories_get_neighbours_test
+          [ "Northwest Territory"; "Alberta"; "Kamchatka" ]
+          alaska;
+    "get neighbors of Western US"
+    >:: territories_get_neighbours_test
+          [ "Alberta"; "Ontario"; "Eastern US"; "Central America" ]
+          western_us;
+    "get neighbors of Ontario"
+    >:: territories_get_neighbours_test
+          [
+            "Northwest Territory";
+            "Alberta";
+            "Western US";
+            "Eastern US";
+            "Quebec";
+            "Greenland";
+          ]
+          ontario;
+    "get neighbors of Brazil"
+    >:: territories_get_neighbours_test
+          [ "Peru"; "Argentina"; "Venezuela"; "North Africa" ]
+          brazil;
+    "get neighbors of Venezuela"
+    >:: territories_get_neighbours_test
+          [ "Peru"; "Brazil"; "Central America" ]
+          venezuela;
+    "get neighbors of Indonesia"
+    >:: territories_get_neighbours_test
+          [ "Siam"; "New Guinea"; "Western Australia" ]
+          indonesia;
+    "get neighbors of Western Australia"
+    >:: territories_get_neighbours_test
+          [ "Indonesia"; "Eastern Australia"; "New Guinea" ]
+          western_australia;
+    "get neighbors of Northern Europe"
+    >:: territories_get_neighbours_test
+          [
+            "Great Britain";
+            "Scandinavia";
+            "Western Europe";
+            "Southern Europe";
+            "Ukraine";
+          ]
+          northern_europe;
+    "get neighbors of Southern Europe"
+    >:: territories_get_neighbours_test
+          [
+            "Great Britain";
+            "Western Europe";
+            "Northern Europe";
+            "Ukraine";
+            "Middle East";
+            "Egypt";
+            "North Africa";
+          ]
+          southern_europe;
+    "get neighbors of East Africa"
+    >:: territories_get_neighbours_test
+          [
+            "Egypt";
+            "South Africa";
+            "Congo";
+            "North Africa";
+            "Madagascar";
+            "Middle East";
+          ]
+          east_africa;
+    "get neighbors of Madagascar"
+    >:: territories_get_neighbours_test
+          [ "East Africa"; "South Africa" ]
+          madagascar;
+    "get neighbors of China"
+    >:: territories_get_neighbours_test
+          [ "Afghanistan"; "Siam"; "India"; "Mongolia"; "Ural"; "Siberia" ]
+          china;
+    "get neighbors of Yakutsk"
+    >:: territories_get_neighbours_test
+          [ "Kamchatka"; "Irkutsk"; "Siberia" ]
+          yakutsk;
+  ]
 
 (*--------------------------- Player Examples --------------------------------*)
 let p1 = Player.init "1" Raylib.Color.gray
@@ -738,7 +817,8 @@ let tests =
            territories_troops_value_tests;
            territories_get_continent_tests;
            territories_get_location_tests;
-           player_get_name_tests (* territories_get_neighbors_tests; *);
+           territories_get_neighbours_tests;
+           player_get_name_tests;
            player_get_color_tests;
            player_num_territories_tests;
            get_game_over_tests;
