@@ -5,6 +5,8 @@ type players = player list
 type territory = Territories.t
 type territories = territory array
 
+exception InvalidDice
+
 type phase =
   | Deploy
   | Attack
@@ -38,8 +40,9 @@ let colors_left : Raylib.Color.t option array =
 (*************************** Helpers **********************************)
 let rec pp_lst pp_elt lst =
   match lst with
+  | h :: _ :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
+  | h :: _ -> pp_elt h
   | [] -> ""
-  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
 
 let pp_territory_list t = pp_lst (fun s -> s) t
 let get_player s lst = List.find (fun p -> Player.get_name p = s) lst
@@ -51,10 +54,20 @@ let get_players game = game.players
 let rec catch_error f msg =
   try f (read_line ())
   with _ ->
-    print_endline msg;
+    print_endline (msg ^ "\n");
     catch_error f msg
 
-(***************************Sampling helpers**********************************)
+(** [terlst_to_string lst] Given a list of territories [lst], returns the string
+    version of the territories*)
+let terlst_to_string (lst : Territories.t list) : string =
+  List.fold_left
+    (fun acc x ->
+      acc ^ Territories.get_name x ^ ": "
+      ^ string_of_int (Territories.get_troops x)
+      ^ "\n")
+    "" lst
+
+(***************************Sampling helpers********e**************************)
 
 (**Returns the number of non-None elements in an option array that has shifted
    all None elements right. Requires: All Some values are left of all None
@@ -117,9 +130,15 @@ let rec init_players (n : int) : players =
 (**Inihtializes the Territories in a game *)
 let init_territories = path |> Map.create_map |> Map.get_territories
 
+(** [get_territory_game s] returns the territory equivalent of the string [s]/
+    Not case sensitive. *)
 let get_territory_game (s : string) : Territories.t =
   let ter =
-    Array.find_opt (fun t -> Territories.get_name t = s) init_territories
+    Array.find_opt
+      (fun t ->
+        String.lowercase_ascii (Territories.get_name t)
+        = String.lowercase_ascii s)
+      init_territories
   in
   match ter with
   | None -> failwith "impossible"
@@ -199,12 +218,9 @@ let rec roll_dice (n : int) : int list =
   | 0 -> []
   | _ -> Random.int 6 :: roll_dice (n - 1)
 
-(**Given a player, returns a list of the territories that can attack (have more
-   than one troop)*)
-let can_attack_territories p =
-  let t_lst = Player.get_territories_lst p in
-  List.filter (fun t -> Territories.get_troops t > 1) t_lst
-
+(** [territories_to_attack t] Given a territory [t], returns a list of the
+    territories that can be attacked. Attackable territories cannot be owned by
+    the same player who owns the territory)*)
 let territories_to_attack t =
   let neighbours = Territories.get_neighbours t in
   List.filter
@@ -212,6 +228,17 @@ let territories_to_attack t =
       let t2 = get_territory_game n in
       Territories.get_owner t2 <> Territories.get_owner t)
     neighbours
+
+(** [can_attack_territories p]Given a player [p], returns a list of the
+    territories that can attack (have more than one troop and its neighbours are
+    not owned by the given player [p])*)
+let can_attack_territories p =
+  let t_lst = Player.get_territories_lst p in
+  List.filter
+    (fun t ->
+      Territories.get_troops t > 1
+      && if territories_to_attack t = [] then false else true)
+    t_lst
 
 let rec attack (game : t) =
   print_endline "\n\n\nDo you want to attack? (Yes/No).";
@@ -230,26 +257,34 @@ let rec attack (game : t) =
   else
     let _ = print_endline "Choose which territory to attack with:" in
     let atk_opt = can_attack_territories game.current_player in
-    print_endline (Player.usable_territories_to_string game.current_player);
+    print_endline (terlst_to_string atk_opt);
     let atk_ter =
       catch_error
         (fun x ->
           if
             List.exists
-              (fun t -> t = Player.get_territory game.current_player x)
+              (fun t ->
+                String.lowercase_ascii (Territories.get_name t)
+                = String.lowercase_ascii
+                    (Territories.get_name
+                       (Player.get_territory game.current_player x)))
               atk_opt
           then Player.get_territory game.current_player x
           else failwith "")
         "Invalid input"
     in
     let atk_player = get_player (Territories.get_owner atk_ter) game.players in
-    print_endline "\nChoose which territory to attack:";
+    print_endline "\nChoose which territory to attack: ";
     let def_options = territories_to_attack atk_ter in
     print_endline (pp_territory_list def_options);
     let def_ter =
       catch_error
         (fun x ->
-          if List.exists (fun s -> s = x) def_options then get_territory_game x
+          if
+            List.exists
+              (fun s -> String.lowercase_ascii s = String.lowercase_ascii x)
+              def_options
+          then get_territory_game x
           else failwith "")
         "Invalid input"
     in
@@ -264,16 +299,19 @@ and attacking atk atk_player def def_player game =
   let def_troops = Territories.get_troops def in
   let _ =
     print_endline
-      ("Choose how many troops to attack with max 3 or "
-      ^ string_of_int (atk_troops - 1)
-      ^ ", min 1")
+      ("Choose how many troops to attack with (max: "
+      ^ string_of_int (Int.min 3 atk_troops)
+      ^ ", min: 1)")
   in
-  let num_atk_dice = catch_error int_of_string "Invalid Input" in
   let atk_dice =
-    match num_atk_dice with
-    | n when n > 2 -> roll_dice 3
-    | n when n > 0 -> roll_dice n
-    | _ -> failwith "violates rep_inv"
+    catch_error
+      (fun x ->
+        match int_of_string x with
+        | n when n > 3 -> raise InvalidDice
+        | n when n > 2 -> roll_dice 3
+        | n when n > 0 -> roll_dice n
+        | _ -> raise InvalidDice)
+      "Invalid Input"
   in
   let _ = print_endline ("attack rolls: " ^ pp_lst string_of_int atk_dice) in
   let def_dice =
@@ -294,9 +332,14 @@ and attacking atk atk_player def def_player game =
         if d_t <= 0 then (
           print_endline "Attack wins";
           print_endline
-            ("Choose the number of troops to move over, max "
+            ("Choose the number of troops to move over, min: 1, max: "
             ^ string_of_int (Territories.get_troops atk - 1));
-          let n = catch_error int_of_string "Invalid Input" in
+          let n =
+            catch_error
+              (fun x ->
+                if 1 <= int_of_string x then int_of_string x else failwith "")
+              "Invalid Input"
+          in
           Territories.add_value n def;
           Territories.subtract_value n atk;
           Player.add_territory atk_player def;
@@ -334,6 +377,17 @@ let owned_neighbours t =
       Territories.get_owner t2 = Territories.get_owner t)
     neighbours
 
+(** [can_attack_territories p]Given a player [p], returns a list of the
+    territories that can attack (have more than one troop and its neighbours are
+    not owned by the given player [p])*)
+let can_fortify_territories p =
+  let t_lst = Player.get_territories_lst p in
+  List.filter
+    (fun t ->
+      Territories.get_troops t > 1
+      && if owned_neighbours t = [] then false else true)
+    t_lst
+
 let rec fortify_territories tlst acc (visited : string list) =
   let t = List.hd tlst in
   let visited' = Territories.get_name t :: visited in
@@ -349,15 +403,35 @@ let rec fortify_territories tlst acc (visited : string list) =
       fortify_territories tlst' acc' visited'
 
 let fortify p =
-  let _ = print_endline "Select a territory to move troops from: " in
-  let _ = print_endline (Player.territories_to_string p) in
-  let t1 = catch_error get_territory_game "Invalid Input" in
+  print_endline "Select a territory to move troops from: ";
+  let fort_ter = can_fortify_territories p in
+  print_endline (terlst_to_string fort_ter);
+  let t1 =
+    catch_error
+      (fun x ->
+        if
+          List.exists
+            (fun y ->
+              String.lowercase_ascii (Territories.get_name y)
+              = String.lowercase_ascii
+                  (Territories.get_name (get_territory_game x)))
+            fort_ter
+        then get_territory_game x
+        else failwith "")
+      "Invalid Input"
+  in
+  let move_trps = Territories.get_troops t1 - 1 in
   let _ =
     print_endline
-      ("Select the number of troops to move: max "
-      ^ string_of_int (Territories.get_troops t1 - 1))
+      ("Select the number of troops to move: max " ^ string_of_int move_trps)
   in
-  let n = catch_error int_of_string "Invalid Input" in
+  let n =
+    catch_error
+      (fun x ->
+        let num = int_of_string x in
+        if num >= 1 && num <= move_trps then num else failwith "")
+      ("Number must be between 1 and " ^ string_of_int move_trps)
+  in
   let _ = print_endline "Choose the territory to move troops to " in
   let tlst = fortify_territories [ t1 ] [] [] in
   print_endline (pp_lst (fun s -> s) tlst);
@@ -378,11 +452,10 @@ let get_troops (p : player) : int =
   in
   if n < 3 then 3 else n
 
-(** [Deploy_helper g] given a game [g], tell the player to deploy their troops
-    in their territories and deploy those troops int the cooresponding
-    territories. Only return when the player has finished deploying their
-    troops. *)
-let deploy_helper g =
+(** [Deploy g] given a game [g], tell the player to deploy their troops in their
+    territories and deploy those troops int the cooresponding territories. Only
+    return when the player has finished deploying their troops. *)
+let deploy g =
   let new_troops = ref (get_troops g.current_player) in
   if !new_troops = 0 then
     failwith "IMPOSSIBLE: Each player must have 3 troops minimum"
@@ -474,7 +547,7 @@ let change_phase (game : t) : t =
   print_endline ("The current phase is " ^ phase_to_string game.current_phase);
   match game.current_phase with
   | Deploy ->
-      deploy_helper game;
+      deploy game;
       change_phase Attack game
   | Attack ->
       attack game;

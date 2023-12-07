@@ -186,16 +186,5 @@ let territories_to_string (p : t) : string =
           ^ "\n")
     "" p.territories
 
-let usable_territories_to_string (p : t) : string =
-  Array.fold_left
-    (fun acc x ->
-      match x with
-      | None -> acc ^ ""
-      | Some x1 ->
-          let num = Territories.get_troops x1 in
-          if num <= 1 then acc
-          else acc ^ Territories.get_name x1 ^ ": " ^ string_of_int num ^ "\n")
-    "" p.territories
-
 (** Given a name [n] and color [c], initializes the player.*)
 let init n c : t = { name = n; color = c; territories = Array.make 42 None }
