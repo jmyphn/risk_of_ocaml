@@ -1,6 +1,8 @@
 type t
 (** [t] Represents a player *)
 
+exception Done
+
 val get_name : t -> string
 (** [get_name p] Given a player [p] returns the name of [p]. *)
 
@@ -39,6 +41,8 @@ val get_continent_bonus : t -> int
     America","Africa","South America","Europe", and "Australia"*)
 
 val territories_to_string : t -> string
+(** [territories_to_string p] Given a player [p], returns the territories owned
+    by player [p] in a string form*)
 
 val init : string -> Raylib.Color.t -> t
 (** [init n c] Initializes a player given a name [string] and color

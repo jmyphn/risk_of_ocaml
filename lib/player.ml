@@ -5,6 +5,8 @@ type t = {
 }
 
 exception Not_Owned
+
+exception Done
 (** AF: The record {name: _ ; color: _  ; Territories: _} represents a player. All [Some] 
    elements of the Territories array represents an territory owned by the player. If
    all of the elements of the Territories array are [None], they have lost the game.
@@ -79,20 +81,22 @@ let get_color (p : t) : Raylib.Color.t = p.color
 (** Given a player [p] and a string [s], returns the index of the territory with
     Territory.name = s. Raises: ["not owned"] if not found*)
 let get_territory (p : t) (s : string) : Territories.t =
-  let ter =
-    Array.find_opt
-      (fun t ->
-        match t with
-        | None -> false
-        | Some t ->
-            String.lowercase_ascii (Territories.get_name t)
-            = String.lowercase_ascii s)
-      p.territories
-  in
-  match ter with
-  | None -> raise Not_Owned
-  | Some None -> raise Not_Owned
-  | Some (Some t) -> t
+  if s = "done" then raise Done
+  else
+    let ter =
+      Array.find_opt
+        (fun t ->
+          match t with
+          | None -> false
+          | Some t ->
+              String.lowercase_ascii (Territories.get_name t)
+              = String.lowercase_ascii s)
+        p.territories
+    in
+    match ter with
+    | None -> raise Not_Owned
+    | Some None -> raise Not_Owned
+    | Some (Some t) -> t
 
 (** Given a player [p], returns an option array of Territories owned by the
     player. *)
