@@ -11,8 +11,8 @@ val get_color : t -> Raylib.Color.t
 (** [get_color p] Given a player [p] returns the color of [p]. *)
 
 val get_territory : t -> string -> Territories.t
-(** [get_territory p s] Given a player [p] and a string [s], returns the index
-    of the territory with Territory.name = s. Raises: ["not owned"] if not found*)
+(** [get_territory p s] Given a player [p] and a string [s], returns the
+    territory with Territory.name = s. Raises: ["not owned"] if not found *)
 
 val get_territories : t -> Territories.t option array
 (** [get_Territories p] Given a player [p] returns the Territories owned by [p]. *)
