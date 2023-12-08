@@ -138,8 +138,8 @@ let num_territories (p : t) : int =
     (fun acc x -> if x = None then acc else acc + 1)
     0 p.territories
 
-(** [check_country lst c num] Given a list of country strings [lst], a continent
-    [c], and the number of territories in that country [num], if the number of
+(** [check_country lst c num] Given a list of continents [lst], a continent [c],
+    and the number of territories in that continent [num], if the number of
     times [c] is in [lst] = [num], return the bonus associated with the
     continent [c].*)
 let check_country lst c num =
