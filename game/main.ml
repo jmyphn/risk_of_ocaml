@@ -54,12 +54,8 @@ let rec loop () =
       | START ->
           begin_drawing ();
           clear_background Constants.default_color;
-          Start.draw_start ();
-
-          (* mouse detection on START button *)
           let mouse = get_mouse_position () in
-          Start.highlight_button_start mouse;
-
+          Start.draw_start mouse;
           end_drawing ();
           loop ()
       | MENU ->
