@@ -64,7 +64,7 @@ let fix_string s =
   for i = 0 to String.length s - 1 do
     if is_valid_char (String.get s i) then incr count
   done;
-  String.sub s 0 (!count + 1)
+  String.sub s 0 !count
 
 let get_text () =
   match is_key_pressed Enter with
