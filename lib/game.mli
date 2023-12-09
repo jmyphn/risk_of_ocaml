@@ -9,9 +9,9 @@ type phase =
 type t
 (** [t] The type of the current game *)
 
-val init : int -> t
-(** [init] Given an int [n] representing the number of players, initialize the
-    game*)
+val init : string list -> int -> t
+(** [init] Given a string list [slst] of player names and int [n] representing
+    the number of players, initialize the game*)
 
 val get_players : t -> player list
 (** [get_players game] Given a game [game], returns the players in this game as

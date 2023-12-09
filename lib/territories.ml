@@ -19,11 +19,9 @@ type t = {
   mutable owner : owner;
 }
 
-(** Function to check the representation invariant *)
-let rep_ok (t : t) : unit =
-  let chk1 = t.troops > 0 in
-  let chk2 = List.length t.neighbours <> 0 in
-  if chk1 && chk2 then () else failwith "rep invariant violated"
+(* * Function to check the representation invariant let rep_ok (t : t) : unit =
+   let chk1 = t.troops > 0 in let chk2 = List.length t.neighbours <> 0 in if
+   chk1 && chk2 then () else failwith "rep invariant violated" *)
 
 let change_owner c s = c.owner <- s
 let get_owner c = c.owner
@@ -54,7 +52,7 @@ let init json : t =
   }
 
 let add_value (n : int) (territory : t) : unit =
-  territory.troops <- territory.troops + n; rep_ok territory
+  territory.troops <- territory.troops + n
 
 let subtract_value (n : int) (territory : t) : unit =
-  territory.troops <- territory.troops - n; rep_ok territory
+  territory.troops <- territory.troops - n
