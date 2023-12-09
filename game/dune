@@ -1,3 +1,3 @@
 (executable
  (name main)
- (libraries lib raylib stdlib yojson))
+ (libraries lib raylib raygui stdlib yojson))

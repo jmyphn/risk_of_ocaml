@@ -51,5 +51,5 @@ let draw_start mouse =
   let dest = Rectangle.create 0. 0. sw sh in
   let origin = Vector2.create 0. 0. in
   draw_texture_pro start.bg source dest origin 0. Constants.default_color;
-  draw_texture start.button 681 570 Constants.default_color;
-  highlight_button_start mouse
+  highlight_button_start mouse;
+  draw_texture start.button 681 570 Constants.default_color

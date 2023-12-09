@@ -1,4 +1,5 @@
 open Raylib
+open Raygui
 
 type t = {
   bg : Texture2D.t;
@@ -12,14 +13,25 @@ type t = {
   five_pb_hl : Texture2D.t;
   six_pb : Texture2D.t;
   six_pb_hl : Texture2D.t;
+  show_tb : bool;
 }
 
 let menu = ref None
-let two_pb_hb = Rectangle.create 225. 350. 100. 100.
-let three_pb_hb = Rectangle.create 550. 350. 100. 100.
-let four_pb_hb = Rectangle.create 875. 350. 100. 100.
-let five_pb_hb = Rectangle.create 388. 550. 100. 100.
-let six_pb_hb = Rectangle.create 713. 550. 100. 100.
+let two_pb_hb = Rectangle.create 304. 348. 100. 100.
+let three_pb_hb = Rectangle.create 527. 348. 100. 100.
+let four_pb_hb = Rectangle.create 750. 348. 100. 100.
+let five_pb_hb = Rectangle.create 971. 348. 100. 100.
+let six_pb_hb = Rectangle.create 1194. 348. 100. 100.
+let tb_edit = ref false
+let tb_text = ref "hello"
+let tb = Rectangle.create 550. 600. 500. 80.
+
+let grab_text_in_box () =
+  match is_key_pressed Enter with
+  | true ->
+      print_endline !tb_text;
+      tb_text := ""
+  | _ -> ()
 
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
@@ -54,11 +66,12 @@ let initialize_menu () =
         five_pb_hl = five_pb_highlight_texture;
         six_pb = six_pb_texture;
         six_pb_hl = six_pb_highlight_texture;
+        show_tb = false;
       }
 
 let highlight_button_menu mouse hitbox highlight (x, y) n =
   if check_collision_point_rec mouse hitbox then
-    match is_mouse_button_down MouseButton.Left with
+    match is_mouse_button_pressed MouseButton.Left with
     | false -> draw_texture highlight x y Color.raywhite
     | true ->
         Constants.game_active := Some (Game.init n);
@@ -72,13 +85,25 @@ let draw_menu mouse =
   let dest = Rectangle.create 0. 0. sw sh in
   let origin = Vector2.create 0. 0. in
   draw_texture_pro menu.bg source dest origin 0. Constants.default_color;
-  draw_texture menu.two_pb 225 350 Constants.default_color;
-  draw_texture menu.three_pb 550 350 Constants.default_color;
-  draw_texture menu.four_pb 875 350 Constants.default_color;
-  draw_texture menu.five_pb 388 550 Constants.default_color;
-  draw_texture menu.six_pb 713 550 Constants.default_color;
-  highlight_button_menu mouse two_pb_hb menu.two_pb_hl (225, 350) 2;
-  highlight_button_menu mouse three_pb_hb menu.three_pb_hl (550, 350) 3;
-  highlight_button_menu mouse four_pb_hb menu.four_pb_hl (875, 350) 4;
-  highlight_button_menu mouse five_pb_hb menu.five_pb_hl (388, 550) 5;
-  highlight_button_menu mouse six_pb_hb menu.six_pb_hl (713, 550) 6
+  draw_texture menu.two_pb 304 348 Constants.default_color;
+  draw_texture menu.three_pb 527 348 Constants.default_color;
+  draw_texture menu.four_pb 750 348 Constants.default_color;
+  draw_texture menu.five_pb 971 348 Constants.default_color;
+  draw_texture menu.six_pb 1194 348 Constants.default_color;
+  highlight_button_menu mouse two_pb_hb menu.two_pb_hl (294, 343) 2;
+  highlight_button_menu mouse three_pb_hb menu.three_pb_hl (517, 343) 3;
+  highlight_button_menu mouse four_pb_hb menu.four_pb_hl (740, 343) 4;
+  highlight_button_menu mouse five_pb_hb menu.five_pb_hl (961, 343) 5;
+  highlight_button_menu mouse six_pb_hb menu.six_pb_hl (1184, 343) 6;
+  grab_text_in_box ();
+  (* rect: shape and position of the text box on screen *)
+  let rect = Rectangle.create 25.0 215.0 125.0 30.0 in
+  match text_box rect !tb_text !tb_edit with
+  (* vl is the text inside the textbox *)
+  | vl, true ->
+      tb_edit := not !tb_edit;
+      tb_text := vl
+  | vl, false ->
+      tb_text := vl;
+
+      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left)
