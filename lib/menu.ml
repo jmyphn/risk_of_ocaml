@@ -34,36 +34,14 @@ let rec pp_lst pp_elt lst =
   | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
   | [] -> ""
 
-let valid_chars =
-  [
-    'a';
-    'b';
-    'c';
-    'd';
-    'e';
-    'f';
-    'g';
-    'h';
-    'i';
-    'j';
-    'k';
-    'l';
-    'm';
-    'n';
-    'o';
-    'p';
-    'q';
-    'r';
-    's';
-    't';
-    'u';
-    'v';
-    'w';
-    'x';
-    'y';
-    'z';
-    ' ';
-  ]
+let is_valid_char a =
+  match a with
+  | 'a' .. 'z' -> true
+  | 'A' .. 'Z' -> true
+  | '1' .. '9' -> true
+  | '.' | ',' -> true
+  | ' ' -> true
+  | _ -> false
 
 let rec string_compare s1 s2 =
   let s1 = String.lowercase_ascii s1 in
@@ -72,8 +50,8 @@ let rec string_compare s1 s2 =
   else if String.length s1 = 0 && String.length s2 = 0 then true
   else if
     String.get s1 0 = String.get s2 0
-    && List.mem (String.get s1 0) valid_chars
-    && List.mem (String.get s2 0) valid_chars
+    && is_valid_char (String.get s1 0)
+    && is_valid_char (String.get s2 0)
   then
     string_compare
       (String.sub s1 1 (String.length s1 - 1))
@@ -83,7 +61,7 @@ let rec string_compare s1 s2 =
 let fix_string s =
   let count = ref 0 in
   for i = 0 to String.length s - 1 do
-    if List.mem (String.get s i) valid_chars then incr count
+    if is_valid_char (String.get s i) then incr count
   done;
   String.sub s 0 !count
 
