@@ -27,28 +27,18 @@ let tb_text = ref "Enter Player"
 let tb = Rectangle.create 550. 600. 500. 80.
 let show_tb = ref false
 
-(* TODO: REMOVE *)
-let rec pp_lst pp_elt lst =
-  match lst with
-  | [ h ] -> pp_elt h
-  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
-  | [] -> ""
-
 let grab_text_in_box () =
   if !tb_text = "" then ()
   else
     match is_key_pressed Enter with
     | true ->
-        if List.mem !tb_text (fst !players) then (
-          print_endline (!tb_text ^ " already inside");
-          print_endline (pp_lst (fun s -> s) (fst !players)))
+        if List.mem !tb_text (fst !players) then
+          print_endline (!tb_text ^ " already inside")
         else (
           print_endline (!tb_text ^ " added");
-          players := (!tb_text :: fst !players, snd !players);
-          print_endline (pp_lst (fun s -> s) (fst !players)));
-
+          players := (!tb_text :: fst !players, snd !players));
         tb_text := ""
-    | _ -> ()
+    | false -> ()
 
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
@@ -90,10 +80,10 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     match is_mouse_button_pressed MouseButton.Left with
     | false -> draw_texture highlight x y Color.raywhite
     | true ->
-        Constants.game_active := Some (Game.init n);
-        Constants.game_state := INSTRUCTIONS;
+        (* Constants.game_active := Some (Game.init n); *)
+        (* Constants.game_state := INSTRUCTIONS; *)
         show_tb := true;
-        players := (fst !players, n) 
+        players := ([], n)
 (* Constants.game_active := Some (Game.init n) *)
 (* Constants.game_state := ACTIVE *)
 
@@ -123,9 +113,8 @@ let draw_menu mouse =
     (* 6 *))
   else grab_text_in_box ();
   (* rect: shape and position of the text box on screen *)
-  (let rect = Rectangle.create 25.0 215.0 125.0 30.0 in
-   if !show_tb then
-     match text_box rect !tb_text !tb_edit with
+  (if !show_tb then
+     match text_box tb !tb_text !tb_edit with
      (* vl is the text inside the textbox *)
      | vl, true ->
          tb_edit := not !tb_edit;
@@ -133,10 +122,12 @@ let draw_menu mouse =
      | vl, false ->
          tb_text := vl;
 
-         set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
+         set_style (TextBox `Text_alignment) TextAlignment.(to_int Left);
+         set_style (TextBox `Color_selected_bg) 200);
+
   let plst = fst !players in
   let np = snd !players in
   if List.length plst = np then (
     Constants.game_active := Some (Game.init plst np);
-    Constants.game_state := ACTIVE)
+    Constants.game_state := INSTRUCTIONS)
   else ()
