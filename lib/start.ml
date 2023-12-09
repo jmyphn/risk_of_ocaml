@@ -6,14 +6,20 @@ type t = {
   button_hl : Texture2D.t;
 }
 
+let offset = 10
 let start = ref None
-let start_hb = Rectangle.create 480. 570. 240. 100.
+
+let start_hb =
+  Rectangle.create
+    (681. +. float_of_int (2 * offset))
+    (570. +. float_of_int (2 * offset))
+    240. 100.
 
 let initialize_start () =
   let bg_start_texture = load_texture "assets/start/StartBackground.png" in
   let start_button_texture = load_texture "assets/start/StartButton.png" in
   let start_button_highlight_texture =
-    load_texture "assets/start/StartButtonHighlight.png"
+    load_texture "assets/start/StartButtonHi.png"
   in
   start :=
     Some
@@ -32,7 +38,9 @@ let highlight_button_start mouse =
   let start_hl = (Option.get !start).button_hl in
   if check_collision_point_rec mouse start_hb then
     match is_mouse_button_down MouseButton.Left with
-    | false -> draw_texture start_hl 480 570 Constants.default_color
+    | false ->
+        draw_texture start_hl (681 - offset) (570 - offset)
+          Constants.default_color
     | true -> Constants.game_state := MENU
 
 let draw_start mouse =
@@ -43,5 +51,5 @@ let draw_start mouse =
   let dest = Rectangle.create 0. 0. sw sh in
   let origin = Vector2.create 0. 0. in
   draw_texture_pro start.bg source dest origin 0. Constants.default_color;
-  draw_texture start.button 480 570 Constants.default_color;
+  draw_texture start.button 681 570 Constants.default_color;
   highlight_button_start mouse
