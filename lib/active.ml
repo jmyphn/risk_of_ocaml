@@ -18,25 +18,10 @@ let x_offset = 35
 let y_offset = 20
 let pb_x = 1372
 let pb_y = 670
-let sb_x = 80
-let sb_y = 650
-
-(* state temp button hitbox *)
-let state_hb =
-  Rectangle.create (float_of_int sb_x) (float_of_int sb_y) 150. 100.
 
 (* phase temp button hitbox *)
 let phase_hb =
   Rectangle.create (float_of_int pb_x) (float_of_int pb_y) 150. 100.
-
-let highlight_button_state mouse =
-  if check_collision_point_rec mouse state_hb then
-    match is_mouse_button_pressed MouseButton.Left with
-    | false ->
-        draw_texture (Option.get !active).state_hl sb_x sb_y Color.raywhite
-    | true ->
-        Constants.game_active := None;
-        Constants.game_state := END
 
 let highlight_button_phase mouse =
   if check_collision_point_rec mouse phase_hb then
@@ -116,7 +101,6 @@ let draw_active mouse =
   let dest = Rectangle.create 0. 0. sw sh in
   let origin = Vector2.create 0. 0. in
   draw_texture_pro a.bg source dest origin 0. Constants.default_color;
-  draw_texture a.state sb_x sb_y Constants.default_color;
   draw_texture a.phase pb_x pb_y Constants.default_color;
 
   let game = Constants.get_game () in
