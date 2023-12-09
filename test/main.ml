@@ -912,14 +912,6 @@ let get_territories_list_tests =
     "player 6 territories list" >:: get_territories_list_test [] p6;
   ]
 
-(*------------------------------ add_country ---------------------------------*)
-(* let add_country_test out in1 in2 _ = Player.add_country in1 in2; assert_equal
-   ~printer:pp_country_option_array ~msg: ("function: add_country\ninput: " ^
-   pp_country_option_array (Player.get_territories in1)) out
-   (Player.get_territories in1)
-
-   let add_country_test = [] *)
-
 (******************************************************************************)
 
 (******************************** Game tests **********************************)
