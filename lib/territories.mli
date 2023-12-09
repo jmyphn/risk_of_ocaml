@@ -1,4 +1,5 @@
 type t
+(** type [t] corresponds to a territory *)
 
 val change_owner : t -> string -> unit
 (** [change_owner t p] Mutates [t.owner] to equal [p].*)
