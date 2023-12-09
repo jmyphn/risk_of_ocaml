@@ -123,6 +123,7 @@ let rep_ok (g : t) : t =
 (*****************************************************************************)
 (*******************************End game functions****************************)
 
+(* TODO: change game over to END phase in constants *)
 let check_game_over g =
   if List.length g.players = 1 then g.game_over <- true else ()
 
@@ -145,23 +146,18 @@ let get_game_over g = g.game_over
 (* Given a int [n], initializes players and returns a list of the players
    initialized. USER CHANGES NAME ECT ECT *)
 
-let rec init_players_helper (n : int) (lst : string list) : players =
-  match n with
-  | 0 -> []
-  | a ->
-      print_endline ("\nSelect name for player " ^ string_of_int a);
-      catch_error
-        (fun s ->
-          if List.exists (fun s' -> s = s') lst = false then (
-            print_endline
-              ("Player " ^ string_of_int a ^ " Succesfully Initialized");
-            match sample colors_left (arr_size colors_left) with
-            | None -> failwith "Too many players"
-            | Some c -> Player.init s c :: init_players_helper (a - 1) (s :: lst))
-          else raise (Invalid_argument ""))
-        "Name has already been chosen"
+let rec init_players_helper (n : int) (plst : string list) : players =
+  match (n, plst) with
+  | 0, _ -> []
+  | a, h :: t -> begin
+      match sample colors_left (arr_size colors_left) with
+      | None -> failwith "Too many players"
+      | Some c -> Player.init h c :: init_players_helper (a - 1) t
+    end
+  | _, [] -> failwith "violates rep inv"
 
-let init_players (n : int) : players = init_players_helper n []
+let init_players (plst : string list) (n : int) : players =
+  init_players_helper n plst
 (* match n with | 0 -> [] | a -> ( print_endline ("\nSelect name for player " ^
    string_of_int a); let input = read_line () in print_endline ("Player " ^
    string_of_int a ^ " Succesfully Initialized"); match sample colors_left
@@ -224,11 +220,11 @@ let assign_troops_helper t p =
 let assign_troops n plst = List.map (assign_troops_helper n) plst
 
 (** Initializes game given a number of players *)
-let init (numPlayers : int) =
+let init (nplst : string list) (numPlayers : int) =
   let plist =
     assign_troops
       (num_troops_per_player numPlayers)
-      (assign_Territories (init_players numPlayers))
+      (assign_Territories (init_players nplst numPlayers))
   in
   {
     players = plist;
