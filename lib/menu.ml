@@ -62,7 +62,7 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     | false -> draw_texture highlight x y Color.raywhite
     | true ->
         Constants.game_active := Some (Game.init n);
-        Constants.game_state := ACTIVE
+        Constants.game_state := INSTRUCTIONS
 
 let draw_menu mouse =
   let menu = Option.get !menu in

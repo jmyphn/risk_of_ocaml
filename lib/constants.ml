@@ -3,6 +3,7 @@ open Raylib
 type game_state =
   | START
   | MENU
+  | INSTRUCTIONS
   | ACTIVE
   | END
 

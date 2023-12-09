@@ -42,6 +42,7 @@ let setup () =
   set_target_fps Constants.screen_fps;
   Start.initialize_start ();
   Menu.initialize_menu ();
+  Instructions.initialize_instructions ();
   Active.initialize_active ();
   ()
 
@@ -63,6 +64,13 @@ let rec loop () =
           clear_background Constants.default_color;
           let mouse = get_mouse_position () in
           Menu.draw_menu mouse;
+          end_drawing ();
+          loop ()
+      | INSTRUCTIONS ->
+          begin_drawing ();
+          clear_background Constants.default_color;
+          let mouse = get_mouse_position () in
+          Instructions.draw_instructions mouse;
           end_drawing ();
           loop ()
       | ACTIVE ->

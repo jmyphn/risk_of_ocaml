@@ -6,7 +6,7 @@ type t = {
   button_hl : Texture2D.t;
 }
 
-let offset = 10
+let offset = 15
 let start = ref None
 
 let start_hb =
@@ -31,7 +31,7 @@ let initialize_start () =
 
 let get_button_hl () =
   match !start with
-  | None -> failwith "Failed to load in start textures"
+  | None -> failwith "Failed to load in instructions textures"
   | Some s -> s.button_hl
 
 let highlight_button_start mouse =
