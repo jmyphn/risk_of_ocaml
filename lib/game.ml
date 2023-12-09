@@ -6,6 +6,13 @@ type territory = Territories.t
 type territories = territory array
 
 exception InvalidDice
+exception InvalidOwnedCountry
+exception InvalidAttackCountry
+
+(** AF: The record {players: _ ; current_player: _  ; current_phase: _ ; 
+  territories: _ ; troops_to_place: _ ; game_over: _ ;} represents a game. 
+  RI: Players list must never be empty, current player must always be a player 
+  in the player list, and troops to place must never be below 0. *)
 
 type phase =
   | Deploy
@@ -67,7 +74,7 @@ let terlst_to_string (lst : Territories.t list) : string =
       ^ "\n")
     "" lst
 
-(***************************Sampling helpers********e**************************)
+(***************************Sampling helpers***********************************)
 
 (**Returns the number of non-None elements in an option array that has shifted
    all None elements right. Requires: All Some values are left of all None
@@ -93,7 +100,26 @@ let sample arr size =
     arr.(i) <- arr.(size - 1);
     arr.(size - 1) <- None;
     v
-(*************************************************************************)
+
+(*************************** Rep_ok **********************************)
+
+let check_territory_rep g =
+  let t =
+    List.fold_left
+      (fun acc (p : player) -> Player.get_territories_lst p @ acc)
+      [] g.players
+  in
+  List.length (List.sort_uniq Stdlib.compare t) = 42
+
+(** Checks representation invariants during gameplay.*)
+let rep_ok (g : t) : t =
+  let chk1 = g.troops_to_place >= 0 in
+  let chk2 = List.exists (( == ) g.current_player) g.players in
+  let chk3 = List.length g.players <> 0 in
+  let chk4 = check_territory_rep g in
+  if chk1 && chk2 && chk3 && chk4 then g else failwith "Rep Invariant Violated"
+
+(*****************************************************************************)
 (*******************************End game functions****************************)
 
 let check_game_over g =
@@ -157,17 +183,6 @@ let get_territory_game (s : string) : Territories.t =
   match ter with
   | None -> failwith "impossible"
   | Some c -> c
-
-let check_territory_rep g =
-  let t =
-    List.fold_left
-      (fun acc (p : player) -> Player.get_territories_lst p @ acc)
-      [] g.players
-  in
-  List.length (List.sort_uniq Stdlib.compare t) = 42
-
-(** Checks representation invariants during gameplay.*)
-let rep_ok g = if check_territory_rep g then g else failwith "rep-inv violated"
 
 let to_option_array (arr : 'a array) : 'a option array =
   Array.map (fun v -> Some v) arr
@@ -281,7 +296,7 @@ let attacking atk atk_player def def_player game =
     match def_troops with
     | n when n > 1 -> roll_dice 2
     | n when n > 0 -> roll_dice n
-    | _ -> failwith "violates\n   rep_inv"
+    | _ -> failwith "Violates rep_inv"
   in
   let _ = print_endline ("defense rolls: " ^ pp_lst string_of_int def_dice) in
   let rec cmp (a : int list) (d : int list) : unit =
@@ -367,7 +382,7 @@ let attack (game : t) =
                      (Player.get_territory game.current_player x)))
             atk_opt
         then Player.get_territory game.current_player x
-        else failwith "")
+        else raise InvalidOwnedCountry)
       "Invalid input"
   in
   let atk_player = get_player (Territories.get_owner atk_ter) game.players in
@@ -382,7 +397,7 @@ let attack (game : t) =
             (fun s -> String.lowercase_ascii s = String.lowercase_ascii x)
             def_options
         then get_territory_game x
-        else failwith "")
+        else raise InvalidAttackCountry)
       "Invalid input"
   in
   let def_player = get_player (Territories.get_owner def_ter) game.players in
@@ -399,9 +414,9 @@ let owned_neighbours t =
       Territories.get_owner t2 = Territories.get_owner t)
     neighbours
 
-(** [can_attack_territories p]Given a player [p], returns a list of the
-    territories that can attack (have more than one troop and its neighbours are
-    not owned by the given player [p])*)
+(** [can_fortify_territories p] Given a player [p], returns a list of the
+    territories that can be fortified. These territories are territories not
+    landlocked by others player's countries. [p])*)
 let can_fortify_territories p =
   let t_lst = Player.get_territories_lst p in
   List.filter
@@ -453,7 +468,7 @@ let fortify p =
                     (Territories.get_name (get_territory_game x)))
               fort_ter
           then get_territory_game x
-          else failwith "")
+          else raise InvalidOwnedCountry)
         "Invalid Input"
     in
     let move_trps = Territories.get_troops t1 - 1 in
@@ -471,7 +486,20 @@ let fortify p =
     let _ = print_endline "Choose the territory to move troops to " in
     let tlst = fortify_territories [ t1 ] [] [] in
     print_endline (pp_lst (fun s -> s) tlst);
-    let t2 = catch_error get_territory_game "Invalid Input" in
+    let t2 =
+      catch_error
+        (fun x ->
+          if
+            List.exists
+              (fun y ->
+                String.lowercase_ascii y
+                = String.lowercase_ascii
+                    (Territories.get_name (get_territory_game x)))
+              tlst
+          then get_territory_game x
+          else raise InvalidOwnedCountry)
+        "Invalid Input"
+    in
     Territories.add_value n t2;
     Territories.subtract_value n t1)
 

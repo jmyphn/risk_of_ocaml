@@ -2,6 +2,11 @@ module Y = Yojson.Basic.Util
 module C = Continent
 module R = Raylib
 
+(** AF: The record {name : _; mutable troops : _; continent : _; location_x : _;
+  location_y : _; neighbours : _ ; mutable owner : _;} represents a game. 
+  RI: Neighbours must never be empty and there should always be > 0 troops on a
+  territory. *)
+
 type owner = string
 
 type t = {
@@ -13,6 +18,12 @@ type t = {
   neighbours : string list;
   mutable owner : owner;
 }
+
+(** Function to check the representation invariant *)
+let rep_ok (t : t) : unit =
+  let chk1 = t.troops > 0 in
+  let chk2 = List.length t.neighbours <> 0 in
+  if chk1 && chk2 then () else failwith "rep invariant violated"
 
 let change_owner c s = c.owner <- s
 let get_owner c = c.owner
@@ -43,7 +54,7 @@ let init json : t =
   }
 
 let add_value (n : int) (territory : t) : unit =
-  territory.troops <- territory.troops + n
+  territory.troops <- territory.troops + n; rep_ok territory
 
 let subtract_value (n : int) (territory : t) : unit =
-  territory.troops <- territory.troops - n
+  territory.troops <- territory.troops - n; rep_ok territory

@@ -37,9 +37,9 @@ let are_some (arr : Territories.t option array) : bool =
       | None -> false)
     arr
 
-(* Given an array of options [arr], [find_index arr elt] returns the first index
-   of the array that contains [elt]. Raises: ["Invalid_element"] if there is no
-   [elt] in the array*)
+(* [find_index arr elt] Given an array of options [arr], [find_index arr elt]
+   returns the first index of the array that contains [elt]. Raises:
+   ["Invalid_element"] if there is no [elt] in the array*)
 let find_index (arr : Territories.t option array) (elt : Territories.t option) :
     int =
   let found = ref false in
@@ -51,8 +51,8 @@ let find_index (arr : Territories.t option array) (elt : Territories.t option) :
   | true -> !acc
   | false -> failwith "Invalid_element"
 
-(* Returns whether the array [a] satisfies: All [Some] elements in the
-   Territories array are to the left of all [None] elements. *)
+(* [check_inv a] Returns whether the array [a] satisfies: All [Some] elements in
+   the Territories array are to the left of all [None] elements. *)
 let check_inv (a : Territories.t option array) : bool =
   if are_some a then true
   else
@@ -68,19 +68,20 @@ let duplicate (a : Territories.t option array) : bool =
   | 0 -> true
   | _ -> false
 
-(* Checks whether [p] satisfies the representation invariant. *)
+(* [rep_ok p] Checks whether [p] satisfies the representation invariant. *)
 let rep_ok (p : t) : unit =
   let ck1 = Array.length p.territories = 42 in
   let ck2 = check_inv p.territories in
   let ck3 = duplicate p.territories in
   if ck1 && ck2 && ck3 then () else ()
 
-(** Given a player [p], returns the name of the player. *)
+(** [get_color p] Given a player [p], returns the name of the player. *)
 let get_color (p : t) : Raylib.Color.t = p.color
 
-(** Given a player [p] and a string [s], returns the index of the territory with
-    Territory.name = s. Raises: ["not owned"] if not found*)
+(** [get_territory p s] Given a player [p] and a string [s], returns the index
+    of the territory with Territory.name = s. Raises: ["not owned"] if not found*)
 let get_territory (p : t) (s : string) : Territories.t =
+  rep_ok p;
   if s = "done" then raise Done
   else
     let ter =
@@ -98,19 +99,24 @@ let get_territory (p : t) (s : string) : Territories.t =
     | Some None -> raise Not_Owned
     | Some (Some t) -> t
 
-(** Given a player [p], returns an option array of Territories owned by the
-    player. *)
-let get_territories (p : t) : Territories.t option array = p.territories
+(** [get_territories p] Given a player [p], returns an option array of
+    Territories owned by the player. *)
+let get_territories (p : t) : Territories.t option array =
+  rep_ok p;
+  p.territories
 
-(** Given a player [p], returns a list of Territories owned by the player. *)
+(** [get_territories_lst p] Given a player [p], returns a list of Territories
+    owned by the player. *)
 let get_territories_lst (p : t) : Territories.t list =
+  rep_ok p;
   let lst = Array.to_list p.territories in
   List.filter_map (fun x -> x) lst
 
-(** Given a player [p], adds a territory to the Territories array. Requires: [c]
-    must not be owned by the player Raises: ["In_territory"] if [c] is already
-    in the [p.territories] array *)
+(** [add_territory p c] Given a player [p], adds a territory to the Territories
+    array. Requires: [c] must not be owned by the player Raises:
+    ["In_territory"] if [c] is already in the [p.territories] array *)
 let add_territory (p : t) (c : Territories.t) : unit =
+  rep_ok p;
   if Array.exists (fun x -> x = Some c) p.territories then
     failwith "In_territory"
   else
@@ -119,10 +125,12 @@ let add_territory (p : t) (c : Territories.t) : unit =
     Territories.change_owner c p.name;
     rep_ok p
 
-(** Given a player [p], removes a territory in the Territories array. Requires:
-    [c] must be owned by the player and [p.territories] cannot be empty. Raises:
-    ["Empty_Array"] if [p.territories] is empty*)
+(** [remove_territory p c] Given a player [p], removes a territory in the
+    Territories array. Requires: [c] must be owned by the player and
+    [p.territories] cannot be empty. Raises: ["Empty_Array"] if [p.territories]
+    is empty*)
 let remove_territory (p : t) (c : Territories.t) : unit =
+  rep_ok p;
   if Array.length p.territories = 0 then failwith "Empty_Array"
   else
     let idx1 = find_index p.territories (Some c) in
@@ -131,9 +139,10 @@ let remove_territory (p : t) (c : Territories.t) : unit =
     p.territories.(idx2 - 1) <- None;
     rep_ok p
 
-(** Given player [p], returns the number of Territories in the Territories
-    array.*)
+(** [num_territories p] Given player [p], returns the number of Territories in
+    the Territories array.*)
 let num_territories (p : t) : int =
+  rep_ok p;
   Array.fold_left
     (fun acc x -> if x = None then acc else acc + 1)
     0 p.territories
@@ -168,6 +177,7 @@ let match_continents (lst : Continent.t list) =
       (Continent.get_continent_number Continent.Europe)
 
 let get_continent_bonus (p : t) : int =
+  rep_ok p;
   let lst =
     List.fold_left
       (fun acc t -> Territories.get_continent t :: acc)
@@ -176,6 +186,7 @@ let get_continent_bonus (p : t) : int =
   match_continents lst
 
 let territories_to_string (p : t) : string =
+  rep_ok p;
   Array.fold_left
     (fun acc x ->
       match x with

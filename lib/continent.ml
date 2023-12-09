@@ -8,6 +8,9 @@ type continents =
   | North_America
   | South_America
 
+(** AF: The record {  name : _ ; value : _ } represents a continent. 
+  RI: None *)
+
 type t = {
   name : continents;
   value : int;
