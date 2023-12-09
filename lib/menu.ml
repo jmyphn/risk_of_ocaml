@@ -16,11 +16,11 @@ type t = {
 }
 
 let menu = ref None
-let two_pb_hb = Rectangle.create 225. 350. 100. 100.
-let three_pb_hb = Rectangle.create 550. 350. 100. 100.
-let four_pb_hb = Rectangle.create 875. 350. 100. 100.
-let five_pb_hb = Rectangle.create 388. 550. 100. 100.
-let six_pb_hb = Rectangle.create 713. 550. 100. 100.
+let two_pb_hb = Rectangle.create 304. 348. 100. 100.
+let three_pb_hb = Rectangle.create 527. 348. 100. 100.
+let four_pb_hb = Rectangle.create 750. 348. 100. 100.
+let five_pb_hb = Rectangle.create 971. 348. 100. 100.
+let six_pb_hb = Rectangle.create 1194. 348. 100. 100.
 
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
@@ -74,13 +74,13 @@ let draw_menu mouse =
   let dest = Rectangle.create 0. 0. sw sh in
   let origin = Vector2.create 0. 0. in
   draw_texture_pro menu.bg source dest origin 0. Constants.default_color;
-  draw_texture menu.two_pb 225 350 Constants.default_color;
-  draw_texture menu.three_pb 550 350 Constants.default_color;
-  draw_texture menu.four_pb 875 350 Constants.default_color;
-  draw_texture menu.five_pb 388 550 Constants.default_color;
-  draw_texture menu.six_pb 713 550 Constants.default_color;
-  highlight_button_menu mouse two_pb_hb menu.two_pb_hl (225, 350) 2;
-  highlight_button_menu mouse three_pb_hb menu.three_pb_hl (550, 350) 3;
-  highlight_button_menu mouse four_pb_hb menu.four_pb_hl (875, 350) 4;
-  highlight_button_menu mouse five_pb_hb menu.five_pb_hl (388, 550) 5;
-  highlight_button_menu mouse six_pb_hb menu.six_pb_hl (713, 550) 6
+  draw_texture menu.two_pb 304 348 Constants.default_color;
+  draw_texture menu.three_pb 527 348 Constants.default_color;
+  draw_texture menu.four_pb 750 348 Constants.default_color;
+  draw_texture menu.five_pb 971 348 Constants.default_color;
+  draw_texture menu.six_pb 1194 348 Constants.default_color;
+  highlight_button_menu mouse two_pb_hb menu.two_pb_hl (294, 343) 2;
+  highlight_button_menu mouse three_pb_hb menu.three_pb_hl (517, 343) 3;
+  highlight_button_menu mouse four_pb_hb menu.four_pb_hl (740, 343) 4;
+  highlight_button_menu mouse five_pb_hb menu.five_pb_hl (961, 343) 5;
+  highlight_button_menu mouse six_pb_hb menu.six_pb_hl (1184, 343) 6

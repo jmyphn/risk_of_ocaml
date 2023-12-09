@@ -21,7 +21,7 @@ let get_state () = !game_state
 let get_game () = Option.get !game_active
 
 (** [screen_width] is the width of the screen. Default is 1400px *)
-let screen_width = 1400
+let screen_width = 1600
 
 (** [screen_height] is the height of the screen. Default is 900px *)
 let screen_height = 900
