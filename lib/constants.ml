@@ -6,6 +6,20 @@ type game_state =
   | ACTIVE
   | END
 
+type game = Game.t
+
+(** [game_state] the current state of the game *)
+let game_state = ref START
+
+(** [game_active] the active game *)
+let game_active : game option ref = ref None
+
+(** [get_state ()] returns the current state of the game *)
+let get_state () = !game_state
+
+(** [get_game ()] returns the active game *)
+let get_game () = Option.get !game_active
+
 (** [screen_width] is the width of the screen. Default is 1400px *)
 let screen_width = 1400
 

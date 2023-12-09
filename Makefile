@@ -26,8 +26,8 @@ clean:
 	dune clean
 	rm -f *.zip
 
-# doc:
-# 	dune build @doc
+doc:
+	dune build @doc
 
-# opendoc: doc
-# 	@bash opendoc.sh
+opendoc: doc
+	@bash opendoc.sh

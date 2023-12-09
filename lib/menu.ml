@@ -15,6 +15,11 @@ type t = {
 }
 
 let menu = ref None
+let two_pb_hb = Rectangle.create 225. 350. 100. 100.
+let three_pb_hb = Rectangle.create 550. 350. 100. 100.
+let four_pb_hb = Rectangle.create 875. 350. 100. 100.
+let five_pb_hb = Rectangle.create 388. 550. 100. 100.
+let six_pb_hb = Rectangle.create 713. 550. 100. 100.
 
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
@@ -51,7 +56,15 @@ let initialize_menu () =
         six_pb_hl = six_pb_highlight_texture;
       }
 
-let draw_menu () =
+let highlight_button_menu mouse hitbox highlight (x, y) n =
+  if check_collision_point_rec mouse hitbox then
+    match is_mouse_button_down MouseButton.Left with
+    | false -> draw_texture highlight x y Color.raywhite
+    | true ->
+        Constants.game_active := Some (Game.init n);
+        Constants.game_state := ACTIVE
+
+let draw_menu mouse =
   let menu = Option.get !menu in
   let sw = float_of_int Constants.screen_width in
   let sh = float_of_int Constants.screen_height in
@@ -63,8 +76,9 @@ let draw_menu () =
   draw_texture menu.three_pb 550 350 Constants.default_color;
   draw_texture menu.four_pb 875 350 Constants.default_color;
   draw_texture menu.five_pb 388 550 Constants.default_color;
-  draw_texture menu.six_pb 713 550 Constants.default_color
-
-let get_hl () =
-  let res = Option.get !menu in
-  (res.two_pb_hl, res.three_pb_hl, res.four_pb_hl, res.five_pb_hl, res.six_pb_hl)
+  draw_texture menu.six_pb 713 550 Constants.default_color;
+  highlight_button_menu mouse two_pb_hb menu.two_pb_hl (225, 350) 2;
+  highlight_button_menu mouse three_pb_hb menu.three_pb_hl (550, 350) 3;
+  highlight_button_menu mouse four_pb_hb menu.four_pb_hl (875, 350) 4;
+  highlight_button_menu mouse five_pb_hb menu.five_pb_hl (388, 550) 5;
+  highlight_button_menu mouse six_pb_hb menu.six_pb_hl (713, 550) 6
