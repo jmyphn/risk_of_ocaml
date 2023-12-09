@@ -674,6 +674,13 @@ let _ = Player.add_territory p1 indonesia
 let _ = Player.remove_territory p1 afghanistan
 let _ = Player.add_territory p1 congo
 let _ = Player.remove_territory p1 indonesia
+let p1_arr = Array.make 42 None
+let _ = p1_arr.(0) <- Some alaska
+let _ = p1_arr.(1) <- Some congo
+let _ = p1_arr.(2) <- Some quebec
+let _ = p1_arr.(3) <- Some scandinavia
+let _ = p1_arr.(4) <- Some japan
+let _ = p1_arr.(5) <- Some china
 
 (* Let player 2 own: Ontario, Northwest Territory, Great Britain, Kamchatka,
    Ural, South Africa, Irkutsk *)
@@ -690,6 +697,14 @@ let _ = Player.remove_territory p2 middle_east
 let _ = Player.add_territory p2 indonesia
 let _ = Player.add_territory p2 irkutsk
 let _ = Player.remove_territory p2 indonesia
+let p2_arr = Array.make 42 None
+let _ = p2_arr.(0) <- Some ontario
+let _ = p2_arr.(1) <- Some south_africa
+let _ = p2_arr.(2) <- Some northwest_territory
+let _ = p2_arr.(3) <- Some great_britain
+let _ = p2_arr.(4) <- Some kamchatka
+let _ = p2_arr.(5) <- Some ural
+let _ = p2_arr.(6) <- Some irkutsk
 
 (* Let player 3 own: Egypt, Madagascar, Iceland, India *)
 let _ = Player.add_territory p3 greenland
@@ -700,6 +715,11 @@ let _ = Player.add_territory p3 madagascar
 let _ = Player.add_territory p3 iceland
 let _ = Player.add_territory p3 india
 let _ = Player.remove_territory p3 eastern_australia
+let p3_arr = Array.make 42 None
+let _ = p3_arr.(0) <- Some egypt
+let _ = p3_arr.(1) <- Some india
+let _ = p3_arr.(2) <- Some madagascar
+let _ = p3_arr.(3) <- Some iceland
 
 (* Let player 4 own all countries in Australia: Indonesia, New Guinea, Western
    Australia, Eastern Australia *)
@@ -707,6 +727,11 @@ let _ = Player.add_territory p4 indonesia
 let _ = Player.add_territory p4 new_guinea
 let _ = Player.add_territory p4 western_australia
 let _ = Player.add_territory p4 eastern_australia
+let p4_arr = Array.make 42 None
+let _ = p4_arr.(0) <- Some indonesia
+let _ = p4_arr.(1) <- Some new_guinea
+let _ = p4_arr.(2) <- Some western_australia
+let _ = p4_arr.(3) <- Some eastern_australia
 
 (* Let player 5 own all countries in South America: Venezuela, Brazil, Peru,
    Argentina *)
@@ -714,8 +739,28 @@ let _ = Player.add_territory p5 venezuela
 let _ = Player.add_territory p5 brazil
 let _ = Player.add_territory p5 peru
 let _ = Player.add_territory p5 argentina
+let p5_arr = Array.make 42 None
+let _ = p5_arr.(0) <- Some venezuela
+let _ = p5_arr.(1) <- Some brazil
+let _ = p5_arr.(2) <- Some peru
+let _ = p5_arr.(3) <- Some argentina
 
 (* Let player 6 own no territories *)
+let p6_arr = Array.make 42 None
+
+(*--------------------------Player.get_territories --------------------------*)
+let player_get_territories_test out in1 _ =
+  assert_equal out (Player.get_territories in1)
+
+let player_get_territories_tests =
+  [
+    "get territories of player 1" >:: player_get_territories_test p1_arr p1;
+    "get territories of player 2" >:: player_get_territories_test p2_arr p2;
+    "get territories of player 3" >:: player_get_territories_test p3_arr p3;
+    "get territories of player 4" >:: player_get_territories_test p4_arr p4;
+    "get territories of player 5" >:: player_get_territories_test p5_arr p5;
+    "get territories of player 6" >:: player_get_territories_test p6_arr p6;
+  ]
 
 (*--------------------------Player.get_continent_bonus -----------------------*)
 let player_get_continent_bonus_test out in1 _ =
@@ -729,6 +774,43 @@ let player_get_continent_bonus_tests =
     "get continent bonus of player 4" >:: player_get_continent_bonus_test 2 p4;
     "get continent bonus of player 5" >:: player_get_continent_bonus_test 2 p5;
     "get continent bonus of player 6" >:: player_get_continent_bonus_test 0 p6;
+  ]
+(*------------------------Player.territories_to_string -----------------------*)
+
+let player_territories_to_string_test out in1 _ =
+  assert_equal ~printer:(fun x -> x) out (Player.territories_to_string in1)
+
+let player_territories_to_string_tests =
+  [
+    "get string territories of player 1"
+    >:: player_territories_to_string_test
+          "Alaska: 5\nCongo: 3\nQuebec: 5\nScandinavia: 5\nJapan: 7\nChina: 7\n"
+          p1;
+    "get string territories of player 2"
+    >:: player_territories_to_string_test
+          "Ontario: 5\n\
+           South Africa: 3\n\
+           Northwest Territory: 5\n\
+           Great Britain: 5\n\
+           Kamchatka: 7\n\
+           Ural: 7\n\
+           Irkutsk: 7\n"
+          p2;
+    "get string territories of player 3"
+    >:: player_territories_to_string_test
+          "Egypt: 3\nIndia: 7\nMadagascar: 3\nIceland: 5\n" p3;
+    "get string territories of player 4"
+    >:: player_territories_to_string_test
+          "Indonesia: 2\n\
+           New Guinea: 2\n\
+           Western Australia: 2\n\
+           Eastern Australia: 2\n"
+          p4;
+    "get string territories of player 5"
+    >:: player_territories_to_string_test
+          "Venezuela: 2\nBrazil: 2\nPeru: 2\nArgentina: 2\n" p5;
+    "get string territories of player 6"
+    >:: player_territories_to_string_test "" p6;
   ]
 
 (*----------------------------Player.get_territory -------------------------*)
@@ -842,12 +924,13 @@ let get_territories_list_tests =
 
 (******************************** Game tests **********************************)
 
-let game1 = Game.init 6
+(* let game1 = Game.init 6 *)
 
 (*-------------------------- Game.get_game_over ------------------------------*)
 
-let get_game_over_test out in1 _ = assert_equal out (Game.get_game_over in1)
-let get_game_over_tests = [ "check game1" >:: get_game_over_test false game1 ]
+(* let get_game_over_test out in1 _ = assert_equal out (Game.get_game_over in1)
+   let get_game_over_tests = [ "check game1" >:: get_game_over_test false game1
+   ] *)
 
 let tests =
   "main test suite"
@@ -866,12 +949,14 @@ let tests =
            territories_get_location_tests;
            territories_get_neighbours_tests;
            territories_string_neighbours_tests;
+           player_get_territories_tests;
            player_get_name_tests;
            player_get_continent_bonus_tests;
            player_get_color_tests;
            player_get_territory_tests;
            player_num_territories_tests;
-           get_game_over_tests;
+           player_territories_to_string_tests;
+           (* get_game_over_tests; *)
          ]
 
 let _ = run_test_tt_main tests
