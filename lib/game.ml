@@ -591,6 +591,8 @@ let get_phase game = game.current_phase
 
 (** Given a game, return the Territories*)
 let get_territories game = game.territories
+
+let get_remaining_troops game = game.deploy_troops
 (**********************************************************)
 
 (********************** Phase Change **************************************)
