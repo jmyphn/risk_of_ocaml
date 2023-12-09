@@ -631,6 +631,6 @@ let change_phase (game : t) : t =
   | Fortify ->
       fortify game.current_player;
       print_endline
-        ("Player" ^ Player.get_name game.current_player ^ "'s turn is over.");
+        ("Player" ^ Player.get_name game.current_player ^ " 's turn is over.");
       game.current_player <- next_player game;
       change_phase Deploy game
