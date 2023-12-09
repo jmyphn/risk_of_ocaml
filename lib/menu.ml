@@ -68,12 +68,16 @@ let valid_chars =
 let rec string_compare s1 s2 =
   let s1 = String.lowercase_ascii s1 in
   let s2 = String.lowercase_ascii s2 in
-  if String.get s1 0 = String.get s2 0 then
-    if String.length s1 > 1 && List.mem (String.get s1 0) valid_chars then
-      string_compare
-        (String.sub s1 1 (String.length s1 - 1))
-        (String.sub s1 1 (String.length s1 - 1))
-    else true
+  if String.length s1 <> String.length s2 then false
+  else if String.length s1 = 0 && String.length s2 = 0 then true
+  else if
+    String.get s1 0 = String.get s2 0
+    && List.mem (String.get s1 0) valid_chars
+    && List.mem (String.get s2 0) valid_chars
+  then
+    string_compare
+      (String.sub s1 1 (String.length s1 - 1))
+      (String.sub s1 1 (String.length s1 - 1))
   else false
 
 let fix_string s =
