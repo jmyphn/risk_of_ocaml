@@ -37,7 +37,7 @@ let get_button_hl () =
 let highlight_button_start mouse =
   let start_hl = (Option.get !start).button_hl in
   if check_collision_point_rec mouse start_hb then
-    match is_mouse_button_down MouseButton.Left with
+    match is_mouse_button_pressed MouseButton.Left with
     | false ->
         draw_texture start_hl (681 - offset) (570 - offset)
           Constants.default_color

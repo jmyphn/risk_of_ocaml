@@ -11,13 +11,13 @@ type t = {
 let active = ref None
 
 let initialize_active () =
-  let active_bg = load_texture "assets/MapBackground.png" in
+  let active_bg = load_texture "assets/active/map.png" in
   let state = load_texture "assets/TempButton.png" in
 
   let state_hl = load_texture "assets/TempButtonHighlight.png" in
-  let phase = load_texture "assets/PhaseButton.png" in
+  let phase = load_texture "assets/active/PhaseButton.png" in
 
-  let phase_hl = load_texture "assets/PhaseButtonHighlight.png" in
+  let phase_hl = load_texture "assets/active/PhaseButtonHi.png" in
   active := Some { bg = active_bg; state; state_hl; phase; phase_hl }
 
 let get_hl () =
