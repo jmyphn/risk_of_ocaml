@@ -10,9 +10,9 @@ type t = {
 }
 
 let active = ref None
-let vb = Rectangle.create 1322. 578. 200. 50.
-let vb_val = ref 0
-let vb_edit = ref false
+let tb = Rectangle.create 1322. 578. 200. 50.
+let tb_val = ref ""
+let tb_edit = ref false
 let starting = ref false (* check if the phase button has been pressed *)
 let x_offset = 35
 let y_offset = 20
@@ -44,18 +44,22 @@ let initialize_active () =
   active := Some { bg = active_bg; state; state_hl; phase; phase_hl }
 
 let get_value_from_box () =
-  (match value_box vb "" !vb_val ~min:0 ~max:100 !vb_edit with
+  (match text_box tb !tb_val !tb_edit with
   | vl, true ->
-      vb_edit := not !vb_edit;
-      vb_val := vl
-  | vl, false -> vb_val := vl);
-  if !vb_val = 0 then ()
+      tb_edit := not !tb_edit;
+      tb_val := vl
+  | vl, false -> tb_val := vl);
+  if !tb_val = "" then ()
   else
-    (* want to use the input of vb_val w.r.t. the current phase of the game *)
-    match Game.get_phase (Constants.get_game ()) with
-    | Deploy -> ()
-    | Attack -> ()
-    | Fortify -> ()
+    match is_key_pressed Enter with
+    | true -> (
+        (* want to use the input of tb_val w.r.t. the current phase of the
+           game *)
+        match Game.get_phase (Constants.get_game ()) with
+        | Deploy -> View.value_from_gui := Some !tb_val
+        | Attack -> ()
+        | Fortify -> ())
+    | false -> ()
 
 let draw_instructions (game : Game.t) =
   if !starting = true then
@@ -112,6 +116,7 @@ let draw_active mouse =
   let curr_player_string = "Current Player: " ^ curr_player_name in
   draw_text curr_player_string 464 833 40 curr_player_color;
   draw_instructions game;
+  get_value_from_box ();
 
   (* TODO: add function that will display instructions *)
 

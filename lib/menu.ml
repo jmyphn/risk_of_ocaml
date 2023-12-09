@@ -185,4 +185,3 @@ let draw_menu mouse =
       Constants.game_active := Some (Game.init plst np);
       Constants.game_state := INSTRUCTIONS)
     else ())
-(* rect: shape and position of the text box on screen *)
