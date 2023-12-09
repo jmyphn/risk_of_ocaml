@@ -19,6 +19,7 @@ type t = {
   territories : territories;
   troops_to_place : int;
   mutable game_over : bool;
+  mutable deploy_troops : int;
 }
 
 (* Holds the current map *)
@@ -221,6 +222,7 @@ let init (numPlayers : int) =
     territories = init_territories;
     troops_to_place = 0;
     game_over = false;
+    deploy_troops = 0;
   }
 
 (****************************************************************************)
@@ -412,16 +414,18 @@ let can_fortify_territories p =
 
 let rec fortify_territories tlst acc (visited : string list) =
   let t = List.hd tlst in
-  let visited' = Territories.get_name t :: visited in
-  let n = owned_neighbours t in
+  let visited' = t :: visited in
+  let n = owned_neighbours (get_territory_game t) in
   let new_t =
-    List.filter (fun t1 -> List.exists (fun t2 -> t1 = t2) visited = false) n
+    List.filter
+      (fun t1 -> List.exists (fun t2 -> t1 = t2) visited = false)
+      (n @ tlst)
   in
   let acc' = List.sort_uniq Stdlib.compare (new_t @ acc) in
   match new_t with
   | [] -> acc'
   | _ ->
-      let tlst' = List.map (fun h -> get_territory_game h) new_t in
+      let tlst' = new_t in
       fortify_territories tlst' acc' visited'
 
 let fortify p =
@@ -469,7 +473,7 @@ let fortify p =
         ("Number must be between 1 and " ^ string_of_int move_trps)
     in
     let _ = print_endline "Choose the territory to move troops to " in
-    let tlst = fortify_territories [ t1 ] [] [] in
+    let tlst = fortify_territories [ Territories.get_name t1 ] [] [] in
     print_endline (pp_lst (fun s -> s) tlst);
     let t2 = catch_error get_territory_game "Invalid Input" in
     Territories.add_value n t2;
@@ -492,40 +496,31 @@ let get_troops (p : player) : int =
     territories and deploy those troops int the cooresponding territories. Only
     return when the player has finished deploying their troops. *)
 let deploy g =
-  let new_troops = ref (get_troops g.current_player) in
-  if !new_troops = 0 then
-    failwith "IMPOSSIBLE: Each player must have 3 troops minimum"
-  else
-    while !new_troops > 0 do
-      print_endline
-        ("\n" ^ string_of_int !new_troops
-       ^ " troops have been drafted. Select the country you want to deploy in: "
-        );
-      let _ = print_endline (Player.territories_to_string g.current_player) in
-      let input =
-        catch_error
-          (Player.get_territory g.current_player)
-          "Invalid Territory Name"
-      in
-      let should_loop = ref true in
-      let troops_chosen = ref 0 in
-      while !should_loop do
-        print_endline
-          ("Select the number of troops you wish to deploy: ("
-         ^ string_of_int !new_troops ^ " Troops avaliable)");
-        troops_chosen :=
-          catch_error
-            (fun x ->
-              if int_of_string x <= !new_troops then int_of_string x
-              else failwith "")
-            "Invalid Input";
-        if !troops_chosen <= !new_troops then should_loop := false
-        else should_loop := true
-      done;
-      let _ = Territories.add_value !troops_chosen input in
-      new_troops := !new_troops - !troops_chosen
-    done;
-  print_endline "You have no more troops to deploy"
+  let new_troops = g.deploy_troops in
+  print_endline
+    ("\n" ^ string_of_int new_troops
+   ^ " troops have been drafted. Select the country you want to deploy in: ");
+  let _ = print_endline (Player.territories_to_string g.current_player) in
+  let input =
+    catch_error (Player.get_territory g.current_player) "Invalid Territory Name"
+  in
+  let should_loop = ref true in
+  let troops_chosen = ref 0 in
+  while !should_loop do
+    print_endline
+      ("Select the number of troops you wish to deploy: ("
+     ^ string_of_int new_troops ^ " Troops avaliable)");
+    troops_chosen :=
+      catch_error
+        (fun x ->
+          if int_of_string x <= new_troops then int_of_string x else failwith "")
+        "Invalid Input";
+    if !troops_chosen <= new_troops then should_loop := false
+    else should_loop := true
+  done;
+  let _ = Territories.add_value !troops_chosen input in
+  g.deploy_troops <- new_troops - !troops_chosen
+
 (****************************************************************************)
 
 (**********************Phase change helpers************************************)
@@ -546,6 +541,7 @@ let change_phase p g =
       territories = g.territories;
       troops_to_place = g.troops_to_place;
       game_over = g.game_over;
+      deploy_troops = g.deploy_troops;
     }
 
 (** Given a game, return the current player *)
@@ -583,8 +579,12 @@ let change_phase (game : t) : t =
   print_endline ("The current phase is " ^ phase_to_string game.current_phase);
   match game.current_phase with
   | Deploy ->
-      deploy game;
-      change_phase Attack game
+      if game.deploy_troops = 0 then (
+        game.deploy_troops <- get_troops game.current_player;
+        deploy game)
+      else deploy game;
+      if game.deploy_troops <= 0 then change_phase Attack game
+      else change_phase Deploy game
   | Attack ->
       print_endline "\n\n\nDo you want to attack? (Yes/No).";
       let err =
