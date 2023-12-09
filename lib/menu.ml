@@ -21,34 +21,97 @@ let three_pb_hb = Rectangle.create 527. 348. 100. 100.
 let four_pb_hb = Rectangle.create 750. 348. 100. 100.
 let five_pb_hb = Rectangle.create 971. 348. 100. 100.
 let six_pb_hb = Rectangle.create 1194. 348. 100. 100.
-let player_names = ref [] (* player list, number of players *)
-let player_count = ref 7
+let player_names = ref []
+let num_players = ref 7
 let tb_edit = ref false
 let tb_text = ref ""
 let tb = Rectangle.create 550. 600. 500. 80.
 let show_tb = ref false
 
-let grab_text_in_box () =
-  (match text_box tb !tb_text !tb_edit with
-  | vl, true ->
-      tb_edit := not !tb_edit;
-      tb_text := vl
-  | vl, false ->
-      tb_text := vl;
-      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
-  if !tb_text = "" then ()
-  else
-    match is_key_pressed Enter with
-    | true ->
-        let player = !tb_text in
-        let names = !player_names in
-        if List.mem player names then
-          print_endline (!tb_text ^ " already inside")
-        else (
-          print_endline (!tb_text ^ " added");
-          player_names := player :: names);
-        tb_text := ""
-    | false -> ()
+let rec pp_lst pp_elt lst =
+  match lst with
+  | [ h ] -> pp_elt h
+  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
+  | [] -> ""
+
+let valid_chars =
+  [
+    'a';
+    'b';
+    'c';
+    'd';
+    'e';
+    'f';
+    'g';
+    'h';
+    'i';
+    'j';
+    'k';
+    'l';
+    'm';
+    'n';
+    'o';
+    'p';
+    'q';
+    'r';
+    's';
+    't';
+    'u';
+    'v';
+    'w';
+    'x';
+    'y';
+    'z';
+    ' ';
+  ]
+
+let rec string_compare s1 s2 =
+  let s1 = String.lowercase_ascii s1 in
+  let s2 = String.lowercase_ascii s2 in
+  if String.get s1 0 = String.get s2 0 then
+    if String.length s1 > 1 && List.mem (String.get s1 0) valid_chars then
+      string_compare
+        (String.sub s1 1 (String.length s1 - 1))
+        (String.sub s1 1 (String.length s1 - 1))
+    else true
+  else false
+
+let fix_string s =
+  let count = ref 0 in
+  for i = 0 to String.length s - 1 do
+    if List.mem (String.get s i) valid_chars then incr count
+  done;
+  String.sub s 0 !count
+
+let get_text () =
+  match is_key_pressed Enter with
+  | true ->
+      let temp = !tb_text in
+      tb_text := "";
+      Some (fix_string temp)
+  | false -> None
+
+let try_get_player_names n =
+  if List.length !player_names < n then
+    match get_text () with
+    | Some name ->
+        print_endline ("Name: " ^ name);
+        print_endline ("Player List: " ^ pp_lst (fun s -> s) !player_names);
+        print_endline
+          (string_of_bool
+             (List.exists (fun p -> string_compare p name) !player_names));
+        if
+          List.exists (fun p -> String.trim p = String.trim name) !player_names
+          = false
+        then player_names := name :: !player_names
+        else print_endline "Name already chosen."
+    | None -> ()
+  else ()
+
+(* let grab_text_in_box () = if !tb_text = "" then () else match is_key_pressed
+   Enter with | true -> if List.mem !tb_text !player_names then print_endline
+   (!tb_text ^ " already inside") else ( print_endline (!tb_text ^ " added");
+   player_names := !tb_text :: !player_names); tb_text := "" | false -> () *)
 
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
@@ -92,7 +155,9 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     | true ->
         show_tb := true;
         player_names := [];
-        player_count := n
+        num_players := n
+(* Constants.game_active := Some (Game.init n) *)
+(* Constants.game_state := ACTIVE *)
 
 let draw_menu mouse =
   let menu = Option.get !menu in
@@ -118,9 +183,24 @@ let draw_menu mouse =
     (* 5 *)
     highlight_button_menu mouse six_pb_hb menu.six_pb_hl (1184, 343) 6
     (* 6 *))
-  else grab_text_in_box ();
-  let plst = !player_names in
-  let np = !player_count in
-  if List.length plst = np then (
-    Constants.game_active := Some (Game.init plst np);
-    Constants.game_state := INSTRUCTIONS)
+  else (
+    (if !show_tb then
+       match text_box tb !tb_text !tb_edit with
+       (* vl is the text inside the textbox *)
+       | vl, true ->
+           tb_edit := not !tb_edit;
+           tb_text := vl;
+           try_get_player_names !num_players
+       | vl, false ->
+           if "" <> vl then tb_text := vl else ();
+
+           set_style (TextBox `Text_alignment) TextAlignment.(to_int Left);
+           set_style (TextBox `Color_selected_bg) 200);
+
+    let plst = !player_names in
+    let np = !num_players in
+    if List.length plst = np then (
+      Constants.game_active := Some (Game.init plst np);
+      Constants.game_state := INSTRUCTIONS)
+    else ())
+(* rect: shape and position of the text box on screen *)
