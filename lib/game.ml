@@ -537,7 +537,9 @@ let deploy g =
     troops_chosen :=
       catch_error
         (fun x ->
-          if int_of_string x <= new_troops then int_of_string x else failwith "")
+          if int_of_string x <= new_troops && int_of_string x > 0 then
+            int_of_string x
+          else failwith "")
         "Invalid Input";
     if !troops_chosen <= new_troops then should_loop := false
     else should_loop := true
