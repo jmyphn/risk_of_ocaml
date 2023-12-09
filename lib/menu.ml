@@ -13,6 +13,7 @@ type t = {
   five_pb_hl : Texture2D.t;
   six_pb : Texture2D.t;
   six_pb_hl : Texture2D.t;
+  name_sel : Texture2D.t;
 }
 
 let menu = ref None
@@ -24,7 +25,7 @@ let six_pb_hb = Rectangle.create 1194. 348. 100. 100.
 let player_names = ref []
 let num_players = ref 7
 let tb_edit = ref false
-let tb_text = ref "Enter Player"
+let tb_text = ref ""
 let tb = Rectangle.create 550. 600. 500. 80.
 let show_tb = ref false
 
@@ -81,7 +82,7 @@ let fix_string s =
   for i = 0 to String.length s - 1 do
     if List.mem (String.get s i) valid_chars then incr count
   done;
-  String.sub s 0 !count
+  String.sub s 0 (!count + 1)
 
 let get_text () =
   match is_key_pressed Enter with
@@ -96,14 +97,16 @@ let try_get_player_names n =
     match get_text () with
     | Some name ->
         print_endline ("Name: " ^ name);
-        print_endline ("Player List: " ^ pp_lst (fun s -> s) !player_names);
         print_endline
           (string_of_bool
              (List.exists (fun p -> string_compare p name) !player_names));
         if
           List.exists (fun p -> String.trim p = String.trim name) !player_names
           = false
-        then player_names := name :: !player_names
+        then (
+          player_names := name :: !player_names;
+          print_endline (string_of_int (String.length name));
+          print_endline ("Player List: " ^ pp_lst (fun s -> s) !player_names))
         else print_endline "Name already chosen."
     | None -> ()
   else ()
@@ -132,6 +135,7 @@ let initialize_menu () =
   (* active state *)
   let six_pb_texture = load_texture "assets/menu/6PB.png" in
   let six_pb_highlight_texture = load_texture "assets/menu/6PBHighlight.png" in
+  let choose_name_txt = load_texture "assets/menu/ChooseName.png" in
   menu :=
     Some
       {
@@ -146,6 +150,7 @@ let initialize_menu () =
         five_pb_hl = five_pb_highlight_texture;
         six_pb = six_pb_texture;
         six_pb_hl = six_pb_highlight_texture;
+        name_sel = choose_name_txt;
       }
 
 let highlight_button_menu mouse hitbox highlight (x, y) n =
@@ -186,18 +191,18 @@ let draw_menu mouse =
     highlight_button_menu mouse six_pb_hb menu.six_pb_hl (1184, 343) 6
     (* 6 *))
   else (
-    (if !show_tb then
-       match text_box tb !tb_text !tb_edit with
-       (* vl is the text inside the textbox *)
-       | vl, true ->
-           tb_edit := not !tb_edit;
-           tb_text := vl;
-           try_get_player_names !num_players
-       | vl, false ->
-           if "" <> vl then tb_text := vl else ();
+    (if !show_tb then draw_texture menu.name_sel 643 553 Constants.default_color;
+     match text_box tb !tb_text !tb_edit with
+     (* vl is the text inside the textbox *)
+     | vl, true ->
+         tb_edit := not !tb_edit;
+         tb_text := vl;
+         try_get_player_names !num_players
+     | vl, false ->
+         if "" <> vl then tb_text := vl else ();
 
-           set_style (TextBox `Text_alignment) TextAlignment.(to_int Left);
-           set_style (TextBox `Color_selected_bg) 200);
+         set_style (TextBox `Text_alignment) TextAlignment.(to_int Left);
+         set_style (TextBox `Color_selected_bg) 200);
 
     let plst = !player_names in
     let np = !num_players in
