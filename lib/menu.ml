@@ -21,22 +21,32 @@ let three_pb_hb = Rectangle.create 527. 348. 100. 100.
 let four_pb_hb = Rectangle.create 750. 348. 100. 100.
 let five_pb_hb = Rectangle.create 971. 348. 100. 100.
 let six_pb_hb = Rectangle.create 1194. 348. 100. 100.
-let players = ref ([], 7) (* player list, number of players *)
+let player_names = ref [] (* player list, number of players *)
+let player_count = ref 7
 let tb_edit = ref false
-let tb_text = ref "Enter Player"
+let tb_text = ref ""
 let tb = Rectangle.create 550. 600. 500. 80.
 let show_tb = ref false
 
 let grab_text_in_box () =
+  (match text_box tb !tb_text !tb_edit with
+  | vl, true ->
+      tb_edit := not !tb_edit;
+      tb_text := vl
+  | vl, false ->
+      tb_text := vl;
+      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left));
   if !tb_text = "" then ()
   else
     match is_key_pressed Enter with
     | true ->
-        if List.mem !tb_text (fst !players) then
+        let player = !tb_text in
+        let names = !player_names in
+        if List.mem player names then
           print_endline (!tb_text ^ " already inside")
         else (
           print_endline (!tb_text ^ " added");
-          players := (!tb_text :: fst !players, snd !players));
+          player_names := player :: names);
         tb_text := ""
     | false -> ()
 
@@ -80,12 +90,9 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
     match is_mouse_button_pressed MouseButton.Left with
     | false -> draw_texture highlight x y Color.raywhite
     | true ->
-        (* Constants.game_active := Some (Game.init n); *)
-        (* Constants.game_state := INSTRUCTIONS; *)
         show_tb := true;
-        players := ([], n)
-(* Constants.game_active := Some (Game.init n) *)
-(* Constants.game_state := ACTIVE *)
+        player_names := [];
+        player_count := n
 
 let draw_menu mouse =
   let menu = Option.get !menu in
@@ -112,22 +119,8 @@ let draw_menu mouse =
     highlight_button_menu mouse six_pb_hb menu.six_pb_hl (1184, 343) 6
     (* 6 *))
   else grab_text_in_box ();
-  (* rect: shape and position of the text box on screen *)
-  (if !show_tb then
-     match text_box tb !tb_text !tb_edit with
-     (* vl is the text inside the textbox *)
-     | vl, true ->
-         tb_edit := not !tb_edit;
-         tb_text := vl
-     | vl, false ->
-         tb_text := vl;
-
-         set_style (TextBox `Text_alignment) TextAlignment.(to_int Left);
-         set_style (TextBox `Color_selected_bg) 200);
-
-  let plst = fst !players in
-  let np = snd !players in
+  let plst = !player_names in
+  let np = !player_count in
   if List.length plst = np then (
     Constants.game_active := Some (Game.init plst np);
     Constants.game_state := INSTRUCTIONS)
-  else ()

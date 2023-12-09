@@ -521,9 +521,6 @@ let get_troops (p : player) : int =
     return when the player has finished deploying their troops. *)
 let deploy g =
   let new_troops = g.deploy_troops in
-  print_endline
-    ("\n" ^ string_of_int new_troops
-   ^ " troops have been drafted. Select the country you want to deploy in: ");
   let _ = print_endline (Player.territories_to_string g.current_player) in
   let input =
     catch_error (Player.get_territory g.current_player) "Invalid Territory Name"
@@ -550,11 +547,8 @@ let deploy g =
 (****************************************************************************)
 
 (**********************Phase change helpers************************************)
-let phase_to_string (phase : phase) : string =
-  match phase with
-  | Deploy -> "deploy"
-  | Attack -> "attack"
-  | Fortify -> "fortify"
+(* let phase_to_string (phase : phase) : string = match phase with | Deploy ->
+   "deploy" | Attack -> "attack" | Fortify -> "fortify" *)
 
 (** [Change_phase p g] given phase [p] and a game [g] return the game with the
     phase changed to phase [p]*)
@@ -591,6 +585,8 @@ let get_phase game = game.current_phase
 
 (** Given a game, return the Territories*)
 let get_territories game = game.territories
+
+let get_remaining_troops game = game.deploy_troops
 (**********************************************************)
 
 (********************** Phase Change **************************************)
@@ -598,11 +594,6 @@ let get_territories game = game.territories
 (** Given a game and its phase, return a new game with the next phase. The next
     phase order: ATTACK -> FORTIFY -> DEPLOY*)
 let change_phase (game : t) : t =
-  print_endline
-    ("\n\n\n\n\n\n\n\n\n\nIt is "
-    ^ Player.get_name game.current_player
-    ^ "'s turn");
-  print_endline ("The current phase is " ^ phase_to_string game.current_phase);
   match game.current_phase with
   | Deploy ->
       if game.deploy_troops = 0 then (

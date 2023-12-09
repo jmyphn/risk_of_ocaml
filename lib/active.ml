@@ -1,5 +1,5 @@
 open Raylib
-(* open Raygui *)
+open Raygui
 
 type t = {
   bg : Texture2D.t;
@@ -10,6 +10,10 @@ type t = {
 }
 
 let active = ref None
+let vb = Rectangle.create 1322. 578. 200. 50.
+let vb_val = ref 0
+let vb_edit = ref false
+let starting = ref false (* check if the phase button has been pressed *)
 let x_offset = 35
 let y_offset = 20
 let pb_x = 1372
@@ -40,6 +44,7 @@ let highlight_button_phase mouse =
     | false ->
         draw_texture (Option.get !active).phase_hl pb_x pb_y Color.raywhite
     | true ->
+        starting := true;
         Constants.game_active :=
           Some (Game.change_phase (Constants.get_game ()))
 
@@ -53,9 +58,36 @@ let initialize_active () =
   let phase_hl = load_texture "assets/active/PhaseButtonHi.png" in
   active := Some { bg = active_bg; state; state_hl; phase; phase_hl }
 
-let get_hl () =
-  let a = Option.get !active in
-  (a.state_hl, a.phase_hl)
+let get_value_from_box () =
+  (match value_box vb "" !vb_val ~min:0 ~max:100 !vb_edit with
+  | vl, true ->
+      vb_edit := not !vb_edit;
+      vb_val := vl
+  | vl, false -> vb_val := vl);
+  if !vb_val = 0 then ()
+  else
+    (* want to use the input of vb_val w.r.t. the current phase of the game *)
+    match Game.get_phase (Constants.get_game ()) with
+    | Deploy -> ()
+    | Attack -> ()
+    | Fortify -> ()
+
+let draw_instructions (game : Game.t) =
+  if !starting = true then
+    match Game.get_phase (Constants.get_game ()) with
+    | Deploy ->
+        draw_text
+          "Current Phase is Deploy. \n\
+           Choose the territory to\n\
+          \ put your troops in." 1302 109 20 Color.black;
+        draw_text
+          ("Remaining Troops: " ^ string_of_int (Game.get_remaining_troops game))
+          1322 239 20 Color.black
+    | Attack -> ()
+    | Fortify -> ()
+  else
+    draw_text "Click the change phase \nbutton to begin." 1302 108 20
+      Color.black
 
 let draw_territories_of_player (player : Player.t) =
   let territories = Player.get_territories player in
@@ -85,20 +117,21 @@ let draw_active mouse =
 
   let game = Constants.get_game () in
 
+  let players = Game.get_players game in
+  let _ = List.iter (fun player -> draw_territories_of_player player) players in
+  ();
+
   (* draw current player *)
   let curr_player = Game.get_current_player game in
   let curr_player_name = Player.get_name curr_player in
   let curr_player_color = Player.get_color curr_player in
-  let curr_player_string = "It is Player " ^ curr_player_name ^ "'s turn" in
-  draw_text curr_player_string 378 811 50 curr_player_color;
-  let players = Game.get_players game in
-  (* for every player in the current game: for every territory in that player's
-     option array: check whether the territory is Some or None; if Some
-     territory, then get the territory's location tuple; draw the territory text
-     box on the screen with the player's associated color *)
-  let _ = List.iter (fun player -> draw_territories_of_player player) players in
-  ();
+  let curr_player_string = "Current Player: " ^ curr_player_name in
+  draw_text curr_player_string 464 833 40 curr_player_color;
+  draw_instructions game;
+
+  (* TODO: add function that will display instructions *)
+
   (* change state *)
-  highlight_button_state mouse;
+  (* highlight_button_state mouse; *)
   (* change phase *)
   highlight_button_phase mouse

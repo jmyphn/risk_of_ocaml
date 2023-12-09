@@ -1,4 +1,4 @@
 (library
  (name lib)
  (public_name Lib)
- (libraries raylib raygui stdlib ounit2 yojson))
+ (libraries lwt raylib raygui stdlib ounit2 yojson))

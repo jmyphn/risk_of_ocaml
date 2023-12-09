@@ -55,7 +55,7 @@ let highlight_button_instructions mouse =
   let instructions = Option.get !instructions in
   let button_hl = instructions.continue_hl in
   if check_collision_point_rec mouse continue_b then
-    match is_mouse_button_down MouseButton.Left with
+    match is_mouse_button_pressed MouseButton.Left with
     | false -> draw_texture button_hl (750 + offset) 687 Constants.default_color
     | true when instructions.pg0 ->
         instructions.pg0 <- false;

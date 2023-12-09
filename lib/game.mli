@@ -29,6 +29,10 @@ val get_phase : t -> phase
 val get_territories : t -> Territories.t array
 (** [get_territories] Given a game [g], return the [Territories.t array]*)
 
+val get_remaining_troops : t -> int
+(** [get_remaining_troops] Given a game [g], return the remaining troops to be
+    deployed. *)
+
 val change_phase : t -> t
 (** [change_phase] Given a phase [p], and a game [g], return a game with the
     phase [p]*)
