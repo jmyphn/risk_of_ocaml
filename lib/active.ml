@@ -1,10 +1,7 @@
 open Raylib
-open Raygui
 
 type t = {
   bg : Texture2D.t;
-  state : Texture2D.t;
-  state_hl : Texture2D.t;
   phase : Texture2D.t;
   phase_hl : Texture2D.t;
 }
@@ -35,45 +32,30 @@ let highlight_button_phase mouse =
 
 let initialize_active () =
   let active_bg = load_texture "assets/active/map.png" in
-  let state = load_texture "assets/TempButton.png" in
-
-  let state_hl = load_texture "assets/TempButtonHighlight.png" in
   let phase = load_texture "assets/active/PhaseButton.png" in
 
   let phase_hl = load_texture "assets/active/PhaseButtonHi.png" in
-  active := Some { bg = active_bg; state; state_hl; phase; phase_hl }
+  active := Some { bg = active_bg; phase; phase_hl }
 
-let get_value_from_box () =
-  (match text_box tb !tb_val !tb_edit with
-  | vl, true ->
-      tb_edit := not !tb_edit;
-      tb_val := vl
-  | vl, false -> tb_val := vl);
-  if !tb_val = "" then ()
-  else
-    match is_key_pressed Enter with
-    | true -> (
-        (* want to use the input of tb_val w.r.t. the current phase of the
-           game *)
-        match Game.get_phase (Constants.get_game ()) with
-        | Deploy -> View.value_from_gui := Some !tb_val
-        | Attack -> ()
-        | Fortify -> ())
-    | false -> ()
+let print_header s = draw_text s 1302 109 20 Color.black
 
 let draw_instructions (game : Game.t) =
   if !starting = true then
     match Game.get_phase (Constants.get_game ()) with
     | Deploy ->
-        draw_text
+        print_header
           "Current Phase is Deploy. \n\
            Choose the territory to\n\
-          \ put your troops in." 1302 109 20 Color.black;
+          \ put your troops in.";
         draw_text
           ("Remaining Troops: " ^ string_of_int (Game.get_remaining_troops game))
           1322 239 20 Color.black
-    | Attack -> ()
-    | Fortify -> ()
+    | Attack ->
+        print_header
+          "Current Phase is Attack.\nChoose the territory\nto attack from."
+    | Fortify ->
+        print_header
+          "Current Phase is Fortify.\nChoose the territory\nto fortify in."
   else
     draw_text "Click the change phase \nbutton to begin." 1302 108 20
       Color.black
@@ -116,11 +98,4 @@ let draw_active mouse =
   let curr_player_string = "Current Player: " ^ curr_player_name in
   draw_text curr_player_string 350 840 40 curr_player_color;
   draw_instructions game;
-  get_value_from_box ();
-
-  (* TODO: add function that will display instructions *)
-
-  (* change state *)
-  (* highlight_button_state mouse; *)
-  (* change phase *)
   highlight_button_phase mouse
