@@ -12,6 +12,7 @@ type t = {
   five_pb_hl : Texture2D.t;
   six_pb : Texture2D.t;
   six_pb_hl : Texture2D.t;
+  show_tb : bool;
 }
 
 let menu = ref None
@@ -54,6 +55,7 @@ let initialize_menu () =
         five_pb_hl = five_pb_highlight_texture;
         six_pb = six_pb_texture;
         six_pb_hl = six_pb_highlight_texture;
+        show_tb = false;
       }
 
 let highlight_button_menu mouse hitbox highlight (x, y) n =

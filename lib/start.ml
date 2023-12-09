@@ -1,4 +1,5 @@
 open Raylib
+open Raygui
 
 type t = {
   bg : Texture2D.t;
@@ -8,6 +9,8 @@ type t = {
 
 let start = ref None
 let start_hb = Rectangle.create 480. 570. 240. 100.
+let tb_edit = ref false
+let tb_text = ref "hello"
 
 let initialize_start () =
   let bg_start_texture = load_texture "assets/start/StartBackground.png" in
@@ -22,6 +25,11 @@ let initialize_start () =
         button = start_button_texture;
         button_hl = start_button_highlight_texture;
       }
+
+let grab_text_in_box () =
+  match is_key_pressed Enter with
+  | true -> print_endline !tb_text
+  | _ -> ()
 
 let get_button_hl () =
   match !start with
@@ -44,4 +52,16 @@ let draw_start mouse =
   let origin = Vector2.create 0. 0. in
   draw_texture_pro start.bg source dest origin 0. Constants.default_color;
   draw_texture start.button 480 570 Constants.default_color;
-  highlight_button_start mouse
+  highlight_button_start mouse;
+  (* rect: shape and position of the text box on screen *)
+  let rect = Rectangle.create 25.0 215.0 125.0 30.0 in
+  match text_box rect !tb_text !tb_edit with
+  (* vl is the text inside the textbox *)
+  | vl, true ->
+      tb_edit := not !tb_edit;
+      tb_text := vl
+  | vl, false ->
+      tb_text := vl;
+
+      set_style (TextBox `Text_alignment) TextAlignment.(to_int Left);
+      grab_text_in_box ()
