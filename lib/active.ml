@@ -120,7 +120,7 @@ let draw_active mouse =
   let curr_player_name = Player.get_name curr_player in
   let curr_player_color = Player.get_color curr_player in
   let curr_player_string = "Current Player: " ^ curr_player_name in
-  draw_text curr_player_string 464 833 40 curr_player_color;
+  draw_text curr_player_string 350 840 40 curr_player_color;
   draw_instructions game;
   get_value_from_box ();
   highlight_button_phase mouse
