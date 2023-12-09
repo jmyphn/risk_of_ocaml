@@ -40,5 +40,3 @@ val change_phase : t -> t
 val get_game_over : t -> bool
 (** [get_game_over] Given a game [g], return [true] if the game is over and
     [false] otherwise *)
-
-(* val deploy : t -> t val attack : t -> t val fortify : t -> t *)

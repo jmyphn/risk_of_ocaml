@@ -1,13 +1,8 @@
 type t
 (** [t] Represents a player *)
 
-exception Done
-
 val get_name : t -> string
 (** [get_name p] Given a player [p] returns the name of [p]. *)
-
-val rep_ok : t -> unit
-(* [rep_ok p] Checks if [p] satisfies the representation invariant *)
 
 val get_color : t -> Raylib.Color.t
 (** [get_color p] Given a player [p] returns the color of [p]. *)
