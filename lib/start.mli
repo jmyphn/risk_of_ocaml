@@ -1,3 +1,5 @@
+(** Implements the GUI features for the starting pages of the game. *)
+
 open Raylib
 
 type t

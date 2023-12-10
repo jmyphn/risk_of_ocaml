@@ -1,3 +1,5 @@
+(** Implements the flow and phases of the game. *)
+
 type player = Player.t
 (** [player] is a player in the game *)
 

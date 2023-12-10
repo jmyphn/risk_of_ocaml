@@ -1,3 +1,5 @@
+(** Implements the players in the game. *)
+
 type t
 (** [t] Represents a player *)
 

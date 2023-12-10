@@ -1,3 +1,5 @@
+(** Implements the continents in the game map. *)
+
 type t
 (** [t] is the representation of a continent*)
 

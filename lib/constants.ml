@@ -1,3 +1,5 @@
+(** Sets up the GUI display of the game. *)
+
 open Raylib
 
 (** type [game_state] is the type of state that the game can take *)
