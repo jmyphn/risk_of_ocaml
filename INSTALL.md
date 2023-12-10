@@ -20,7 +20,7 @@ to install all dependencies for this game.
 ## Running the game
 In the source directory of the project, run
 ```bash
-dune build
+make build
 ```
 to build the project. Then run
 ```bash
