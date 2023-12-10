@@ -284,8 +284,12 @@ let attacking atk atk_player def def_player game =
       (fun x ->
         match int_of_string x with
         | n when n > 3 -> raise InvalidDice
-        | n when n > 2 -> roll_dice 3
-        | n when n > 0 -> roll_dice n
+        | n when n = 3 ->
+            if atk_troops >= 3 then roll_dice 3 else raise InvalidDice
+        | n when n = 2 ->
+            if atk_troops >= 2 then roll_dice n else raise InvalidDice
+        | n when n = 1 ->
+            if atk_troops >= 1 then roll_dice n else raise InvalidDice
         | _ -> raise InvalidDice)
       "Invalid Input"
   in
