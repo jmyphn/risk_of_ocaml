@@ -556,9 +556,9 @@ let phase_to_string (phase : phase) : string =
   | Attack -> "attack"
   | Fortify -> "fortify"
 
-(** [Change_phase p g] given phase [p] and a game [g] return the game with the
-    phase changed to phase [p]*)
-let change_phase p g =
+(** [Change_phase_helper p g] given phase [p] and a game [g] return the game
+    with the phase changed to phase [p]*)
+let change_phase_helper p g =
   rep_ok
     {
       players = g.players;
@@ -611,8 +611,8 @@ let change_phase (game : t) : t =
         game.deploy_troops <- get_troops game.current_player;
         deploy game)
       else deploy game;
-      if game.deploy_troops <= 0 then change_phase Attack game
-      else change_phase Deploy game
+      if game.deploy_troops <= 0 then change_phase_helper Attack game
+      else change_phase_helper Deploy game
   | Attack ->
       print_endline "\n\n\nDo you want to attack? (Yes/No).";
       let err =
@@ -626,13 +626,13 @@ let change_phase (game : t) : t =
             | _ -> failwith "")
           "Invalid Input"
       in
-      if String.lowercase_ascii err = "no" then change_phase Fortify game
+      if String.lowercase_ascii err = "no" then change_phase_helper Fortify game
       else (
         attack game;
-        change_phase Attack game)
+        change_phase_helper Attack game)
   | Fortify ->
       fortify game.current_player;
       print_endline
         ("Player " ^ Player.get_name game.current_player ^ "'s turn is over.");
       game.current_player <- next_player game;
-      change_phase Deploy game
+      change_phase_helper Deploy game

@@ -29,11 +29,3 @@ val get_continent_value : continents -> int
 val of_string : string -> t
 (** [of_string str]* Given a string [tstr], return the associated type of the
     continent *)
-
-(* val create : Yojson.Basic.t -> t *)
-(** [create json] Given a Yojson.Basic.t [json] reprentation of a continent,
-    creates a continent [c] with name [name] and bonus value [value] *)
-
-(* val owns : territory list -> player -> int (** [owns] Given a list of
-   countries [lst], determine if a player [t] occupies continents and return the
-   troop bonus associated with the continent(s) owned by that player *) *)
