@@ -8,20 +8,20 @@ val get_owner : t -> string
 (** [get_owner t] Returns the owner of the territory.*)
 
 val get_name : t -> string
-(** [get_name] Given a territory [t], return the name of the territory *)
+(** [get_name t] Given a territory [t], return the name of the territory *)
 
 val get_troops : t -> int
-(** [get_value] Given a territory [t], return its number of troops. *)
+(** [get_value t] Given a territory [t], return its number of troops. *)
 
 val get_continent : t -> Continent.t
-(** [get_continent] Given a territory [t], return the continent it is in *)
+(** [get_continent t] Given a territory [t], return the continent it is in *)
 
 val get_location : t -> int * int
-(** [get_location] Given a territory [t], return the location of the territory
+(** [get_location t] Given a territory [t], return the location of the territory
     on the screen *)
 
 val get_neighbours : t -> string list
-(** [get_neighbours] Given a territory [t], return its neighbors *)
+(** [get_neighbours t] Given a territory [t], return its neighbors *)
 
 val neighbours_to_string : t -> string
 (** [neighbours_to_string p] Given a territory [p], returns its neighboors in a
@@ -33,9 +33,10 @@ val init : Yojson.Basic.t -> t
     to 0 *)
 
 val add_value : int -> t -> unit
-(** [add_value] Given the number of troops to be added [n] and a territory
-    [territory], increase the number of troops in [territory] by [n]. *)
+(** [add_value n territory] Given the number of troops to be added [n] and a
+    territory [territory], increase the number of troops in [territory] by [n]. *)
 
 val subtract_value : int -> t -> unit
-(** [subtract_value] Given the number of troops to be subtracted [n] and a
-    territory [territory], decrease the number of troops in [territory] by [n]. *)
+(** [subtract_value n territory] Given the number of troops to be subtracted [n]
+    and a territory [territory], decrease the number of troops in [territory] by
+    [n]. *)

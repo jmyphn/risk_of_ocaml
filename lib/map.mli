@@ -8,8 +8,8 @@ type territories = Territories.t array
 (** [territories] is the representation of all territories on the map *)
 
 val get_territories : t -> territories
-(** [get_territories map] returns the territories on the map *)
+(** [get_territories m] returns the territories that are on the map [m] *)
 
 val create_map : Yojson.Basic.t -> t
-(** [create_map path] creates a [Map.t] instance. [path] must be a valid json
+(** [create_map path] creates a [Map.t] instance. [path] must be a valid JSON
     representation of a map. *)
