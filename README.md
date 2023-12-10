@@ -8,7 +8,7 @@ Risk is a game based on diplomacy, conflict, and conquest. Conquer the
 world by controlling armies, making alliances (or enemies!), and capturing 
 territories.
 
-The game supports 2 to 6 players, with several maps to play on.
+The game supports 2 to 6 players, with a GUI map for players to enjoy.
 
 ## Installation and Running the Game
 Read the [installation guide](INSTALL.md) to install the necessarily dependencies and to run the game.
