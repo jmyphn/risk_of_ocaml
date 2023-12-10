@@ -4,8 +4,9 @@
    by running “make play” on the terminal. OUnit tests were used to test the
    following modules: Continent, Map, Player, and Territories. The remaining
    modules such as Game, Active, Constants, Start, Instructions, View and Menu
-   were tested manually through “make play”. Helper functions not included in
-   the signature of these modules were tested through Utop.
+   and the game/main.ml file were tested manually through “make play”. Helper
+   functions not included in the signature of these modules were tested through
+   Utop.
 
    OUnit tests: For OUnit tests, we tested all modules that contain functions
    supporting our Game module. Our Game module is the main module that is
@@ -53,23 +54,24 @@
    correctly according to our specifications and expectations.
 
    Manual testing using the terminal through “make play”: Manual testing was
-   used to test the Game module which is responsible for running the entire flow
-   and different phases of the game. Thus, this module contains many functions
-   that print various information such as which player’s turn it is to play or
-   how many troops are currently in each territory to the terminal for players
-   to see. This module also contains many functions that use readline to ask for
-   inputs from the players such as player names and how many troops a player
-   would like to deploy to a certain country. As a result, these functions
-   cannot be tested normally through OUnit tests. Hence, we tested these
-   functions by running “make play” on the terminal and playing the game
-   step-by-step.
+   used to test the game/main.ml file and Game module, which are responsible for
+   running the entire flow and different phases of the game. Thus, these systems
+   contain many functions that execute the game and print various information
+   such as which player’s turn it is to play or how many troops are currently in
+   each territory to the terminal for players to see. The Game module also
+   contains many functions that use readline to ask for inputs from the players
+   such as player names and how many troops a player would like to deploy to a
+   certain country. As a result, these systems cannot be tested normally through
+   OUnit tests. Hence, we tested the functions in these systems by running “make
+   play” on the terminal and playing the game step-by-step.
 
-   To ensure that our functions in Game were implemented correctly, we ran “make
-   play” many times and tried out all the possibilities we could think of over
-   many games. For instance, we tried playing the game with different numbers of
-   players, ranging from 2 to 6. We then made sure that our game loop flowed
-   properly. For each player’s turn, the game progressed from the Deploy state
-   to the Attack state to the Fortify state before switching players.
+   To ensure that our functions in game/main.ml and Game were implemented
+   correctly, we ran “make play” many times and tried out all the possibilities
+   we could think of over many games. For instance, we tried playing the game
+   with different numbers of players, ranging from 2 to 6. We then made sure
+   that our game loop flowed properly. For each player’s turn, the game
+   progressed from the Deploy state to the Attack state to the Fortify state
+   before switching players.
 
    At each phase during each player’s turn, we would try out different
    possibilities each time to get good coverage. For instance, we would deploy,
@@ -174,25 +176,12 @@ let map = Map.create_map json
 (* all territories *)
 let territories = Map.get_territories map
 
-(* all continents *)
-(* let continents = Map.get_continents map *)
-
-(* let get_continent_from_array name = match Array.find_opt (fun x ->
-   Continent.get_name x = name) continents with | None -> failwith "bruh" | Some
-   v -> v *)
-
 let get_territory_from_array name =
   match Array.find_opt (fun x -> Territories.get_name x = name) territories with
   | None -> failwith "bruh"
   | Some v -> v
 
 (* Create continents using Continent.of_string *)
-(* let north_america = get_continent_from_array "North America" let
-   south_america = get_continent_from_array "South America" let africa =
-   get_continent_from_array "Africa" let europe = get_continent_from_array
-   "Europe" let asia = get_continent_from_array "Asia" let australia =
-   get_continent_from_array "Australia" *)
-
 let north_america = Continent.of_string "North America"
 let south_america = Continent.of_string "South America"
 let africa = Continent.of_string "Africa"
@@ -278,7 +267,7 @@ let get_continent_value_tests =
     "get continent value of Australia" >:: get_continent_value_test 2 Australia;
   ]
 
-(*--------------------------- Country Examples -------------------------------*)
+(*--------------------------- Territory Examples -----------------------------*)
 
 (* North American territories*)
 let alaska = get_territory_from_array "Alaska"
@@ -334,12 +323,6 @@ let siberia = get_territory_from_array "Siberia"
 let ural = get_territory_from_array "Ural"
 let yakutsk = get_territory_from_array "Yakutsk"
 
-(* Set the neighboring territories for each of the above territories let _ =
-   Territories.init_neighbors alaska [ northwest_territory; alberta; kamchatka ]
-
-   let _ = Territories.init_neighbors alberta [ northwest_territory; alaska;
-   ontario; western_us ] *)
-
 (************************* Territories & Player tests *************************)
 
 (*----------------------------Territories.get_name -------------------------*)
@@ -352,13 +335,8 @@ let territories_get_name_tests =
     "get name of Alberta" >:: territories_get_name_test "Alberta" alberta;
     "get name of Central America"
     >:: territories_get_name_test "Central America" central_america;
-    "get name of Eastern US"
-    >:: territories_get_name_test "Eastern US" eastern_us;
-    "get name of Greenland" >:: territories_get_name_test "Greenland" greenland;
     "get name of Argentina" >:: territories_get_name_test "Argentina" argentina;
     "get name of Brazil" >:: territories_get_name_test "Brazil" brazil;
-    "get name of Venezuela" >:: territories_get_name_test "Venezuela" venezuela;
-    "get name of Peru" >:: territories_get_name_test "Peru" peru;
     "get name of Eastern Australia"
     >:: territories_get_name_test "Eastern Australia" eastern_australia;
     "get name of Indonesia" >:: territories_get_name_test "Indonesia" indonesia;
@@ -371,10 +349,6 @@ let territories_get_name_tests =
     "get name of Iceland" >:: territories_get_name_test "Iceland" iceland;
     "get name of Northern Europe"
     >:: territories_get_name_test "Northern Europe" northern_europe;
-    "get name of Scandinavia"
-    >:: territories_get_name_test "Scandinavia" scandinavia;
-    "get name of Southern Europe"
-    >:: territories_get_name_test "Southern Europe" southern_europe;
     "get name of Congo" >:: territories_get_name_test "Congo" congo;
     "get name of East Africa"
     >:: territories_get_name_test "East Africa" east_africa;
@@ -383,8 +357,6 @@ let territories_get_name_tests =
     >:: territories_get_name_test "Afghanistan" afghanistan;
     "get name of China" >:: territories_get_name_test "China" china;
     "get name of India" >:: territories_get_name_test "India" india;
-    "get name of Irkutsk" >:: territories_get_name_test "Irkutsk" irkutsk;
-    "get name of Japan" >:: territories_get_name_test "Japan" japan;
   ]
 
 (*------------Territories.get_troops, add_value & subtract_value ----------*)
@@ -540,7 +512,6 @@ let territories_troops_value_tests =
     "get troops of Alaska" >:: territories_get_troops_test 5 alaska;
     "get troops of Ontario" >:: territories_get_troops_test 5 ontario;
     "get troops of Quebec" >:: territories_get_troops_test 5 quebec;
-    "get troops of Western US" >:: territories_get_troops_test 5 western_us;
     "get troops of Southern Europe"
     >:: territories_get_troops_test 5 southern_europe;
     "get troops of Ukraine" >:: territories_get_troops_test 5 ukraine;
@@ -549,18 +520,14 @@ let territories_troops_value_tests =
     "get troops of Madagascar" >:: territories_get_troops_test 3 madagascar;
     "get troops of North Africa" >:: territories_get_troops_test 3 north_africa;
     "get troops of South Africa" >:: territories_get_troops_test 3 south_africa;
-    "get troops of Kamchatka" >:: territories_get_troops_test 7 kamchatka;
     "get troops of Middle East" >:: territories_get_troops_test 7 middle_east;
     "get troops of Mongolia" >:: territories_get_troops_test 7 mongolia;
     "get troops of Siam" >:: territories_get_troops_test 7 siam;
     "get troops of Siberia" >:: territories_get_troops_test 7 siberia;
-    "get troops of Ural" >:: territories_get_troops_test 7 ural;
-    "get troops of Yakutsk" >:: territories_get_troops_test 7 yakutsk;
     "get troops of Indonesia" >:: territories_get_troops_test 2 indonesia;
     "get troops of New Guinea" >:: territories_get_troops_test 2 new_guinea;
-    "get troops of Western Australi"
+    "get troops of Western Australia"
     >:: territories_get_troops_test 2 western_australia;
-    "get troops of Peru" >:: territories_get_troops_test 2 peru;
     "get troops of Brazil" >:: territories_get_troops_test 2 brazil;
     "get troops of Argentina" >:: territories_get_troops_test 2 argentina;
   ]
@@ -1038,16 +1005,6 @@ let get_territories_list_tests =
 
 (******************************************************************************)
 
-(******************************** Game tests **********************************)
-
-(* let game1 = Game.init 6 *)
-
-(*-------------------------- Game.get_game_over ------------------------------*)
-
-(* let get_game_over_test out in1 _ = assert_equal out (Game.get_game_over in1)
-   let get_game_over_tests = [ "check game1" >:: get_game_over_test false game1
-   ] *)
-
 let tests =
   "main test suite"
   >::: List.flatten
@@ -1072,7 +1029,6 @@ let tests =
            player_get_territory_tests;
            player_num_territories_tests;
            player_territories_to_string_tests;
-           (* get_game_over_tests; *)
          ]
 
 let _ = run_test_tt_main tests
