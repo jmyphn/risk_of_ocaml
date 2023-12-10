@@ -1,3 +1,5 @@
+(** Implements the entire map of the game. *)
+
 type t
 (** [t] is the representation type of the map *)
 

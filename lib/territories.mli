@@ -1,3 +1,5 @@
+(** Implements the territories in the map of the game. *)
+
 type t
 (** type [t] corresponds to a territory *)
 

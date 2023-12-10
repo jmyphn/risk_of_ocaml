@@ -1,3 +1,5 @@
+(** Handles input values from the GUI. *)
+
 val value_from_gui : string option ref
 (** [value_from_gui] is the value from the GUI *)
 
