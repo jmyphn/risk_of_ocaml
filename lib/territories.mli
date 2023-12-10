@@ -1,10 +1,11 @@
 type t
+(** type [t] corresponds to a territory *)
 
 val change_owner : t -> string -> unit
 (** [change_owner t p] Mutates [t.owner] to equal [p].*)
 
-val get_owner :
-  t -> string (* [get_owner t] Returns the owner of the territory.*)
+val get_owner : t -> string
+(** [get_owner t] Returns the owner of the territory.*)
 
 val get_name : t -> string
 (** [get_name] Given a territory [t], return the name of the territory *)
