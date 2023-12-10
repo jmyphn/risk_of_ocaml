@@ -93,11 +93,6 @@ let try_get_player_names n =
     | None -> ()
   else ()
 
-(* let grab_text_in_box () = if !tb_text = "" then () else match is_key_pressed
-   Enter with | true -> if List.mem !tb_text !player_names then print_endline
-   (!tb_text ^ " already inside") else ( print_endline (!tb_text ^ " added");
-   player_names := !tb_text :: !player_names); tb_text := "" | false -> () *)
-
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
   let two_pb_texture = load_texture "assets/menu/2PB.png" in
