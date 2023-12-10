@@ -125,7 +125,7 @@
    correctly according to our expectations and requirements. *)
 
 open OUnit2
-open Lib
+open Riskofocaml
 
 (***************************** Pretty Printers *******************************)
 

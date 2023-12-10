@@ -1,4 +1,4 @@
-open Lib
+open Riskofocaml
 open Raylib
 
 (* Game setup function *)
