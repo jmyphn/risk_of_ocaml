@@ -6,10 +6,7 @@ type t = {
   phase_hl : Texture2D.t;
 }
 
-let active = ref None
-let tb = Rectangle.create 1322. 578. 200. 50.
-let tb_val = ref ""
-let tb_edit = ref false
+let active = ref None 
 let starting = ref false (* check if the phase button has been pressed *)
 let x_offset = 35
 let y_offset = 20

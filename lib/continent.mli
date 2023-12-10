@@ -1,13 +1,14 @@
 type t
 (** [t] is the representation of a continent*)
 
+(** [continents] is the type of a continent *)
 type continents =
   | Europe
   | Asia
   | Africa
   | Australia
   | North_America
-  | South_America  (** [continents] is the type of a continent *)
+  | South_America
 
 val get_name : t -> continents
 (** [get_name c] Given a continent [c], return the type of the continent *)

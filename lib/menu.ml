@@ -29,12 +29,6 @@ let tb_text = ref ""
 let tb = Rectangle.create 550. 600. 500. 80.
 let show_tb = ref false
 
-let rec pp_lst pp_elt lst =
-  match lst with
-  | [ h ] -> pp_elt h
-  | h :: t -> pp_elt h ^ ", " ^ pp_lst pp_elt t
-  | [] -> ""
-
 let is_valid_char a =
   match a with
   | 'a' .. 'z' -> true

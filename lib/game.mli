@@ -4,10 +4,11 @@ type player = Player.t
 type players = player list
 (** [players] is a list of players that are currently in the game *)
 
+(** [phase] is the current phase of the game *)
 type phase =
   | Deploy
   | Attack
-  | Fortify  (** [phase] is the current phase of the game *)
+  | Fortify
 
 type t
 (** [t] The type of the current game *)

@@ -15,7 +15,6 @@ type t = {
 let offset = 5
 let instructions = ref None
 let continue_b = Rectangle.create 755. 687. 100. 100.
-let continue_hl = Rectangle.create 755. 687. 100. 100.
 
 let initialize_instructions () =
   let bg_instructions_texture =
