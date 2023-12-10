@@ -20,6 +20,9 @@ let pb_y = 670
 let phase_hb =
   Rectangle.create (float_of_int pb_x) (float_of_int pb_y) 150. 100.
 
+(** [highlight_button_phase mouse] Outputs based on user interaction with the
+    button. If the mouse hovers over, it changes texture. If it is clicked,
+    changes the phase. *)
 let highlight_button_phase mouse =
   if check_collision_point_rec mouse phase_hb then
     match is_mouse_button_pressed MouseButton.Left with
@@ -30,6 +33,7 @@ let highlight_button_phase mouse =
         Constants.game_active :=
           Some (Game.change_phase (Constants.get_game ()))
 
+(** [initialize_active] Loads the textures for the active state.*)
 let initialize_active () =
   let active_bg = load_texture "assets/active/map.png" in
   let phase = load_texture "assets/active/PhaseButton.png" in
@@ -37,8 +41,10 @@ let initialize_active () =
   let phase_hl = load_texture "assets/active/PhaseButtonHi.png" in
   active := Some { bg = active_bg; phase; phase_hl }
 
+(** [print_header] helper for draw_instructions.*)
 let print_header s = draw_text s 1302 109 20 Color.black
 
+(** [draw_instructions g] draws the text for the current phase of [game].*)
 let draw_instructions (game : Game.t) =
   if !starting = true then
     match Game.get_phase game with
@@ -47,6 +53,8 @@ let draw_instructions (game : Game.t) =
     | Fortify -> print_header "Fortify"
   else draw_text "Deploy" 1302 108 20 Color.black
 
+(** [draw_territories_of_player p] draws the troop numbers text for every
+    country that the player owns. *)
 let draw_territories_of_player (player : Player.t) =
   let territories = Player.get_territories player in
   Array.iter
@@ -62,6 +70,8 @@ let draw_territories_of_player (player : Player.t) =
             20 (Player.get_color player))
     territories
 
+(** [draw_active mouse] Draws all the textures for the active phase onto the
+    GUI.*)
 let draw_active mouse =
   let a = Option.get !active in
   let sw = float_of_int Constants.screen_width in

@@ -44,6 +44,8 @@ let is_valid_char a =
   | ' ' -> true
   | _ -> false
 
+(** [string_compare s1 s2] String comparison for s1 and s2 because
+    Stdlib.compare and String.compare did not work for Raylib text box outpus.*)
 let rec string_compare s1 s2 =
   let s1 = String.lowercase_ascii s1 in
   let s2 = String.lowercase_ascii s2 in
@@ -59,6 +61,10 @@ let rec string_compare s1 s2 =
       (String.sub s1 1 (String.length s1 - 1))
   else false
 
+(** Raylib text box is broken and any string that is returned has a bunch of
+    non-existent characters appended to it. [fix_string s] returns a string
+    composed of the valid characters of [s]. Requires: all valid characters come
+    before the first invalid character*)
 let fix_string s =
   let count = ref 0 in
   for i = 0 to String.length s - 1 do
@@ -66,6 +72,8 @@ let fix_string s =
   done;
   String.sub s 0 !count
 
+(** [get_text] Returns any user input in the GUI text box if the user presses
+    ENTER.*)
 let get_text () =
   match is_key_pressed Enter with
   | true ->
@@ -74,6 +82,9 @@ let get_text () =
       Some (fix_string temp)
   | false -> None
 
+(** [try_get_player_names n] Takes in user input from the GUI text box and adds
+    the string to [player_names] which is a list of player names. If the name is
+    already in the list then it does nothing.*)
 let try_get_player_names n =
   if List.length !player_names < n then
     match get_text () with
@@ -87,6 +98,7 @@ let try_get_player_names n =
     | None -> ()
   else ()
 
+(** [initialize_menu] loads the textures of the menu.*)
 let initialize_menu () =
   let bg_menu_texture = load_texture "assets/menu/MenuBackground.png" in
   let two_pb_texture = load_texture "assets/menu/2PB.png" in
@@ -124,6 +136,9 @@ let initialize_menu () =
         name_sel = choose_name_txt;
       }
 
+(** [highlight_button_menu mouse] Outputs based on user interaction with the
+    button. If the mouse hovers over, it changes texture. If it is clicked,
+    switches to "choose name" state. *)
 let highlight_button_menu mouse hitbox highlight (x, y) n =
   if check_collision_point_rec mouse hitbox then
     match is_mouse_button_pressed MouseButton.Left with
@@ -132,9 +147,8 @@ let highlight_button_menu mouse hitbox highlight (x, y) n =
         show_tb := true;
         player_names := [];
         num_players := n
-(* Constants.game_active := Some (Game.init n) *)
-(* Constants.game_state := ACTIVE *)
 
+(** [draw_menu mouse] Draws the textures of the menu state.*)
 let draw_menu mouse =
   let menu = Option.get !menu in
   let sw = float_of_int Constants.screen_width in
