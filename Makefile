@@ -19,8 +19,8 @@ play:
 	OCAMLRUNPARAM=b dune exec game/main.exe
 
 zip:
-	rm -f ms2_code.zip
-	zip -r ms2_code.zip . -x@exclude.lst
+	rm -f riskofocaml.zip
+	zip -r riskofocaml.zip . -x@exclude.lst
 
 clean:
 	dune clean
