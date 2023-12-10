@@ -4,8 +4,9 @@
    by running “make play” on the terminal. OUnit tests were used to test the
    following modules: Continent, Map, Player, and Territories. The remaining
    modules such as Game, Active, Constants, Start, Instructions, View and Menu
-   were tested manually through “make play”. Helper functions not included in
-   the signature of these modules were tested through Utop.
+   and the game/main.ml file were tested manually through “make play”. Helper
+   functions not included in the signature of these modules were tested through
+   Utop.
 
    OUnit tests: For OUnit tests, we tested all modules that contain functions
    supporting our Game module. Our Game module is the main module that is
@@ -53,23 +54,24 @@
    correctly according to our specifications and expectations.
 
    Manual testing using the terminal through “make play”: Manual testing was
-   used to test the Game module which is responsible for running the entire flow
-   and different phases of the game. Thus, this module contains many functions
-   that print various information such as which player’s turn it is to play or
-   how many troops are currently in each territory to the terminal for players
-   to see. This module also contains many functions that use readline to ask for
-   inputs from the players such as player names and how many troops a player
-   would like to deploy to a certain country. As a result, these functions
-   cannot be tested normally through OUnit tests. Hence, we tested these
-   functions by running “make play” on the terminal and playing the game
-   step-by-step.
+   used to test the game/main.ml file and Game module, which are responsible for
+   running the entire flow and different phases of the game. Thus, these systems
+   contain many functions that execute the game and print various information
+   such as which player’s turn it is to play or how many troops are currently in
+   each territory to the terminal for players to see. The Game module also
+   contains many functions that use readline to ask for inputs from the players
+   such as player names and how many troops a player would like to deploy to a
+   certain country. As a result, these systems cannot be tested normally through
+   OUnit tests. Hence, we tested the functions in these systems by running “make
+   play” on the terminal and playing the game step-by-step.
 
-   To ensure that our functions in Game were implemented correctly, we ran “make
-   play” many times and tried out all the possibilities we could think of over
-   many games. For instance, we tried playing the game with different numbers of
-   players, ranging from 2 to 6. We then made sure that our game loop flowed
-   properly. For each player’s turn, the game progressed from the Deploy state
-   to the Attack state to the Fortify state before switching players.
+   To ensure that our functions in game/main.ml and Game were implemented
+   correctly, we ran “make play” many times and tried out all the possibilities
+   we could think of over many games. For instance, we tried playing the game
+   with different numbers of players, ranging from 2 to 6. We then made sure
+   that our game loop flowed properly. For each player’s turn, the game
+   progressed from the Deploy state to the Attack state to the Fortify state
+   before switching players.
 
    At each phase during each player’s turn, we would try out different
    possibilities each time to get good coverage. For instance, we would deploy,
