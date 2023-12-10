@@ -79,16 +79,10 @@ let try_get_player_names n =
     match get_text () with
     | Some name ->
         print_endline ("Name: " ^ name);
-        print_endline
-          (string_of_bool
-             (List.exists (fun p -> string_compare p name) !player_names));
         if
           List.exists (fun p -> String.trim p = String.trim name) !player_names
           = false
-        then (
-          player_names := name :: !player_names;
-          print_endline (string_of_int (String.length name));
-          print_endline ("Player List: " ^ pp_lst (fun s -> s) !player_names))
+        then player_names := name :: !player_names
         else print_endline "Name already chosen."
     | None -> ()
   else ()

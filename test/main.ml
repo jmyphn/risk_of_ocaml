@@ -1,3 +1,127 @@
+(* -------------------------- Testing Approach --------------------------- *)
+(* We used two approaches in testing our system. These two approaches include
+   testing using OUnit tests and manual testing by playing our game step-by-step
+   by running “make play” on the terminal. OUnit tests were used to test the
+   following modules: Continent, Map, Player, and Territories. The remaining
+   modules such as Game, Active, Constants, Start, Instructions, View and Menu
+   were tested manually through “make play”. Helper functions not included in
+   the signature of these modules were tested through Utop.
+
+   OUnit tests: For OUnit tests, we tested all modules that contain functions
+   supporting our Game module. Our Game module is the main module that is
+   responsible for running the flow and phases of our game. This Game module
+   relies on the following modules: Continent, Map, Territories, and Player.
+   Hence, OUnit tests were used to test these 4 modules.
+
+   For the Continent module, we mainly used glass box testing. The Continent
+   module comprises functions that create the continents in our game and extract
+   information about each continent such as its name, the number of territories
+   in the continent, and the bonus value given to each player for owning the
+   entire continent. Hence, the implementation of almost all functions in the
+   Continent module includes having multiple branches to handle each of the
+   continents in our game. Thus, we used glass box testing to test the functions
+   in the Continent module to ensure good coverage and that all functions work
+   on each continent that exists in our game.
+
+   To test this module, we used the Continent.of_string function to create an
+   instance of each continent in the game. Then, we tested the remaining
+   functions in the module on each of these instantiated continents through
+   glass box testing. Hence, we believe that we have achieved good coverage of
+   the functions on the Continent module. We ensured that each function produces
+   the expected outputs on each input continent. Thus, we believe that our
+   Continent module has been implemented correctly and successfully.
+
+   For the Map, Territories, and Player modules, we mainly used black box
+   testing. With these modules, most functions are not implemented to go through
+   multiple branches based on differing inputs. Hence, most functions in these
+   modules are designed to take similar paths and behaviors on all inputs. Thus,
+   we used black box testing for the functions in these modules as we were not
+   too concerned regarding testing multiple branches. We simply wanted to make
+   sure that all of these functions produce the correct output and behavior on
+   each chosen input.
+
+   We tested the Map module by using the functions in it to create an instance
+   of each territory in the game. Then, we tested the functions in the
+   Territories module on these created territories, making sure that each
+   function produced the expected output and behavior on each input territory.
+   Additionally, we tested the Player module by using the Player.init function
+   to create instances of multiple players in the game. We then also tested the
+   remaining functions in the Player module on these created players and
+   previously created territories, again ensuring that every function results in
+   the correct output and behavior based on our chosen inputs. Therefore, we
+   believe that our Map, Territories, and Player modules have been implemented
+   correctly according to our specifications and expectations.
+
+   Manual testing using the terminal through “make play”: Manual testing was
+   used to test the Game module which is responsible for running the entire flow
+   and different phases of the game. Thus, this module contains many functions
+   that print various information such as which player’s turn it is to play or
+   how many troops are currently in each territory to the terminal for players
+   to see. This module also contains many functions that use readline to ask for
+   inputs from the players such as player names and how many troops a player
+   would like to deploy to a certain country. As a result, these functions
+   cannot be tested normally through OUnit tests. Hence, we tested these
+   functions by running “make play” on the terminal and playing the game
+   step-by-step.
+
+   To ensure that our functions in Game were implemented correctly, we ran “make
+   play” many times and tried out all the possibilities we could think of over
+   many games. For instance, we tried playing the game with different numbers of
+   players, ranging from 2 to 6. We then made sure that our game loop flowed
+   properly. For each player’s turn, the game progressed from the Deploy state
+   to the Attack state to the Fortify state before switching players.
+
+   At each phase during each player’s turn, we would try out different
+   possibilities each time to get good coverage. For instance, we would deploy,
+   attack, and fortify various countries, trying out both valid territories
+   (players are allowed to deploy, attack, and fortify these territories) and
+   invalid territories. We would also try deploying, attacking, and fortifying
+   with various numbers of troops, ranging from the minimum and maximum number
+   of troops allowed and both valid and invalid numbers of troops.
+
+   Each time, we would check whether we see the expected results and behavior or
+   not. For example, if we chose to attack Western Australia, then we would
+   check that Western Australia indeed is the country that gets attacked. If we
+   chose to deploy 3 troops to Indonesia, then we would check that Indonesia’s
+   number of troops increased by 3. If we tried invalid inputs such as attacking
+   a country that the attacking player owned, then we would check that the game
+   would give us an “invalid input” warning. If we found incorrect behavior or
+   results, we would then debug and fix the implementation of our functions
+   accordingly.
+
+   We repeated the above steps each time we implemented a new function. We have
+   also tried playing the game until it “finishes” and one single player has
+   conquered the entire map, thus winning the game. This shows that our game
+   does progress and terminates correctly. Hence, we are confident that our game
+   system has been implemented correctly and successfully.
+
+   As for the Active, Constants, Start, Instructions, View and Menu modules,
+   these modules comprise the functions that create and manipulate the GUI
+   display of our game. Thus, these modules also cannot be tested through OUnit
+   test cases. Instead, we also tested them manually by running “make play”. As
+   we play the game, we would check whether all of the GUI features of the game
+   are displayed properly and that they function as expected. For example, we
+   would check that all territories are positioned correctly and neatly on the
+   map. We would also check that all buttons function correctly and result in
+   the expected behavior. For instance, if we press the button for 4 players at
+   the beginning of the game, then we expect the game to solicit players to
+   input 4 names for the 4 players.
+
+   Utop Testing: Since we could not access helper functions that were not
+   included in our module signatures, we could not test them normally through
+   OUnit tests. Hence, we would usually copy and paste some of our code related
+   to the different types and helper functions we created into Utop. We would
+   then test our helper functions on Utop to make sure that they have been
+   implemented correctly. Helper functions that were tested this way were
+   functions that were used to query data structures such as a function that
+   returns the first index that contains None in an option array.
+
+   Overall, through the testing strategies detailed above, we believe that we
+   have attained good testing coverage with all of our modules and functions,
+   including those that handle the front-end GUI and back-end features of our
+   game. Hence, we believe that our entire game system has been implemented
+   correctly according to our expectations and requirements. *)
+
 open OUnit2
 open Lib
 
